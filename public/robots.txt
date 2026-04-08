@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+
+# Replace this with your production domain when you publish a sitemap.
+# Sitemap: https://your-domain.tld/sitemap.xml

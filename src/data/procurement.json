@@ -1,0 +1,77 @@
+{
+  "updatedAt": "2026-04-06",
+  "source": "https://procurement.gensantos.gov.ph",
+  "categories": [
+    {
+      "id": "competitive-goods",
+      "name": "Competitive Bidding",
+      "scope": "Goods & Consulting Services",
+      "sourceUrl": "https://procurement.gensantos.gov.ph/ongoing-competitive.php",
+      "bids": [
+        { "ref": "25CB-GSCEPA-668(R)", "title": "Various Tokens (Rebid)", "abc": 290000, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-071(R)", "title": "Catering with Hotel Venue (Rebid)", "abc": 124500, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-072(R)", "title": "Agricultural and Forestry Supplies (Rebid)", "abc": 240000, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-073(R)", "title": "Office Equipment (Rebid)", "abc": 372400, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-078(R)", "title": "Container Van (Rebid)", "abc": 600000, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-082(R)", "title": "Tokens (Rebid)", "abc": 720950, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-133", "title": "Food Supplies (Rice Procurement)", "abc": 126000, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-134", "title": "Decorations", "abc": 470000, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-135", "title": "Catering with Hotel Venue and Accommodation", "abc": 257400, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-136", "title": "Rental", "abc": 300000, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-137", "title": "Catering with Hotel Venue", "abc": 328250, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-138", "title": "Catering Without Venue", "abc": 457500, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-139", "title": "Printing of Newsletters", "abc": 750000, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-140", "title": "Catering with Venue", "abc": 739050, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-141", "title": "Catering with Venue", "abc": 814500, "deadline": "2026-04-14 09:00", "status": "Open" },
+        { "ref": "26CB-GSC-123", "title": "Drugs and Medicines", "abc": 1252340, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-124", "title": "Generator", "abc": 1000000, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-125", "title": "Catering with Hotel Venue", "abc": 1560000, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-126", "title": "Drugs and Medicines", "abc": 1467945.64, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-127", "title": "Anesthesia/Anticoagulants", "abc": 2538760, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-128", "title": "Fluids/Electrolyte Solutions", "abc": 2700045.60, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-129", "title": "Founding Mayors Park Completion", "abc": 2917509.68, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-130", "title": "Vaccines", "abc": 4298500, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-131", "title": "Antimicrobial Parenterals", "abc": 4801403, "deadline": "2026-04-14 12:00", "status": "Open" },
+        { "ref": "26CB-GSC-132", "title": "Sports Complex Renovation", "abc": 9721500.62, "deadline": "2026-04-14 12:00", "status": "Open" }
+      ]
+    },
+    {
+      "id": "negotiated-goods",
+      "name": "Negotiated Bidding",
+      "scope": "Goods & Consulting Services",
+      "sourceUrl": "https://procurement.gensantos.gov.ph/ongoing-alter.php",
+      "bids": [
+        { "ref": "DC26-04-004", "title": "Toners and Inks", "abc": 12000, "deadline": "2026-04-14", "status": "Open" },
+        { "ref": "DC26-04-005", "title": "Toners and Inks", "abc": 215937.50, "deadline": "2026-04-14", "status": "Open" },
+        { "ref": "DC26-04-006", "title": "Job Order — Other Machinery", "abc": 51595, "deadline": "2026-04-14", "status": "Open" },
+        { "ref": "DC26-04-007", "title": "Job Order — Heavy Equipment", "abc": 362665.52, "deadline": "2026-04-14", "status": "Open" },
+        { "ref": "NP-A2A26-04-007", "title": "Non-Accountable Forms", "abc": 72100, "deadline": "2026-04-14", "status": "Open" }
+      ]
+    },
+    {
+      "id": "shopping-goods",
+      "name": "Shopping Bidding",
+      "scope": "Goods & Consulting Services",
+      "sourceUrl": "https://procurement.gensantos.gov.ph/ongoing-alternative.php",
+      "bids": [
+        { "ref": "SVP26-04-140", "title": "Hardbound Services", "abc": 90000, "deadline": "2026-04-14", "status": "Open" },
+        { "ref": "SVP26-04-141", "title": "Fire Extinguisher", "abc": 14000, "deadline": "2026-04-14", "status": "Open" },
+        { "ref": "SVP26-04-142", "title": "Subscription", "abc": 135000, "deadline": "2026-04-14", "status": "Open" },
+        { "ref": "SVP26-04-143", "title": "Chemical Supplies and Materials", "abc": 99000, "deadline": "2026-04-14", "status": "Open" }
+      ]
+    },
+    {
+      "id": "competitive-infra",
+      "name": "Competitive Bidding",
+      "scope": "Infrastructure",
+      "sourceUrl": "https://procurement.gensantos.gov.ph/publication-infra",
+      "bids": [
+        { "ref": "26CW-GSC-005", "title": "Multi-Purpose Building (Covered Court) at Purok Las Villas, City Heights", "abc": null, "deadline": "2026-03-16", "status": "Active" },
+        { "ref": "26CW-GSC-004", "title": "Road Concreting at Jct. Natividad to Capareda Street, Lagao", "abc": null, "deadline": "2026-03-16", "status": "Active" },
+        { "ref": "26CW-GSC-003", "title": "Multi-Purpose Building at General Santos City National High School", "abc": null, "deadline": "2026-03-03", "status": "Active" },
+        { "ref": "26CW-GSC-002", "title": "Gymnasium Improvement at Barangay Hall, Mabuhay", "abc": null, "deadline": "2026-03-03", "status": "Active" },
+        { "ref": "26CW-GSC-001", "title": "Flood Control System at Purok Cabuay, Sinawal", "abc": null, "deadline": "2026-02-27", "status": "Active" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+# Department Pages
+# This file contains all the pages/governments available under the Department
+
+pages:
+  - name: 'Executive'
+    slug: 'executive'
+    description: "Find out about your Mayor and Vice Mayor, including upcoming events, the Mayor's Community Assistance Program, mayoral history, and information about other historic roles in the local government unit."
+  - name: 'Legislative'
+    slug: 'legislative'
+    description: 'The Sangguniang Panlungsod (City Council) of General Santos City is the legislative body of the city, with the Vice Mayor as the presiding officer. [TO BE VERIFIED — number of councilors and current term]'
