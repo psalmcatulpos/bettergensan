@@ -11,6 +11,8 @@
 // padding is matched to the same tier so the page reads as deliberate
 // hierarchy instead of equal-weight stacked widgets.
 
+import { Link } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 import SEO from '../components/SEO';
 import SearchHero from '../components/home/SearchHero';
 import PlatformValue from '../components/home/PlatformValue';
@@ -20,6 +22,44 @@ import PopulationSpotlight from '../components/dashboard/PopulationSpotlight';
 import CivicDecisions from '../components/dashboard/CivicDecisions';
 import GovOpportunities from '../components/dashboard/GovOpportunities';
 import JoinBetterGov from '../components/dashboard/JoinBetterGov';
+
+function InfraAnnouncement() {
+  return (
+    <div className="border-b border-[#f58900]/20" style={{ backgroundColor: '#f58900' }}>
+      <div className="mx-auto flex max-w-[1100px] items-start gap-3 px-4 py-3 sm:items-center">
+        <MapPin className="h-5 w-5 shrink-0 text-white" />
+
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-semibold text-white">
+            New: Infrastructure Projects Now Live
+          </p>
+          <p className="mt-0.5 text-[12px] leading-relaxed text-white/80 sm:line-clamp-1">
+            Explore ongoing and completed public infrastructure projects across
+            General Santos City — with map view, budgets, timelines, and
+            sources.
+          </p>
+        </div>
+
+        <Link
+          to="/city-map"
+          className="hidden shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition hover:bg-white/90 sm:inline-flex"
+        >
+          View Infrastructure
+        </Link>
+      </div>
+
+      {/* Mobile CTA — below text */}
+      <div className="mx-auto max-w-[1100px] px-4 pb-3 sm:hidden">
+        <Link
+          to="/city-map"
+          className="inline-flex rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition hover:bg-white/90"
+        >
+          View Infrastructure
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 const Home: React.FC = () => {
   return (
@@ -32,6 +72,9 @@ const Home: React.FC = () => {
       <main className="flex-grow">
         {/* ---------- Hero ---------- */}
         <SearchHero />
+
+        {/* ---------- Announcement strip ---------- */}
+        <InfraAnnouncement />
 
         {/* ---------- Featured: platform identity ---------- */}
         <PlatformValue />

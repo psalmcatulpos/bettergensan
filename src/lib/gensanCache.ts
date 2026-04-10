@@ -1300,6 +1300,164 @@ export function aggregateFreshness(infos: FreshnessInfo[]): FreshnessInfo {
   };
 }
 
+// ---------- Infrastructure Projects (Bisto.ph) ----------
+
+export const BISTO_SOURCE_SLUG = 'bisto-infrastructure';
+
+export interface InfrastructureProjectRow {
+  id: string;
+  external_id: string;
+  source: string;
+  title: string;
+  description: string | null;
+  agency: string | null;
+  contractor: string | null;
+  location_text: string | null;
+  region: string | null;
+  province: string | null;
+  city_municipality: string | null;
+  barangay: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  budget_amount: number | null;
+  status: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  category: string | null;
+  geographic_scope_match: string;
+  first_seen_at: string;
+  last_seen_at: string;
+  last_synced_at: string;
+  /** Only populated by readInfrastructureProjectById (detail view). */
+  raw_payload?: BistoRawPayload | null;
+}
+
+/** Shape of the raw upstream Bisto/DPWH record stored in raw_payload. */
+export interface BistoRawPayload {
+  contractId?: string;
+  infraYear?: string;
+  progress?: number;
+  sourceOfFunds?: string;
+  programName?: string;
+  amountPaid?: number;
+  reportCount?: number;
+  isLive?: boolean;
+  hasSatelliteImage?: boolean;
+  componentCategories?: string;
+  livestreamUrl?: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
+const INFRA_COLUMNS =
+  'id, external_id, source, title, description, agency, contractor, location_text, region, province, city_municipality, barangay, latitude, longitude, budget_amount, status, start_date, end_date, category, geographic_scope_match, first_seen_at, last_seen_at, last_synced_at';
+
+/**
+ * Fetches infrastructure projects with valid coordinates within GenSan or
+ * Region XII. Used by the CityMap infrastructure layer.
+ */
+export async function readInfrastructureProjects(
+  signal?: AbortSignal,
+): Promise<InfrastructureProjectRow[]> {
+  return memo('readInfrastructureProjects', [], () =>
+    safe(
+      'readInfrastructureProjects',
+      async () => {
+        let q = supabase
+          .from('infrastructure_projects')
+          .select(INFRA_COLUMNS)
+          .eq('geographic_scope_match', 'gensan')
+          .not('latitude', 'is', null)
+          .not('longitude', 'is', null)
+          .eq('archive_status', 'active')
+          .order('last_seen_at', { ascending: false })
+          .limit(500);
+        if (signal) q = q.abortSignal(signal) as typeof q;
+        const { data, error } = await q;
+        if (error) {
+          console.warn(
+            '[gensanCache] readInfrastructureProjects failed',
+            error.message,
+          );
+          return [];
+        }
+        return (data ?? []) as unknown as InfrastructureProjectRow[];
+      },
+      [],
+      signal,
+    ),
+  );
+}
+
+/**
+ * Fetches ALL active infrastructure projects (including those without
+ * coordinates). Used by the infrastructure listing page's table tab.
+ */
+export async function readAllInfrastructureProjects(
+  signal?: AbortSignal,
+): Promise<InfrastructureProjectRow[]> {
+  return memo('readAllInfrastructureProjects', [], () =>
+    safe(
+      'readAllInfrastructureProjects',
+      async () => {
+        let q = supabase
+          .from('infrastructure_projects')
+          .select(INFRA_COLUMNS)
+          .eq('geographic_scope_match', 'gensan')
+          .eq('archive_status', 'active')
+          .order('last_seen_at', { ascending: false })
+          .limit(1000);
+        if (signal) q = q.abortSignal(signal) as typeof q;
+        const { data, error } = await q;
+        if (error) {
+          console.warn(
+            '[gensanCache] readAllInfrastructureProjects failed',
+            error.message,
+          );
+          return [];
+        }
+        return (data ?? []) as unknown as InfrastructureProjectRow[];
+      },
+      [],
+      signal,
+    ),
+  );
+}
+
+const INFRA_DETAIL_COLUMNS = INFRA_COLUMNS + ', raw_payload';
+
+/**
+ * Fetches a single infrastructure project by ID (includes raw_payload).
+ */
+export async function readInfrastructureProjectById(
+  id: string,
+  signal?: AbortSignal,
+): Promise<InfrastructureProjectRow | null> {
+  return memo('readInfrastructureProjectById', [id], () =>
+    safe(
+      'readInfrastructureProjectById',
+      async () => {
+        let q = supabase
+          .from('infrastructure_projects')
+          .select(INFRA_DETAIL_COLUMNS)
+          .eq('id', id);
+        if (signal) q = q.abortSignal(signal) as typeof q;
+        const { data, error } = await q.single();
+        if (error) {
+          console.warn(
+            '[gensanCache] readInfrastructureProjectById failed',
+            error.message,
+          );
+          return null;
+        }
+        return (data ?? null) as unknown as InfrastructureProjectRow | null;
+      },
+      null,
+      signal,
+    ),
+  );
+}
+
 // ---------- Formatting helpers ----------
 
 export function humanAge(ms: number): string {

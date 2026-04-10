@@ -30,6 +30,8 @@ import HousingLandUse from './pages/HousingLandUse';
 import Departments from './pages/Departments';
 import LocalOfficials from './pages/LocalOfficials';
 import Population from './pages/Population';
+import CityMap from './pages/CityMap';
+import InfrastructureDetail from './pages/InfrastructureDetail';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Accessibility from './pages/Accessibility';
@@ -84,6 +86,11 @@ function App() {
               <Route path="/splis" element={<Splis />} />
               <Route path="/city-profile" element={<CityProfile />} />
               <Route path="/population" element={<Population />} />
+              <Route path="/city-map" element={<CityMap />} />
+              <Route
+                path="/city-map/:projectId"
+                element={<InfrastructureDetail />}
+              />
               <Route path="/about" element={<About />} />
 
               {/* Footer mock pages — placeholder routes for destinations

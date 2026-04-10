@@ -45,6 +45,7 @@ The numbers below describe what the **production deployment** has cached at the 
 | Sangguniang Panglungsod (Ordinances + Resolutions) | 17,731 | `splis.gensantos.gov.ph` |
 | Procurement (7 datasets) | 18,663 | `procurement.gensantos.gov.ph` |
 | Jobs (public listings aggregated from multiple sources) | ~50 | aggregated public listings |
+| Infrastructure Projects (DPWH in GenSan) | 43 | `bisto.ph` / BetterGov Meilisearch |
 | **Total cached records** | **~36,700+** | refreshed on scheduled intervals (typically daily) |
 
 Every record links back to its official source. Records are **never deleted** by sync — when something disappears upstream, it gets flagged as `missing_from_source` and stays viewable as a cached copy with a clear notice.
@@ -62,6 +63,8 @@ Every record links back to its official source. Records are **never deleted** by
 - **`/government/departments`** — Directory of all GenSan LGU departments
 - **`/government/officials`** — 21st Sangguniang Panlungsod (2025–2028)
 - **`/population`** — PSA-sourced demographic data and 26-barangay breakdown
+- **`/city-map`** — Infrastructure projects listing with map view, table view, and filter sidebar (year, category, status). Data sourced from Bisto.ph, scoped to GenSan city boundary via point-in-polygon filtering
+- **`/city-map/:projectId`** — Project detail dossier: overview metrics, timeline, procurement, implementation details, embedded map with GenSan boundary overlay, record integrity metadata, related projects, sticky intelligence sidebar
 - **`/city-profile`** — City overview, OSM map, weather, history
 - **`/about`** — Mission, archive stats (live), data sources, trust principles
 
@@ -127,8 +130,8 @@ The build produces a static `dist/` folder you can host on any static hosting pr
 The frontend points at whatever Supabase project you configure. To get an instance with real data you need to:
 
 1. Create a Supabase project and copy the URL + anon key into `.env.local`
-2. Apply the cache table schema (`executive_orders_cache`, `splis_cache`, `procurement_cache`, `jobs`, `sources`, `scrape_runs`, `scrape_alerts`, `snapshots`, `page_fetches`, `profiles`) plus the `source_health` view and the `is_admin()` RLS helper
-3. Deploy the edge functions (`gensan-eo-refresh`, `gensan-procurement-refresh`, `gensan-splis-refresh`, `admin-run-source`, `jobs-refresh`, `linkedin-refresh`)
+2. Apply the cache table schema (`executive_orders_cache`, `splis_cache`, `procurement_cache`, `jobs`, `infrastructure_projects`, `sources`, `scrape_runs`, `scrape_alerts`, `snapshots`, `page_fetches`, `profiles`, `source_upstream_health`) plus the `source_health` view and the `is_admin()` RLS helper
+3. Deploy the edge functions (`gensan-eo-refresh`, `gensan-procurement-refresh`, `gensan-splis-refresh`, `bisto-sync`, `admin-run-source`, `jobs-refresh`, `linkedin-refresh`)
 4. Provide a Regiment API key as the `REGIMENT_API_KEY` Supabase Vault secret
 5. Schedule daily `pg_cron` jobs that POST to each edge function
 
@@ -212,10 +215,12 @@ bettergensan/
 ├── src/
 │   ├── components/     # Reusable UI primitives + section components
 │   ├── contexts/       # AuthContext (Supabase auth state)
-│   ├── data/           # services.yaml, government.yaml, navigation.ts
+│   ├── data/           # services.yaml, government.yaml, navigation.ts, gensanBoundary.ts
 │   ├── lib/            # gensanCache.ts, jobsSource.ts, supabase.ts
 │   ├── pages/          # Route components (Home, Jobs, Splis, Procurement, etc.)
 │   └── i18n.ts         # i18next setup
+├── supabase/
+│   └── functions/      # Edge functions (bisto-sync, admin-run-source)
 ├── scripts/            # YAML→JSON converter and operator helpers
 ├── terraform/          # IaC (Supabase project provisioning)
 └── vite.config.ts      # Vite + dev proxy + production console-stripping
@@ -264,6 +269,7 @@ Both must exit clean.
 
 - [BetterGov](https://bettergov.ph) — the parent civic-tech movement
 - Regiment — internal ingestion infrastructure used to refresh cached public data (not publicly accessible)
+- [Bisto.ph](https://bisto.ph) / [BetterGov](https://bettergov.ph) — DPWH infrastructure project data
 - [Supabase](https://supabase.com/) — Postgres + auth + edge functions
 - [PSA RSSO XII](https://rsso12.psa.gov.ph/) — official population and demographics data
 - The City Government of General Santos for publishing the public records this portal mirrors
