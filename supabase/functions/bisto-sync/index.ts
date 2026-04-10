@@ -51,7 +51,7 @@ async function fetchBistoPage(offset: number): Promise<{
     queries: [
       {
         indexUid: INDEX_UID,
-        q: '',
+        q: 'South Cotabato',
         limit: PAGE_LIMIT,
         offset,
       },
@@ -148,9 +148,36 @@ async function fetchAllBistoProjects(): Promise<{
 
 // --- Geographic scoping: GenSan only ---
 //
-// Uses ray-casting point-in-polygon against the simplified GenSan city
-// boundary (150 pts, Douglas-Peucker from OSM Nominatim). Only projects
-// whose coordinates fall inside the polygon are kept.
+// Two-tier scoping:
+// 1. Polygon: any record with coords inside the GenSan boundary (any province)
+// 2. Province + text: records tagged "South Cotabato 1st DEO" without coords,
+//    but only if the title mentions GenSan or a known GenSan barangay.
+
+// GenSan text indicators for province-only (no-coords) fallback.
+// Catches typos like "GENERAL SANOTS", abbreviations like "GSC", "GEN. SANTOS",
+// and GenSan barangay names that appear in DPWH project descriptions.
+const GENSAN_TEXT_PATTERNS = [
+  'general santos', 'gensan', ' gsc', ',gsc', '(gsc', 'gen. santos',
+  'general sanots', 'general antos', // common DPWH typos
+];
+const GENSAN_BARANGAYS = [
+  'dadiangas', 'calumpang', 'lagao', 'tambler', 'sinawal', 'apopong',
+  'labangal', 'fatima', 'buayan', 'katangawan', 'conel', 'san isidro',
+  'mabuhay', 'bawing', 'tinagacan', 'olympog', 'city heights', 'ligaya',
+  'upper labay', 'baluan', 'batomelong', 'san jose', 'bula',
+  'dadiangas north', 'dadiangas south', 'dadiangas east', 'dadiangas west',
+];
+
+function looksLikeGensan(title: string): boolean {
+  const t = title.toLowerCase();
+  for (const p of GENSAN_TEXT_PATTERNS) {
+    if (t.includes(p)) return true;
+  }
+  for (const b of GENSAN_BARANGAYS) {
+    if (t.includes(b)) return true;
+  }
+  return false;
+}
 
 // Simplified GenSan boundary — [lng, lat] pairs per GeoJSON convention.
 const GENSAN_RING: [number, number][] = [
@@ -271,7 +298,8 @@ function mapRecords(hits: any[]): any[] {
           r.category ?? r.componentCategories ?? r.sector ??
           r.project_type ?? null,
         raw_payload: r,
-        geographic_scope_match: 'gensan',
+        // Scope is set after province + polygon filtering
+        geographic_scope_match: '',
         archive_status: 'active',
         source_removed_at: null,
         first_seen_at: now,
@@ -440,12 +468,52 @@ Deno.serve(async (req) => {
       },
     });
 
-    // Map all hits then keep only those inside GenSan polygon
+    // Two parallel paths to capture GenSan projects:
+    // 1. Polygon: any record with coords inside the GenSan boundary (any province)
+    // 2. Province: records tagged "South Cotabato 1st DEO" without coords
+    const PROVINCE_KEY = 'South Cotabato 1st DEO';
     const allRows = mapRecords(fetchResult.allHits);
-    const scopedRows = allRows.filter(
-      (r) => r.latitude != null && r.longitude != null &&
-        isInsideGensan(Number(r.latitude), Number(r.longitude)),
-    );
+    const scopedRows: typeof allRows = [];
+    const seen = new Set<string>(); // dedupe by external_id
+    let polygonCount = 0;
+    let provinceOnlyCount = 0;
+    let discardedOutsidePolygon = 0;
+    let provinceMatched = 0;
+    for (const r of allRows) {
+      if (r.province === PROVINCE_KEY) provinceMatched++;
+    }
+
+    // Pass 1: polygon check on all records with coordinates
+    for (const r of allRows) {
+      if (r.latitude != null && r.longitude != null) {
+        if (isInsideGensan(Number(r.latitude), Number(r.longitude))) {
+          r.geographic_scope_match = 'polygon';
+          scopedRows.push(r);
+          seen.add(r.external_id);
+          polygonCount++;
+        }
+      }
+    }
+
+    // Pass 2: province-matched records without coordinates
+    for (const r of allRows) {
+      if (seen.has(r.external_id)) continue;
+      const prov = r.province;
+      if (prov === PROVINCE_KEY && r.latitude == null && r.longitude == null) {
+        r.geographic_scope_match = 'province';
+        scopedRows.push(r);
+        seen.add(r.external_id);
+        provinceOnlyCount++;
+      }
+    }
+
+    // Count records with coords outside polygon that matched province
+    for (const r of allRows) {
+      if (!seen.has(r.external_id) && r.latitude != null && r.longitude != null) {
+        const prov = r.province;
+        if (prov === PROVINCE_KEY) discardedOutsidePolygon++;
+      }
+    }
     const discarded = allRows.length - scopedRows.length;
 
     // Upsert only scoped rows
@@ -468,7 +536,7 @@ Deno.serve(async (req) => {
         run_id,
         'zero_rows',
         'high',
-        `Bisto returned ${fetchResult.allHits.length} total hits but 0 fell inside GenSan boundary`,
+        `Bisto returned ${fetchResult.allHits.length} total hits, ${provinceMatched} matched province, but 0 passed scoping`,
       );
     }
 
@@ -485,8 +553,12 @@ Deno.serve(async (req) => {
         metadata: {
           estimated_total: fetchResult.totalEstimated,
           pages_fetched: fetchResult.pagesFetched,
-          gensan_inside: scopedRows.length,
-          discarded_outside: discarded,
+          province_matched: provinceMatched,
+          polygon_verified: polygonCount,
+          province_only: provinceOnlyCount,
+          discarded_outside_polygon: discardedOutsidePolygon,
+          discarded_total: discarded,
+          total_inserted: scopedRows.length,
         },
       })
       .eq('id', run_id);
@@ -496,8 +568,10 @@ Deno.serve(async (req) => {
       total_upstream: fetchResult.allHits.length,
       estimated_total: fetchResult.totalEstimated,
       pages_fetched: fetchResult.pagesFetched,
-      gensan_inserted: inserted,
-      discarded_outside: discarded,
+      province_matched: provinceMatched,
+      polygon_verified: polygonCount,
+      province_only: provinceOnlyCount,
+      total_inserted: inserted,
       run_id,
     });
   } catch (e) {

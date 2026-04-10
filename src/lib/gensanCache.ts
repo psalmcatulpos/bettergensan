@@ -1363,25 +1363,34 @@ export async function readInfrastructureProjects(
     safe(
       'readInfrastructureProjects',
       async () => {
-        let q = supabase
-          .from('infrastructure_projects')
-          .select(INFRA_COLUMNS)
-          .eq('geographic_scope_match', 'gensan')
-          .not('latitude', 'is', null)
-          .not('longitude', 'is', null)
-          .eq('archive_status', 'active')
-          .order('last_seen_at', { ascending: false })
-          .limit(500);
-        if (signal) q = q.abortSignal(signal) as typeof q;
-        const { data, error } = await q;
-        if (error) {
-          console.warn(
-            '[gensanCache] readInfrastructureProjects failed',
-            error.message,
-          );
-          return [];
+        const PAGE = 1000;
+        const all: InfrastructureProjectRow[] = [];
+        let from = 0;
+        while (true) {
+          let q = supabase
+            .from('infrastructure_projects')
+            .select(INFRA_COLUMNS)
+            .in('geographic_scope_match', ['polygon', 'province', 'gensan'])
+            .not('latitude', 'is', null)
+            .not('longitude', 'is', null)
+            .eq('archive_status', 'active')
+            .order('last_seen_at', { ascending: false })
+            .range(from, from + PAGE - 1);
+          if (signal) q = q.abortSignal(signal) as typeof q;
+          const { data, error } = await q;
+          if (error) {
+            console.warn(
+              '[gensanCache] readInfrastructureProjects failed',
+              error.message,
+            );
+            return all.length > 0 ? all : [];
+          }
+          const rows = (data ?? []) as unknown as InfrastructureProjectRow[];
+          all.push(...rows);
+          if (rows.length < PAGE) break;
+          from += PAGE;
         }
-        return (data ?? []) as unknown as InfrastructureProjectRow[];
+        return all;
       },
       [],
       signal,
@@ -1400,23 +1409,33 @@ export async function readAllInfrastructureProjects(
     safe(
       'readAllInfrastructureProjects',
       async () => {
-        let q = supabase
-          .from('infrastructure_projects')
-          .select(INFRA_COLUMNS)
-          .eq('geographic_scope_match', 'gensan')
-          .eq('archive_status', 'active')
-          .order('last_seen_at', { ascending: false })
-          .limit(1000);
-        if (signal) q = q.abortSignal(signal) as typeof q;
-        const { data, error } = await q;
-        if (error) {
-          console.warn(
-            '[gensanCache] readAllInfrastructureProjects failed',
-            error.message,
-          );
-          return [];
+        // Supabase caps at 1000 rows per request; paginate to get all.
+        const PAGE = 1000;
+        const all: InfrastructureProjectRow[] = [];
+        let from = 0;
+        while (true) {
+          let q = supabase
+            .from('infrastructure_projects')
+            .select(INFRA_COLUMNS)
+            .in('geographic_scope_match', ['polygon', 'province', 'gensan'])
+            .eq('archive_status', 'active')
+            .order('last_seen_at', { ascending: false })
+            .range(from, from + PAGE - 1);
+          if (signal) q = q.abortSignal(signal) as typeof q;
+          const { data, error } = await q;
+          if (error) {
+            console.warn(
+              '[gensanCache] readAllInfrastructureProjects failed',
+              error.message,
+            );
+            return all.length > 0 ? all : [];
+          }
+          const rows = (data ?? []) as unknown as InfrastructureProjectRow[];
+          all.push(...rows);
+          if (rows.length < PAGE) break;
+          from += PAGE;
         }
-        return (data ?? []) as unknown as InfrastructureProjectRow[];
+        return all;
       },
       [],
       signal,

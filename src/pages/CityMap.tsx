@@ -19,14 +19,16 @@ import {
   MapPin,
   TableProperties,
   Building2,
+  ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   Search,
   X,
   Calendar,
   Tag,
   CheckSquare,
   Filter,
-  SlidersHorizontal,
   RotateCcw,
 } from 'lucide-react';
 
@@ -54,7 +56,7 @@ import { GENSAN_BOUNDARY } from '../data/gensanBoundary';
 
 const GENSAN_CENTER: [number, number] = [6.1164, 125.1716];
 const DEFAULT_ZOOM = 12;
-const LIMIT_OPTIONS = [25, 50, 100, 250];
+const PAGE_SIZE = 24;
 
 const infraIcon = new L.Icon({
   iconUrl: markerIcon,
@@ -167,8 +169,8 @@ function CityMap() {
   const urlSearch = searchParams.get('q') ?? '';
   const urlYear = searchParams.get('year') ?? '';
   const urlCategory = searchParams.get('category') ?? '';
-  const parsedLimit = parseInt(searchParams.get('limit') ?? '100', 10);
-  const urlLimit = isNaN(parsedLimit) || parsedLimit < 1 ? 100 : parsedLimit;
+  const parsedPage = parseInt(searchParams.get('page') ?? '1', 10);
+  const urlPage = isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
   const urlStatuses = useMemo(
     () => searchParams.get('status')?.split(',').filter(Boolean) ?? [],
     [searchParams]
@@ -178,8 +180,11 @@ function CityMap() {
   const [search, setSearch] = useState(urlSearch);
   const [year, setYear] = useState(urlYear);
   const [category, setCategory] = useState(urlCategory);
-  const [limit, setLimit] = useState(urlLimit);
-  const [statuses, setStatuses] = useState<string[]>(urlStatuses);
+  // Empty urlStatuses means "all selected" — draft state is initialized lazily
+  // from facets so checkboxes appear checked by default.
+  const [statusesOverride, setStatusesOverride] = useState<
+    string[] | null
+  >(urlStatuses.length > 0 ? urlStatuses : null);
 
   const [projects, setProjects] = useState<InfrastructureProjectRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -225,24 +230,43 @@ function CityMap() {
     };
   }, [projects]);
 
-  // ── Apply filters ──
+  // Effective statuses: null means "all selected"
+  const allStatusKeys = useMemo(
+    () => facets.statusCounts.map(([s]) => s),
+    [facets.statusCounts]
+  );
+  const statuses = statusesOverride ?? allStatusKeys;
+  const allSelected =
+    statusesOverride === null ||
+    (allStatusKeys.length > 0 &&
+      allStatusKeys.every(s => statusesOverride.includes(s)));
+
+  // ── Apply filters (resets page to 1) ──
   const applyFilters = useCallback(() => {
     const p: Record<string, string> = {};
     if (activeTab !== 'map') p.view = activeTab;
     if (search.trim()) p.q = search.trim();
     if (year) p.year = year;
     if (category) p.category = category;
-    if (limit !== 100) p.limit = String(limit);
-    if (statuses.length > 0) p.status = statuses.join(',');
+    // Only encode status param when not all are selected
+    if (!allSelected && statuses.length > 0)
+      p.status = statuses.join(',');
     setSearchParams(p, { replace: true });
-  }, [activeTab, search, year, category, limit, statuses, setSearchParams]);
+  }, [
+    activeTab,
+    search,
+    year,
+    category,
+    statuses,
+    allSelected,
+    setSearchParams,
+  ]);
 
   const resetFilters = useCallback(() => {
     setSearch('');
     setYear('');
     setCategory('');
-    setLimit(100);
-    setStatuses([]);
+    setStatusesOverride(null);
     setSearchParams(activeTab === 'map' ? {} : { view: activeTab }, {
       replace: true,
     });
@@ -254,15 +278,17 @@ function CityMap() {
     if (urlSearch) p.q = urlSearch;
     if (urlYear) p.year = urlYear;
     if (urlCategory) p.category = urlCategory;
-    if (urlLimit !== 100) p.limit = String(urlLimit);
     if (urlStatuses.length > 0) p.status = urlStatuses.join(',');
     setSearchParams(p, { replace: true });
   };
 
   const toggleStatus = (s: string) => {
-    setStatuses(prev =>
-      prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]
-    );
+    setStatusesOverride(prev => {
+      const current = prev ?? allStatusKeys;
+      return current.includes(s)
+        ? current.filter(x => x !== s)
+        : [...current, s];
+    });
   };
 
   // ── Filter dataset (uses URL params, not draft state) ──
@@ -293,8 +319,27 @@ function CityMap() {
       rows = rows.filter(p => urlStatuses.includes(p.status ?? 'Unknown'));
     }
 
-    return rows.slice(0, urlLimit);
-  }, [projects, urlSearch, urlYear, urlCategory, urlStatuses, urlLimit]);
+    return rows;
+  }, [projects, urlSearch, urlYear, urlCategory, urlStatuses]);
+
+  // ── Pagination ──
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(urlPage, totalPages);
+  const pageRows = useMemo(
+    () =>
+      filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [filtered, safePage]
+  );
+
+  const setPage = useCallback(
+    (p: number) => {
+      const next = new URLSearchParams(searchParams);
+      if (p <= 1) next.delete('page');
+      else next.set('page', String(p));
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
 
   const mappable = useMemo(
     () => filtered.filter(p => p.latitude != null && p.longitude != null),
@@ -336,20 +381,6 @@ function CityMap() {
           )}
         </div>
       </div>
-
-      {/* Max results */}
-      <FilterSection title="Maximum Results" icon={SlidersHorizontal}>
-        <SelectField
-          value={String(limit)}
-          onChange={v => setLimit(parseInt(v, 10) || 100)}
-          options={LIMIT_OPTIONS.map(n => ({
-            value: String(n),
-            label: `${n} results`,
-          }))}
-          placeholder="100 results"
-          helper="Higher limits may take longer to load"
-        />
-      </FilterSection>
 
       {/* Year */}
       {facets.years.length > 0 && (
@@ -634,6 +665,14 @@ function CityMap() {
             {/* Table tab */}
             {!loading && activeTab === 'table' && (
               <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm shadow-gray-900/[0.04]">
+                {/* Top pagination */}
+                {totalPages > 1 && (
+                  <Pagination
+                    page={safePage}
+                    totalPages={totalPages}
+                    onPage={setPage}
+                  />
+                )}
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
@@ -650,7 +689,7 @@ function CityMap() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {filtered.length === 0 && (
+                      {pageRows.length === 0 && (
                         <tr>
                           <td
                             colSpan={5}
@@ -662,7 +701,7 @@ function CityMap() {
                           </td>
                         </tr>
                       )}
-                      {filtered.map(p => (
+                      {pageRows.map(p => (
                         <tr
                           key={p.id}
                           onClick={() => goToDetail(p.id)}
@@ -671,6 +710,11 @@ function CityMap() {
                           <td className="px-4 py-2.5">
                             <div className="font-medium text-gray-900 line-clamp-2">
                               {p.title}
+                              {p.latitude == null && p.longitude == null && (
+                                <span className="ml-1.5 inline-block rounded bg-red-100 px-1.5 py-0.5 align-middle text-[9px] font-bold uppercase tracking-wider text-red-600">
+                                  No location
+                                </span>
+                              )}
                             </div>
                             {p.category && (
                               <div className="mt-0.5 text-[11px] text-gray-400">
@@ -707,6 +751,15 @@ function CityMap() {
                     </tbody>
                   </table>
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <Pagination
+                    page={safePage}
+                    totalPages={totalPages}
+                    onPage={setPage}
+                  />
+                )}
               </div>
             )}
 
@@ -731,5 +784,107 @@ function CityMap() {
     </>
   );
 }
+
+// ── Pagination (same pattern as Procurement / EO / SPLIS) ──
+
+interface PaginationProps {
+  page: number;
+  totalPages: number;
+  onPage: (p: number) => void;
+}
+
+const Pagination = ({ page, totalPages, onPage }: PaginationProps) => {
+  const pages: (number | 'ellipsis')[] = [];
+  const push = (n: number) => {
+    if (!pages.includes(n)) pages.push(n);
+  };
+  push(1);
+  for (let p = page - 2; p <= page + 2; p++) {
+    if (p > 1 && p < totalPages) push(p);
+  }
+  if (totalPages > 1) push(totalPages);
+  const withGaps: (number | 'ellipsis')[] = [];
+  pages.forEach((p, i) => {
+    if (i > 0) {
+      const prev = pages[i - 1] as number;
+      if ((p as number) - prev > 1) withGaps.push('ellipsis');
+    }
+    withGaps.push(p);
+  });
+
+  const btn =
+    'inline-flex h-7 w-7 items-center justify-center rounded border border-gray-200 text-gray-500 transition hover:border-primary-300 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:border-gray-200';
+
+  return (
+    <nav
+      aria-label="Pagination"
+      className="flex flex-wrap items-center justify-center gap-1 border-t border-gray-100 py-4"
+    >
+      <button
+        type="button"
+        onClick={() => onPage(1)}
+        disabled={page <= 1}
+        className={btn}
+        aria-label="First page"
+      >
+        <ChevronsLeft className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={() => onPage(page - 1)}
+        disabled={page <= 1}
+        className={btn}
+        aria-label="Previous page"
+      >
+        <ChevronLeft className="h-3.5 w-3.5" />
+      </button>
+
+      {withGaps.map((p, i) =>
+        p === 'ellipsis' ? (
+          <span
+            key={`gap-${i}`}
+            className="px-0.5 text-[11px] text-gray-400"
+            aria-hidden
+          >
+            …
+          </span>
+        ) : (
+          <button
+            key={p}
+            type="button"
+            onClick={() => onPage(p)}
+            aria-current={p === page ? 'page' : undefined}
+            className={`inline-flex h-7 min-w-7 items-center justify-center rounded border px-1.5 text-[11px] font-medium transition ${
+              p === page
+                ? 'border-primary-700 bg-primary-600 text-white hover:bg-primary-700'
+                : 'border-gray-200 text-gray-600 hover:border-primary-400 hover:bg-primary-50'
+            }`}
+          >
+            {p.toLocaleString()}
+          </button>
+        )
+      )}
+
+      <button
+        type="button"
+        onClick={() => onPage(page + 1)}
+        disabled={page >= totalPages}
+        className={btn}
+        aria-label="Next page"
+      >
+        <ChevronRight className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={() => onPage(totalPages)}
+        disabled={page >= totalPages}
+        className={btn}
+        aria-label="Last page"
+      >
+        <ChevronsRight className="h-3.5 w-3.5" />
+      </button>
+    </nav>
+  );
+};
 
 export default CityMap;
