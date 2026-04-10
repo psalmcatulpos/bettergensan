@@ -61,7 +61,7 @@ export const mainNavigation: NavigationItem[] = [
     children: [
       { label: 'Profile', href: '/city-profile' },
       { label: 'Demographics', href: '/population' },
-      { label: 'Map', href: '/city-map' },
+      { label: 'Infrastructure', href: '/city-map' },
     ],
   },
 ];

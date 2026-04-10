@@ -89,6 +89,93 @@ export type Database = {
         }
         Relationships: []
       }
+      infrastructure_projects: {
+        Row: {
+          id: string
+          external_id: string
+          source: string
+          title: string
+          description: string | null
+          agency: string | null
+          contractor: string | null
+          location_text: string | null
+          region: string | null
+          province: string | null
+          city_municipality: string | null
+          barangay: string | null
+          latitude: number | null
+          longitude: number | null
+          budget_amount: number | null
+          status: string | null
+          start_date: string | null
+          end_date: string | null
+          category: string | null
+          raw_payload: Json | null
+          geographic_scope_match: string
+          first_seen_at: string
+          last_seen_at: string
+          last_synced_at: string
+          source_removed_at: string | null
+          archive_status: string
+        }
+        Insert: {
+          id?: string
+          external_id: string
+          source?: string
+          title: string
+          description?: string | null
+          agency?: string | null
+          contractor?: string | null
+          location_text?: string | null
+          region?: string | null
+          province?: string | null
+          city_municipality?: string | null
+          barangay?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          budget_amount?: number | null
+          status?: string | null
+          start_date?: string | null
+          end_date?: string | null
+          category?: string | null
+          raw_payload?: Json | null
+          geographic_scope_match?: string
+          first_seen_at?: string
+          last_seen_at?: string
+          last_synced_at?: string
+          source_removed_at?: string | null
+          archive_status?: string
+        }
+        Update: {
+          id?: string
+          external_id?: string
+          source?: string
+          title?: string
+          description?: string | null
+          agency?: string | null
+          contractor?: string | null
+          location_text?: string | null
+          region?: string | null
+          province?: string | null
+          city_municipality?: string | null
+          barangay?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          budget_amount?: number | null
+          status?: string | null
+          start_date?: string | null
+          end_date?: string | null
+          category?: string | null
+          raw_payload?: Json | null
+          geographic_scope_match?: string
+          first_seen_at?: string
+          last_seen_at?: string
+          last_synced_at?: string
+          source_removed_at?: string | null
+          archive_status?: string
+        }
+        Relationships: []
+      }
       page_fetches: {
         Row: {
           bytes: number | null
