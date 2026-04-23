@@ -94,6 +94,10 @@ scripts/.*.sql
 scripts/gensan-backfill-helper.cjs
 scripts/gensan-bulk-post.cjs
 
+# Raw data downloads / working exports (processed data lives in src/data/)
+HDX Pop Density/
+command-center-export/
+
 # =============================================================================
 # Personal / scratch files (do not publish)
 # =============================================================================

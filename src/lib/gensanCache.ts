@@ -1477,6 +1477,83 @@ export async function readInfrastructureProjectById(
   );
 }
 
+// ---------- Safety Reports ----------
+
+export interface SafetyReportRow {
+  id: string;
+  external_id: string;
+  source: string;
+  verified: boolean;
+  is_incident: boolean;
+  category: string | null;
+  severity: string | null;
+  summary: string | null;
+  message: string | null;
+  message_url: string | null;
+  author_name: string | null;
+  author_url: string | null;
+  image_url: string | null;
+  barangay: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  location_confidence: string | null;
+  reactions_count: number | null;
+  comments_count: number | null;
+  shares_count: number | null;
+  posted_at: string | null;
+  source_page_name: string | null;
+  archive_status: ArchiveStatus;
+}
+
+const SAFETY_COLUMNS =
+  'id, external_id, source, verified, is_incident, category, severity, summary, message, message_url, author_name, author_url, image_url, barangay, latitude, longitude, location_confidence, reactions_count, comments_count, shares_count, posted_at, source_page_name, archive_status';
+
+/**
+ * Fetches active incident safety reports, ordered by posted_at DESC.
+ * Paginates in chunks of 1000 to work around the Supabase row cap.
+ */
+export async function readSafetyReports(
+  signal?: AbortSignal,
+): Promise<SafetyReportRow[]> {
+  return memo('readSafetyReports', [], () =>
+    safe(
+      'readSafetyReports',
+      async () => {
+        const PAGE = 1000;
+        const all: SafetyReportRow[] = [];
+        let from = 0;
+        while (true) {
+          // safety_reports isn't in generated types yet; cast to any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let q = (supabase as any)
+            .from('safety_reports')
+            .select(SAFETY_COLUMNS)
+            .eq('is_incident', true)
+            .eq('archive_status', 'active')
+            .order('posted_at', { ascending: false })
+            .range(from, from + PAGE - 1);
+          if (signal) q = q.abortSignal(signal) as typeof q;
+          const { data, error } = await q;
+          if (error) {
+            console.warn(
+              '[gensanCache] readSafetyReports failed',
+              error.message,
+            );
+            return all.length > 0 ? all : [];
+          }
+          const rows = (data ?? []) as unknown as SafetyReportRow[];
+          all.push(...rows);
+          if (rows.length < PAGE) break;
+          from += PAGE;
+        }
+        return all;
+      },
+      [],
+      signal,
+    ),
+  );
+}
+
 // ---------- Formatting helpers ----------
 
 export function humanAge(ms: number): string {

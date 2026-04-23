@@ -62,6 +62,7 @@ export const mainNavigation: NavigationItem[] = [
       { label: 'Profile', href: '/city-profile' },
       { label: 'Demographics', href: '/population' },
       { label: 'Infrastructure', href: '/city-map' },
+      { label: 'Smart Map', href: '/command-center' },
     ],
   },
 ];

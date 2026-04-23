@@ -1,0 +1,22 @@
+=== GenSan Boundary Cleaning Report ===
+Date: 2026-04-12T10:08:18.336Z
+Input barangays: 26
+
+Cleaned 26 barangays
+
+Checking for overlaps...
+No significant overlaps found.
+
+Building city boundary from barangay union...
+Checking for gaps...
+City boundary area: 512.6487 km²
+Sum of barangay areas: 512.6488 km²
+Difference (gaps - overlaps): -0.0001 km²
+Gap/overlap negligible (<0.01 km²)
+
+Verifying containment...
+All barangays contained within city boundary. ✓
+
+Exported:
+  src/data/gensan_barangays_clean.geojson (26 features)
+  src/data/gensan_city_boundary_regenerated.geojson
