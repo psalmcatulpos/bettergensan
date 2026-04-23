@@ -653,19 +653,27 @@ const About: React.FC = () => {
           helper="BetterGensan is open source. Every line of code is reviewable, auditable, and forkable."
         />
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {[
             {
               label: 'Frontend',
               value: 'React 19 · TypeScript · Vite · Tailwind 4',
             },
             {
-              label: 'Data layer',
-              value: 'Supabase · Postgres · pg_cron · Edge Functions',
+              label: 'Mapping',
+              value: 'MapLibre GL · PMTiles · Leaflet · NASA GIBS · OSM Overpass',
             },
             {
-              label: 'Scrapers',
-              value: 'Regiment API · 10 daily edge function jobs across 12 sources',
+              label: 'Live data',
+              value: 'ADSB.fi aircraft · AISStream.io vessels · Supabase real-time',
+            },
+            {
+              label: 'Data layer',
+              value: 'Supabase · Postgres · pg_cron · Edge Functions · RLS',
+            },
+            {
+              label: 'Data acquisition',
+              value: 'Regiment API · OpenAI gpt-4o-mini · Nominatim · 12+ edge function jobs',
             },
             {
               label: 'License',

@@ -31,30 +31,30 @@ function InfraAnnouncement() {
 
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold text-white">
-            New: Infrastructure Projects Now Live
+            New: Smart Map Command Center
           </p>
           <p className="mt-0.5 text-[12px] leading-relaxed text-white/80 sm:line-clamp-1">
-            Explore ongoing and completed public infrastructure projects across
-            General Santos City — with map view, budgets, timelines, and
-            sources.
+            Live incident monitoring, hazard maps, infrastructure tracking,
+            marine analytics, and flight/ship tracking for General Santos
+            City — all in one 3D operational map.
           </p>
         </div>
 
         <Link
-          to="/city-map"
+          to="/command-center"
           className="hidden shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition hover:bg-white/90 sm:inline-flex"
         >
-          View Infrastructure
+          Open Smart Map
         </Link>
       </div>
 
       {/* Mobile CTA — below text */}
       <div className="mx-auto max-w-[1100px] px-4 pb-3 sm:hidden">
         <Link
-          to="/city-map"
+          to="/command-center"
           className="inline-flex rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition hover:bg-white/90"
         >
-          View Infrastructure
+          Open Smart Map
         </Link>
       </div>
     </div>

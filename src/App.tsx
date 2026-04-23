@@ -37,6 +37,7 @@ import Privacy from './pages/Privacy';
 import Accessibility from './pages/Accessibility';
 import FAQ from './pages/FAQ';
 import Placeholder from './pages/Placeholder';
+import CommandCenter from './pages/CommandCenter';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import Sources from './pages/admin/Sources';
@@ -57,6 +58,9 @@ function App() {
         <NuqsAdapter>
           <ScrollToTop />
           <Routes>
+            {/* Command Center — standalone full-page, no navbar/footer */}
+            <Route path="/command-center" element={<CommandCenter />} />
+
             {/* Admin login — bare layout, no sidebar */}
             <Route path="/admin/login" element={<Login />} />
 

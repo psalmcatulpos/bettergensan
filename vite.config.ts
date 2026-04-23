@@ -112,6 +112,17 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss(), regimentCachingProxy(regimentKey)],
     assetsInclude: ['**/*.md'],
+    server: {
+      proxy: {
+        // ADSB.fi live aircraft positions — CORS proxy for dev.
+        // Production should use a Supabase Edge Function proxy.
+        '/api/adsb': {
+          target: 'https://opendata.adsb.fi',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/api\/adsb/, '/api/v2'),
+        },
+      },
+    },
     // Production hardening:
     //   - Strip all `console.*` and `debugger` statements from the bundle so
     //     diagnostic warnings (gensanCache fallbacks, etc.) never reach the

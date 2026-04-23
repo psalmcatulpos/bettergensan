@@ -14,14 +14,14 @@ Government websites frequently experience downtime, restructuring, or content re
 
 ## What this repository contains
 
-**This repository is the frontend application only.** The cached records, scraper edge functions, cron jobs, and admin authentication all live in a separately-hosted Supabase project that the deployed instance points at.
+**This repository is the frontend application only.** The cached records, data acquisition edge functions, cron jobs, and admin authentication all live in a separately-hosted Supabase project that the deployed instance points at.
 
-When you clone this repo you get the React/TypeScript SPA, the YAML/Markdown content tree (services, departments, officials), the build configuration, and the documented schema/edge-function patterns the frontend expects. You do **not** get any cached records — those are runtime data, not code, and they're populated by the scraper pipeline running against your own Supabase project.
+When you clone this repo you get the React/TypeScript SPA, the YAML/Markdown content tree (services, departments, officials), the build configuration, and the documented schema/edge-function patterns the frontend expects. You do **not** get any cached records — those are runtime data, not code, and they're populated by the data acquisition pipeline running against your own Supabase project.
 
 To run a meaningful local instance you need to:
 1. Provision your own Supabase project
 2. Apply the cache table migrations (`executive_orders_cache`, `splis_cache`, `procurement_cache`, `jobs`, `sources`, `scrape_runs`, `scrape_alerts`, `snapshots`, `page_fetches`, `profiles`) and the `source_health` view
-3. Deploy the edge functions (`gensan-eo-refresh`, `gensan-procurement-refresh`, `gensan-splis-refresh`, `admin-run-source`, `jobs-refresh`, `linkedin-refresh`)
+3. Deploy the edge functions (`gensan-eo-refresh`, `gensan-procurement-refresh`, `gensan-splis-refresh`, `admin-run-source`, `jobs-refresh`, `linkedin-refresh`, `facebook-safety-sync`, `facebook-safety-backfill`)
 4. Schedule the `pg_cron` jobs that trigger them
 5. Provide your own Regiment API key
 
@@ -30,7 +30,7 @@ Without these the frontend renders empty cards and "no records" placeholders —
 ### What's intentionally **not** in this repo
 
 - **Cached records** — runtime data, lives in the operator's Supabase project
-- **Scraper edge functions** — operational infrastructure tied to a specific Supabase project + Regiment credentials
+- **Data acquisition edge functions** — operational infrastructure tied to a specific Supabase project + Regiment credentials
 - **Backfill scripts** — one-shot Phase-1 helpers that target now-deleted edge functions; gitignored
 - **`.env.local`** — contains real Supabase URL + anon key; gitignored
 - **Internal docs** (`CLAUDE.md`, `DOSSIER.md`, `CHANGELOG.md`, the project plan) — operator notes, gitignored at the repo root
@@ -46,7 +46,9 @@ The numbers below describe what the **production deployment** has cached at the 
 | Procurement (7 datasets) | 18,663 | `procurement.gensantos.gov.ph` |
 | Jobs (public listings aggregated from multiple sources) | ~50 | aggregated public listings |
 | Infrastructure Projects (DPWH in GenSan) | 43 | `bisto.ph` / BetterGov Meilisearch |
-| **Total cached records** | **~36,700+** | refreshed on scheduled intervals (typically daily) |
+| Safety Reports (community incidents) | varies | Facebook community safety pages |
+| Critical Infrastructure POIs | 82+ | BetterGenSan verified + OpenStreetMap |
+| **Total cached records** | **~36,800+** | refreshed on scheduled intervals (typically daily) |
 
 Every record links back to its official source. Records are **never deleted** by sync — when something disappears upstream, it gets flagged as `missing_from_source` and stays viewable as a cached copy with a clear notice.
 
@@ -65,6 +67,17 @@ Every record links back to its official source. Records are **never deleted** by
 - **`/population`** — PSA-sourced demographic data and 26-barangay breakdown
 - **`/city-map`** — Infrastructure projects listing with map view, table view, and filter sidebar (year, category, status). Data sourced from Bisto.ph, scoped to GenSan city boundary via point-in-polygon filtering
 - **`/city-map/:projectId`** — Project detail dossier: overview metrics, timeline, procurement, implementation details, embedded map with GenSan boundary overlay, record integrity metadata, related projects, sticky intelligence sidebar
+- **`/command-center`** — Full-page 3D operational map (MapLibre GL) with 8 toggleable layer groups:
+  - **Incidents** — Community safety reports (Facebook backfill) with category/severity filtering, heatmap, clustering
+  - **Infrastructure** — DPWH/GenSan projects from Bisto.ph, color-coded by status
+  - **Hazard Maps** — 9 Project NOAH layers (flood, landslide, storm surge) via PMTiles
+  - **Population** — Meta HRSL density (visual heatmap + analyst grid modes)
+  - **Marine Analytics** — 4 satellite ocean layers for fishing intelligence: Chlorophyll-a (NASA PACE OCI), SST Anomaly (GHRSST MUR L4), Bathymetry (Esri Ocean), Salinity (NASA SMAP 8-day). 3 layers locked pending Copernicus Marine proxy: Sea Level Anomaly, Surface Currents, Wind & Waves.
+  - **Live Tracking** — Real-time aircraft (ADSB.fi) + AIS ship tracking (AISStream.io WebSocket) with click popups showing flight/vessel details
+  - **Critical Infrastructure** — 82+ POIs (police stations, hospitals, gov offices, fire stations, clinics, pharmacies) from bundled verified data + OSM Overpass
+  - **26 barangay boundaries** with hover interaction and click info popups
+  - Dark mode, timeline scrubber, responsive mobile view (Map/Layers/Intel tabs)
+  - Bottom panels: Live Feed, Analysis Center (dynamic charts/breakdowns for all active layers), Intelligence Stack (contextual insights, quick stats, active sources)
 - **`/city-profile`** — City overview, OSM map, weather, history
 - **`/about`** — Mission, archive stats (live), data sources, trust principles
 
@@ -73,8 +86,10 @@ Every record links back to its official source. Records are **never deleted** by
 ## Tech stack
 
 - **Frontend**: React 19 · TypeScript · Vite · Tailwind 4 · React Router 7 · i18next · nuqs · Lucide icons
+- **Mapping**: MapLibre GL JS · PMTiles · Leaflet · ApexCharts · NASA GIBS WMTS · OSM Overpass
+- **Live data**: ADSB.fi (aircraft REST) · AISStream.io (vessel WebSocket) · Supabase real-time
 - **Data layer**: Supabase (Postgres + RLS + Edge Functions + Auth + pg_cron)
-- **Scrapers**: Internal Regiment ingestion service → Supabase edge functions on a scheduled interval. Regiment is a personal internal data collection and normalization system operated by the BetterGensan maintainer. Access is not publicly shared as it contains sensitive ingestion logic and source integrations. BetterGensan does not require Regiment to run — it only consumes cached data produced by scheduled ingestion jobs.
+- **Data acquisition**: Regiment ingestion service + OpenAI gpt-4o-mini (classification) + Nominatim (geocoding) → Supabase edge functions on a scheduled interval. Regiment is a personal internal data collection and normalization system operated by the BetterGensan maintainer. Access is not publicly shared as it contains sensitive ingestion logic and source integrations. BetterGensan does not require Regiment to run — it only consumes cached data produced by scheduled ingestion jobs.
 - **Hosting**: Static SPA — deploys to any static host (Netlify, Cloudflare Pages, S3 + CloudFront, Nginx, etc.)
 
 ---
@@ -83,7 +98,7 @@ Every record links back to its official source. Records are **never deleted** by
 
 BetterGensan mirrors public data into durable cache tables. The frontend reads only from the archive, ensuring availability even if upstream sources fail.
 
-The system is split in two: **this repository** is the React/TypeScript frontend that reads from a Supabase project, and the **data layer** (cache tables, edge functions, cron jobs) lives inside that Supabase project — not in this repo. On the data side, a daily `pg_cron` job triggers a Supabase edge function for each source. Each function calls the Regiment ingestion service, parses the response, computes a stable content hash per record, and upserts into a per-domain cache table (`executive_orders_cache`, `splis_cache`, `procurement_cache`, `jobs`). The frontend reads exclusively from these cache tables via Supabase's anonymous client — **the frontend never calls Regiment directly**. Every read is wrapped in a `safe()` helper that catches network errors AND hangs (12 s timeout via `Promise.race`), so a transient upstream failure degrades to an empty state instead of an infinite loading spinner. An admin dashboard at `/admin` (Supabase Auth + `is_admin` RLS) shows source health, recent runs, alerts, and lets operators trigger manual refreshes.
+The system is split in two: **this repository** is the React/TypeScript frontend that reads from a Supabase project, and the **data layer** (cache tables, edge functions, cron jobs) lives inside that Supabase project — not in this repo. On the data side, scheduled edge functions handle data acquisition for each source. Government record functions (EO, procurement, SPLIS, jobs) call the Regiment ingestion service, parse the response, compute a stable content hash per record, and upsert into per-domain cache tables (`executive_orders_cache`, `splis_cache`, `procurement_cache`, `jobs`). The safety pipeline (`facebook-safety-sync`) uses Regiment to fetch Facebook posts, OpenAI gpt-4o-mini to classify and extract incident details, and Nominatim + a landmark dictionary for geocoding — writing to `safety_reports` with every rejection logged to `sync_rejections`. The frontend reads exclusively from these cache tables via Supabase's anonymous client — **the frontend never calls Regiment or OpenAI directly**. Every read is wrapped in a `safe()` helper that catches network errors AND hangs (12 s timeout via `Promise.race`), so a transient upstream failure degrades to an empty state instead of an infinite loading spinner. An admin dashboard at `/admin` (Supabase Auth + `is_admin` RLS) shows source health, recent runs, alerts, and lets operators trigger manual refreshes.
 
 ---
 
@@ -107,7 +122,7 @@ npm install
 
 ```bash
 cp env.example .env.local
-# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (+ REGIMENT_API_KEY if running scrapers locally)
+# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (+ REGIMENT_API_KEY if running data acquisition locally)
 ```
 
 `.env.local` is gitignored. **Never commit it.** Only variables prefixed with `VITE_` are exposed to the browser bundle; everything else (including `REGIMENT_API_KEY`) stays server-side and is only used by the Vite dev proxy in `vite.config.ts`. It is **not** bundled into the production build.
@@ -130,8 +145,8 @@ The build produces a static `dist/` folder you can host on any static hosting pr
 The frontend points at whatever Supabase project you configure. To get an instance with real data you need to:
 
 1. Create a Supabase project and copy the URL + anon key into `.env.local`
-2. Apply the cache table schema (`executive_orders_cache`, `splis_cache`, `procurement_cache`, `jobs`, `infrastructure_projects`, `sources`, `scrape_runs`, `scrape_alerts`, `snapshots`, `page_fetches`, `profiles`, `source_upstream_health`) plus the `source_health` view and the `is_admin()` RLS helper
-3. Deploy the edge functions (`gensan-eo-refresh`, `gensan-procurement-refresh`, `gensan-splis-refresh`, `bisto-sync`, `admin-run-source`, `jobs-refresh`, `linkedin-refresh`)
+2. Apply the cache table schema (`executive_orders_cache`, `splis_cache`, `procurement_cache`, `jobs`, `infrastructure_projects`, `safety_reports`, `sync_rejections`, `sources`, `scrape_runs`, `scrape_alerts`, `snapshots`, `page_fetches`, `profiles`, `source_upstream_health`) plus the `source_health` and `sync_rejection_summary` views and the `is_admin()` RLS helper
+3. Deploy the edge functions (`gensan-eo-refresh`, `gensan-procurement-refresh`, `gensan-splis-refresh`, `bisto-sync`, `admin-run-source`, `jobs-refresh`, `linkedin-refresh`, `facebook-safety-sync`, `facebook-safety-backfill`)
 4. Provide a Regiment API key as the `REGIMENT_API_KEY` Supabase Vault secret
 5. Schedule daily `pg_cron` jobs that POST to each edge function
 
@@ -220,7 +235,8 @@ bettergensan/
 │   ├── pages/          # Route components (Home, Jobs, Splis, Procurement, etc.)
 │   └── i18n.ts         # i18next setup
 ├── supabase/
-│   └── functions/      # Edge functions (bisto-sync, admin-run-source)
+│   ├── migrations/     # SQL migrations for safety pipeline schema
+│   └── functions/      # Edge functions (bisto-sync, admin-run-source, facebook-safety-*)
 ├── scripts/            # YAML→JSON converter and operator helpers
 ├── terraform/          # IaC (Supabase project provisioning)
 └── vite.config.ts      # Vite + dev proxy + production console-stripping
