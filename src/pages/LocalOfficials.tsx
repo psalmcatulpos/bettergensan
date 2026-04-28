@@ -129,6 +129,7 @@ const LocalOfficials: React.FC = () => {
   return (
     <>
       <SEO
+        path="/government/officials"
         title="Local Officials Directory — GenSan"
         description="Directory of the elected local officials of General Santos City for the 2025-2028 term. Mayor, Vice Mayor, Lone District Representative, and the 12 elected members of the 21st Sangguniang Panlungsod."
         keywords="gensan officials, mayor lorelie pacquiao, vice mayor yumang, sangguniang panlungsod gensan, 21st sp gensan, shirlyn banas-nograles, gensan councilors 2025"

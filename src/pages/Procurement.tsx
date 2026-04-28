@@ -162,6 +162,7 @@ const Procurement: React.FC = () => {
   return (
     <>
       <SEO
+        path="/procurement"
         title={`GenSan Procurement — ${activeCfg.label}`}
         description="Full procurement archive for General Santos City: bids, awards, infrastructure publications, and price catalogue. Cached daily from procurement.gensantos.gov.ph via Regiment."
         keywords="gensan procurement, gensan bids, bid results, BAC general santos, procurement archive"

@@ -356,6 +356,7 @@ const Agriculture: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/agriculture-fisheries"
         title="Agriculture & Fisheries — GenSan"
         description="Complete guide to government agriculture and fisheries programs in General Santos City — RSBSA registration, free seeds, RCEF, PCIC insurance, ATI training, BFAR boat licensing, veterinary services, and the Coconut Trust Fund."
         keywords="gensan agriculture, gensan fisheries, rsbsa, rcef rice farmers, pcic insurance, ati training, bfar gensan, coconut trust fund, sagip saka, tuna capital"

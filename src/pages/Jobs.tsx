@@ -170,6 +170,7 @@ const Jobs: React.FC = () => {
   return (
     <>
       <SEO
+        path="/jobs"
         title="Jobs in General Santos City"
         description="Browse the latest job openings in General Santos City, pulled from Indeed and LinkedIn."
         keywords="gensan jobs, general santos city jobs, hiring gensan, employment south cotabato"

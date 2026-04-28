@@ -132,6 +132,7 @@ const ExecutiveOrders: React.FC = () => {
   return (
     <>
       <SEO
+        path="/eo"
         title="Executive Orders — GenSan"
         description="Full archive of General Santos City executive orders. Daily-refreshed cache from eo.gensantos.gov.ph with year filtering and direct PDF previews."
         keywords="gensan executive orders, mayoral order general santos, lgu executive orders, gensan archive, eo gensan"

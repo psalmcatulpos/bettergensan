@@ -373,6 +373,7 @@ const Education: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/education"
         title="Education — GenSan"
         description="Complete guide to public and government education programs in General Santos City. K to 12 enrollment, city scholarships, TESDA vocational training, DOST-SEI scholarships, UniFAST free higher education, ALS, and the responsible offices."
         keywords="gensan education, deped enrollment, ched, tesda training gensan, dost sei scholarship, unifast free tuition, ra 10931, gensan city scholarship, als gensan"

@@ -12,6 +12,7 @@ const Services: React.FC = () => {
       overviewComponent={
         <>
           <SEO
+            path="/services"
             title="Services"
             description={`All services provided by the ${import.meta.env.VITE_GOVERNMENT_NAME} government. Find what you need for citizenship, business, education, and more.`}
             keywords="government services, public services, local government, civic services"

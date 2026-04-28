@@ -343,6 +343,7 @@ const Health: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/health-services"
         title="Health Services — GenSan"
         description="Complete guide to public health services in General Santos City — free vaccinations, maternal & child care, TB-DOTS, HIV testing, mental health, PhilHealth coverage, hospitals, and crisis hotlines."
         keywords="gensan health services, cho gensan, doh region 12, philhealth, free vaccination philippines, tb dots, hiv testing gensan, mental health philippines, ncmh, malasakit center"

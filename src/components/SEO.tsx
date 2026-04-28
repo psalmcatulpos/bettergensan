@@ -6,8 +6,12 @@ interface SEOProps {
   keywords?: string;
   image?: string;
   url?: string;
+  /** Page path appended to VITE_WEBSITE_URL for canonical/OG URLs. */
+  path?: string;
   type?: string;
   siteName?: string;
+  /** JSON-LD structured data — single object or array of objects. */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 export default function SEO({
@@ -16,8 +20,10 @@ export default function SEO({
   keywords,
   image,
   url,
+  path,
   type = 'website',
   siteName = import.meta.env.VITE_GOVERNMENT_NAME || 'Local Government Website',
+  jsonLd,
 }: SEOProps) {
   const defaultTitle = `${siteName} - Official Government Website`;
   const defaultDescription =
@@ -27,12 +33,13 @@ export default function SEO({
     import.meta.env.VITE_SITE_KEYWORDS ||
     'government, local government, services, public services, civic services';
 
+  const baseUrl = import.meta.env.VITE_WEBSITE_URL || '';
   const fullTitle = title ? `${title} | ${siteName}` : defaultTitle;
   const fullDescription = description || defaultDescription;
   const fullKeywords = keywords || defaultKeywords;
-  const fullUrl = url || import.meta.env.VITE_WEBSITE_URL || '';
+  const fullUrl = url || (path ? `${baseUrl}${path}` : baseUrl);
   const fullImage =
-    image || import.meta.env.VITE_OG_IMAGE_URL || `${fullUrl}/og-image.jpg`;
+    image || import.meta.env.VITE_OG_IMAGE_URL || `${baseUrl}/og-image.jpg`;
   const twitterHandle = import.meta.env.VITE_TWITTER_HANDLE || '';
 
   return (
@@ -100,6 +107,14 @@ export default function SEO({
         href="https://fonts.gstatic.com"
         crossOrigin="anonymous"
       />
+
+      {/* Structured data (JSON-LD) */}
+      {jsonLd &&
+        (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((ld, i) => (
+          <script key={i} type="application/ld+json">
+            {JSON.stringify(ld)}
+          </script>
+        ))}
     </Helmet>
   );
 }

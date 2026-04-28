@@ -177,6 +177,7 @@ const Splis: React.FC = () => {
   return (
     <>
       <SEO
+        path="/splis"
         title={`GenSan Sangguniang Panglungsod — ${
           TABS.find(t => t.key === activeType)?.label ?? 'All Records'
         }`}

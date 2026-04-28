@@ -84,6 +84,7 @@ const Privacy: React.FC = () => {
   return (
     <>
       <SEO
+        path="/privacy"
         title="Privacy Policy — BetterGensan"
         description="Privacy policy for BetterGensan, the citizen-built portal for General Santos City. We collect almost no personal data, use no tracking, and host no ads."
         keywords="bettergensan privacy, gensan portal privacy, data privacy act, ra 10173"

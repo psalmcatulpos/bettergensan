@@ -304,6 +304,7 @@ const Population: React.FC = () => {
   return (
     <>
       <SEO
+        path="/population"
         title="Population & Demographics — GenSan"
         description="Verified Philippine Statistics Authority (PSA) census data for General Santos City. Population trends since 1990, 26-barangay breakdown for 2015 and 2020, household statistics, age structure, and dependency ratios. All figures sourced and linked."
         keywords="general santos city population, gensan census, psa 2020 census gensan, gensan barangays population, gensan demographics, rsso 12"

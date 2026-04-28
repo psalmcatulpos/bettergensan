@@ -346,6 +346,7 @@ const PublicSafety: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/disaster-preparedness"
         title="Public Safety — GenSan"
         description="Public safety, emergency response, and disaster preparedness for General Santos City. Includes the full PNP police station directory, BFP, CDRRMO, PAGASA, PHIVOLCS, and a Leaflet map of all 10 police stations."
         keywords="gensan public safety, gensan police stations, pnp gensan, cdrrmo gensan, bfp gensan, ndrrmc, pagasa, phivolcs, emergency hotlines"

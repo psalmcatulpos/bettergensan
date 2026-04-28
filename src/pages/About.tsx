@@ -340,6 +340,7 @@ const About: React.FC = () => {
   return (
     <>
       <SEO
+        path="/about"
         title="About BetterGensan"
         description="BetterGensan is a citizen-first portal for General Santos City. We cache and surface public records, civic data, and city services so residents have one trustworthy place to find what they need."
         keywords="about bettergensan, gensan portal, citizen portal, civic tech philippines, general santos city"

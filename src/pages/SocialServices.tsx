@@ -385,6 +385,7 @@ const SocialServices: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/social-welfare"
         title="Social Services — GenSan"
         description="Complete guide to government social services in General Santos City — 4Ps, Senior Citizen ID, PWD ID, Solo Parent benefits, AICS crisis assistance, PhilHealth, SSS, GSIS, Pag-IBIG, and crisis hotlines."
         keywords="gensan social services, 4ps gensan, senior citizen id gensan, pwd id gensan, solo parent id, dswd aics, philhealth, sss, gsis, pag-ibig, cswdo gensan"

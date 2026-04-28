@@ -65,6 +65,7 @@ const Home: React.FC = () => {
   return (
     <>
       <SEO
+        path="/"
         title="Home"
         description="BetterGensan — your citizen portal for General Santos City. Find jobs, start a business, make money, and stay informed."
         keywords="General Santos City, GenSan, jobs, business, MSME, livelihood, government services"

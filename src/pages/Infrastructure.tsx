@@ -375,6 +375,7 @@ const Infrastructure: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/infrastructure-public-works"
         title="Infrastructure & Public Works — GenSan"
         description="Complete guide to infrastructure services in General Santos City. Building permits, occupancy permits, water and electric connections, road and drainage reports, locational clearances, and the responsible city offices."
         keywords="gensan building permit, occupancy permit gensan, gscwd water connection, socoteco ii electric, city engineer gensan, cpdo zoning, dpwh region 12, obo gensan"

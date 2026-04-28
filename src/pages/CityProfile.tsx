@@ -354,6 +354,7 @@ const CityProfile: React.FC = () => {
   return (
     <>
       <SEO
+        path="/city-profile"
         title="General Santos City Profile"
         description="Overview of General Santos City: history, population, geography, economy, government, and key facts. The Tuna Capital of the Philippines."
         keywords="general santos city, gensan profile, gensan history, gensan economy, soccsksargen, mindanao, tuna capital"

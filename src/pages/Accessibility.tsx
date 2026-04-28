@@ -73,6 +73,7 @@ const Accessibility: React.FC = () => {
   return (
     <>
       <SEO
+        path="/accessibility"
         title="Accessibility — BetterGensan"
         description="How BetterGensan handles screen readers, keyboard navigation, color contrast, and accessibility for residents of General Santos City."
         keywords="bettergensan accessibility, wcag 2.1 aa, screen reader, civic portal accessibility"

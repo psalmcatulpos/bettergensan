@@ -455,6 +455,7 @@ function CityMap() {
   return (
     <>
       <SEO
+        path="/city-map"
         title="Infrastructure Projects — General Santos City"
         description="Browse infrastructure projects in General Santos City. View on a map or as a table."
         keywords="General Santos City infrastructure, GenSan projects, public works, city map"

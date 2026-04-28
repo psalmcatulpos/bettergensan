@@ -149,6 +149,7 @@ const FAQ: React.FC = () => {
   return (
     <>
       <SEO
+        path="/faq"
         title="FAQ — BetterGensan"
         description="Frequently asked questions about BetterGensan, the citizen-built portal for General Santos City. Data sources, privacy, what we do and do not do."
         keywords="bettergensan faq, gensan portal questions, civic tech philippines"

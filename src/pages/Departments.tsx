@@ -348,6 +348,7 @@ const Departments: React.FC = () => {
   return (
     <>
       <SEO
+        path="/government/departments"
         title="City Departments — GenSan"
         description="Directory of General Santos City local government departments and offices, with direct links to each official portal."
         keywords="gensan departments, city government general santos, gensantos.gov.ph, cho gensan, sangguniang panlungsod gensan"

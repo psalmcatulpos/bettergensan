@@ -141,6 +141,7 @@ const Certificates: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/certificates"
         title="Certificates & Clearances — GenSan"
         description="Quick guide to the most-requested civic certificates in General Santos City — birth, marriage, death, barangay clearance, barangay ID, and police clearance — plus direct links to the responsible government offices."
         keywords="gensan certificates, psa birth certificate, barangay clearance gensan, police clearance, nbi clearance, civil registry general santos"

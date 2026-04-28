@@ -87,6 +87,7 @@ const Terms: React.FC = () => {
   return (
     <>
       <SEO
+        path="/terms"
         title="Terms of Use — BetterGensan"
         description="Plain-language Terms of Use for BetterGensan, the citizen-built portal for General Santos City."
         keywords="bettergensan terms of use, gensan portal terms, civic portal disclaimer"

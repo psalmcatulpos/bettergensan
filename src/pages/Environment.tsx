@@ -350,6 +350,7 @@ const Environment: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/environment"
         title="Environment — GenSan"
         description="Complete guide to environmental services in General Santos City. Solid waste segregation, garbage collection, tree planting and cutting permits, ECC applications, air quality, hazardous waste disposal, and the responsible DENR and CENRO offices."
         keywords="gensan environment, cenro gensan, denr region 12, ra 9003 waste segregation, ecc philippines, emb, climate change commission, hazardous waste disposal, coastal cleanup gensan"

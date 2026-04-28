@@ -356,6 +356,7 @@ const HousingLandUse: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/housing-land-use"
         title="Housing & Land Use — GenSan"
         description="Complete guide to housing and land use programs in General Santos City. Pag-IBIG housing loans, DHSUD, NHA resettlement, SHFC Community Mortgage Program, City Housing Office, and the responsible national agencies."
         keywords="gensan housing, pag-ibig housing loan, dhsud, nha resettlement, shfc cmp, city housing gensan, ra 11201, ra 9679, udha"
