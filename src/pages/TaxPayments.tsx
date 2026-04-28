@@ -45,6 +45,7 @@ import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
 import SectionHeading from '../components/ui/SectionHeading';
 import PageSection from '../components/ui/PageSection';
+import useReveal from '../hooks/useReveal';
 
 // ---------- 5-step quick start ----------
 
@@ -437,7 +438,7 @@ const TaxCard: React.FC<{ t: Tax; kind: 'LOCAL' | 'NATIONAL' }> = ({
 }) => {
   const isLocal = kind === 'LOCAL';
   return (
-    <article className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md">
+    <article className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
           <t.icon className="h-5 w-5" />
@@ -487,6 +488,21 @@ const TaxCard: React.FC<{ t: Tax; kind: 'LOCAL' | 'NATIONAL' }> = ({
 };
 
 const TaxPayments: React.FC = () => {
+  const heroRef = useReveal();
+  const stepsHeadRef = useReveal();
+  const stepsGridRef = useReveal<HTMLOListElement>();
+  const localHeadRef = useReveal();
+  const localGridRef = useReveal();
+  const nationalHeadRef = useReveal();
+  const nationalGridRef = useReveal();
+  const calendarHeadRef = useReveal();
+  const calendarGridRef = useReveal<HTMLUListElement>();
+  const channelsHeadRef = useReveal();
+  const birFormsHeadRef = useReveal();
+  const birFormsGridRef = useReveal();
+  const officesHeadRef = useReveal();
+  const officesGridRef = useReveal();
+
   return (
     <>
       <SEO
@@ -498,7 +514,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- Hero ---------- */}
       <div className="bg-gray-50 py-10">
-        <div className="mx-auto max-w-[1100px] px-4">
+        <div ref={heroRef} className="reveal mx-auto max-w-[1100px] px-4" style={{ animation: 'fade-up var(--dur-slow) var(--ease-out-quart) both' } as React.CSSProperties}>
           <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
@@ -552,6 +568,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- 5-step path ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={stepsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Hash}
@@ -559,12 +576,13 @@ const TaxPayments: React.FC = () => {
           title="How to pay your taxes in 5 steps"
           helper="The standard path most General Santos City taxpayers follow — applies to both individuals and businesses."
         />
+        </div>
 
-        <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <ol ref={stepsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {STEPS.map(step => (
             <li
               key={step.number}
-              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
@@ -587,6 +605,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- Local taxes (collected by the City) ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={localHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={ClipboardList}
@@ -594,8 +613,9 @@ const TaxPayments: React.FC = () => {
           title="Taxes collected by the City of General Santos"
           helper="Real Property Tax, Local Business Tax, and the Community Tax Certificate (Cedula). Authority: Local Government Code (RA 7160). Paid at the City Treasurer's Office."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={localGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {LOCAL_TAXES.map(t => (
             <TaxCard key={t.title} t={t} kind="LOCAL" />
           ))}
@@ -604,6 +624,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- National taxes (collected by BIR) ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={nationalHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Landmark}
@@ -611,8 +632,9 @@ const TaxPayments: React.FC = () => {
           title="Taxes collected by the Bureau of Internal Revenue"
           helper="Income Tax, VAT, and Withholding Tax are NOT city taxes — they are national taxes administered by BIR and apply uniformly across the Philippines. Authority: NIRC (RA 8424), TRAIN Law, CREATE Act."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={nationalGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {NATIONAL_TAXES.map(t => (
             <TaxCard key={t.title} t={t} kind="NATIONAL" />
           ))}
@@ -621,6 +643,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- Tax calendar ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={calendarHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Calendar}
@@ -628,8 +651,9 @@ const TaxPayments: React.FC = () => {
           title="2026 tax calendar — key deadlines"
           helper="Critical filing and payment deadlines for the year. Late payments incur 25% surcharge plus 12% annual interest under the NIRC."
         />
+        </div>
 
-        <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white shadow-sm shadow-gray-900/[0.04]">
+        <ul ref={calendarGridRef} className="reveal divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white shadow-sm shadow-gray-900/[0.04]" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {CALENDAR.map(c => (
             <li
               key={`${c.month}-${c.day}-${c.title}`}
@@ -669,7 +693,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- Filing & payment channels ---------- */}
       <PageSection background="gray" tier="secondary">
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div ref={channelsHeadRef} className="reveal grid gap-6 lg:grid-cols-2">
           {/* Filing */}
           <div>
             <SectionHeading
@@ -686,7 +710,7 @@ const TaxPayments: React.FC = () => {
                   href={c.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+                  className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700">
                     <c.icon className="h-5 w-5" />
@@ -696,7 +720,7 @@ const TaxPayments: React.FC = () => {
                       <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700">
                         {c.label}
                       </h4>
-                      <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 group-hover:text-primary-700" />
+                      <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-700" />
                     </div>
                     <p className="mt-1 text-xs leading-relaxed text-gray-600">
                       {c.body}
@@ -737,7 +761,7 @@ const TaxPayments: React.FC = () => {
                   href={c.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+                  className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700">
                     <c.icon className="h-5 w-5" />
@@ -747,7 +771,7 @@ const TaxPayments: React.FC = () => {
                       <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700">
                         {c.label}
                       </h4>
-                      <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 group-hover:text-primary-700" />
+                      <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-700" />
                     </div>
                     <p className="mt-1 text-xs leading-relaxed text-gray-600">
                       {c.body}
@@ -779,6 +803,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- BIR forms quick reference ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={birFormsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={ClipboardList}
@@ -786,15 +811,16 @@ const TaxPayments: React.FC = () => {
           title="Common BIR forms"
           helper="The most-used BIR forms for individuals and businesses. Download from the BIR website or generate via eBIRForms."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={birFormsGridRef} className="reveal grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {BIR_FORMS.map(f => (
             <a
               key={f.code}
               href={`https://www.bir.gov.ph/index.php/bir-forms.html`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm shadow-gray-900/[0.04] transition-[border-color,background-color] duration-[var(--dur-fast)] hover:border-primary-200 hover:bg-primary-50"
             >
               <div className="flex h-10 min-w-[3.25rem] shrink-0 items-center justify-center rounded-lg bg-primary-600 px-2 text-[11px] font-bold uppercase tracking-wider text-white ring-1 ring-primary-700">
                 {f.code}
@@ -810,6 +836,7 @@ const TaxPayments: React.FC = () => {
 
       {/* ---------- Responsible Offices ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={officesHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Building2}
@@ -817,8 +844,9 @@ const TaxPayments: React.FC = () => {
           title="Responsible Offices"
           helper="Government offices and official portals that handle tax collection and compliance for General Santos City."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div ref={officesGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {OFFICES.map(office => (
             <a
               key={office.name}

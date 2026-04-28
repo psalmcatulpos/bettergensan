@@ -43,6 +43,7 @@ import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
 import SectionHeading from '../components/ui/SectionHeading';
 import PageSection from '../components/ui/PageSection';
+import useReveal from '../hooks/useReveal';
 import PoliceStationsMap from '../components/safety/PoliceStationsMap';
 import { POLICE_STATIONS } from '../components/safety/policeStations';
 
@@ -343,6 +344,19 @@ const TIPS = [
 ];
 
 const PublicSafety: React.FC = () => {
+  const heroRef = useReveal();
+  const stepsHeadRef = useReveal();
+  const stepsGridRef = useReveal<HTMLOListElement>();
+  const servicesHeadRef = useReveal();
+  const servicesGridRef = useReveal();
+  const unitsHeadRef = useReveal();
+  const unitsGridRef = useReveal();
+  const stationsHeadRef = useReveal();
+  const stationsGridRef = useReveal();
+  const tipsHeadRef = useReveal();
+  const officesHeadRef = useReveal();
+  const officesGridRef = useReveal();
+
   return (
     <>
       <SEO
@@ -354,7 +368,7 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- Hero ---------- */}
       <div className="bg-gray-50 py-10">
-        <div className="mx-auto max-w-[1100px] px-4">
+        <div ref={heroRef} className="reveal mx-auto max-w-[1100px] px-4" style={{ animation: 'fade-up var(--dur-slow) var(--ease-out-quart) both' } as React.CSSProperties}>
           <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
@@ -405,6 +419,7 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- 5-step path ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={stepsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Hash}
@@ -412,12 +427,13 @@ const PublicSafety: React.FC = () => {
           title="What to do in 5 steps"
           helper="The standard sequence for any emergency call in General Santos City."
         />
+        </div>
 
-        <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <ol ref={stepsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {STEPS.map(step => (
             <li
               key={step.number}
-              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
@@ -440,6 +456,7 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- 6 main services ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={servicesHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Shield}
@@ -447,12 +464,13 @@ const PublicSafety: React.FC = () => {
           title="Public safety services"
           helper="Six core safety services available to General Santos City residents at the local and national levels."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={servicesGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {SERVICES.map(s => (
             <article
               key={s.title}
-              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
@@ -508,6 +526,7 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- Core emergency units ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={unitsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Siren}
@@ -515,8 +534,9 @@ const PublicSafety: React.FC = () => {
           title="Core emergency units"
           helper="The six core public safety units of General Santos City. Tap any number to dial directly."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={unitsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {CORE_UNITS.map(u => (
             <article
               key={u.name}
@@ -563,6 +583,7 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- Police stations: map + directory ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={stationsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={MapIcon}
@@ -570,6 +591,7 @@ const PublicSafety: React.FC = () => {
           title="PNP stations directory"
           helper="The 10 official PNP stations of General Santos City. Stations 1, 2, and 3 are pinned to verified OpenStreetMap locations. Stations 4 to 10 use the centroid of their barangay as an approximation."
         />
+        </div>
 
         <div className="mb-5">
           <PoliceStationsMap />
@@ -581,7 +603,7 @@ const PublicSafety: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={stationsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {POLICE_STATIONS.map(s => (
             <article
               key={s.number}
@@ -619,7 +641,7 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- Quick safety tips + Hotlines ---------- */}
       <PageSection background="gray" tier="secondary">
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div ref={tipsHeadRef} className="reveal grid gap-6 lg:grid-cols-2">
           <div>
             <SectionHeading
               tier="secondary"
@@ -683,6 +705,7 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- Responsible offices ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={officesHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Building2}
@@ -690,15 +713,16 @@ const PublicSafety: React.FC = () => {
           title="Responsible Offices"
           helper="Government offices and official portals that handle public safety for General Santos City."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div ref={officesGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {OFFICES.map(office => (
             <a
               key={office.name}
               href={office.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
                 <office.icon className="h-5 w-5" />
@@ -708,7 +732,7 @@ const PublicSafety: React.FC = () => {
                   <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700">
                     {office.name}
                   </h4>
-                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 group-hover:text-primary-700" />
+                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-700" />
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-gray-600">
                   {office.scope}

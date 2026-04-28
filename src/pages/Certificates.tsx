@@ -23,6 +23,7 @@ import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
 import SectionHeading from '../components/ui/SectionHeading';
 import PageSection from '../components/ui/PageSection';
+import useReveal from '../hooks/useReveal';
 
 interface Certificate {
   icon: LucideIcon;
@@ -138,6 +139,12 @@ const OFFICES: Office[] = [
 ];
 
 const Certificates: React.FC = () => {
+  const heroRef = useReveal();
+  const certsHeadRef = useReveal();
+  const certsGridRef = useReveal();
+  const officesHeadRef = useReveal();
+  const officesGridRef = useReveal();
+
   return (
     <>
       <SEO
@@ -149,7 +156,7 @@ const Certificates: React.FC = () => {
 
       {/* ---------- Hero ---------- */}
       <div className="bg-gray-50 py-10">
-        <div className="mx-auto max-w-[1100px] px-4">
+        <div ref={heroRef} className="reveal mx-auto max-w-[1100px] px-4" style={{ animation: 'fade-up var(--dur-slow) var(--ease-out-quart) both' } as React.CSSProperties}>
           <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
@@ -181,6 +188,7 @@ const Certificates: React.FC = () => {
 
       {/* ---------- Certificates grid ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={certsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Stamp}
@@ -188,12 +196,13 @@ const Certificates: React.FC = () => {
           title="Available certificates"
           helper="Six everyday civic documents and where to get each one."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={certsGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {CERTIFICATES.map(cert => (
             <article
               key={cert.title}
-              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
                 <cert.icon className="h-5 w-5" />
@@ -223,6 +232,7 @@ const Certificates: React.FC = () => {
 
       {/* ---------- Responsible Offices ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={officesHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Landmark}
@@ -230,15 +240,16 @@ const Certificates: React.FC = () => {
           title="Responsible Offices"
           helper="The government offices and official portals that issue each certificate above."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div ref={officesGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {OFFICES.map(office => (
             <a
               key={office.name}
               href={office.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
                 <office.icon className="h-5 w-5" />
@@ -248,7 +259,7 @@ const Certificates: React.FC = () => {
                   <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700">
                     {office.name}
                   </h4>
-                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 group-hover:text-primary-700" />
+                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-700" />
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-gray-600">
                   {office.scope}

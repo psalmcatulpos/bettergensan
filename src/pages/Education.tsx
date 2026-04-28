@@ -48,6 +48,7 @@ import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
 import SectionHeading from '../components/ui/SectionHeading';
 import PageSection from '../components/ui/PageSection';
+import useReveal from '../hooks/useReveal';
 
 // ---------- 5-step access path ----------
 
@@ -370,6 +371,17 @@ const OFFICES: Office[] = [
 ];
 
 const Education: React.FC = () => {
+  const heroRef = useReveal();
+  const stepsHeadRef = useReveal();
+  const stepsGridRef = useReveal<HTMLOListElement>();
+  const programsHeadRef = useReveal();
+  const programsGridRef = useReveal();
+  const scholarshipsHeadRef = useReveal();
+  const scholarshipsGridRef = useReveal();
+  const reqHeadRef = useReveal();
+  const officesHeadRef = useReveal();
+  const officesGridRef = useReveal();
+
   return (
     <>
       <SEO
@@ -381,7 +393,7 @@ const Education: React.FC = () => {
 
       {/* ---------- Hero ---------- */}
       <div className="bg-gray-50 py-10">
-        <div className="mx-auto max-w-[1100px] px-4">
+        <div ref={heroRef} className="reveal mx-auto max-w-[1100px] px-4" style={{ animation: 'fade-up var(--dur-slow) var(--ease-out-quart) both' } as React.CSSProperties}>
           <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
@@ -435,6 +447,7 @@ const Education: React.FC = () => {
 
       {/* ---------- 5-step path ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={stepsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Hash}
@@ -442,12 +455,13 @@ const Education: React.FC = () => {
           title="How to access education programs in 5 steps"
           helper="The standard path most General Santos City students follow."
         />
+        </div>
 
-        <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <ol ref={stepsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {STEPS.map(step => (
             <li
               key={step.number}
-              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
@@ -470,6 +484,7 @@ const Education: React.FC = () => {
 
       {/* ---------- 6 main programs ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={programsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={HandHeart}
@@ -477,12 +492,13 @@ const Education: React.FC = () => {
           title="Main education programs"
           helper="Six core education and scholarship programs available to General Santos City students. Most are free or government-subsidized."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={programsGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {PROGRAMS.map(p => (
             <article
               key={p.title}
-              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
@@ -538,6 +554,7 @@ const Education: React.FC = () => {
 
       {/* ---------- Free tuition & scholarship reference ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={scholarshipsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Trophy}
@@ -545,8 +562,9 @@ const Education: React.FC = () => {
           title="Government scholarship reference"
           helper="The major government scholarship and free-tuition programs Filipino students can apply for. Most need an active enrollment record and proof of eligibility."
         />
+        </div>
 
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm shadow-gray-900/[0.04]">
+        <div ref={scholarshipsGridRef} className="reveal overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm shadow-gray-900/[0.04]">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">
               <tr>
@@ -584,7 +602,7 @@ const Education: React.FC = () => {
 
       {/* ---------- Common requirements + Hotlines ---------- */}
       <PageSection background="gray" tier="secondary">
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div ref={reqHeadRef} className="reveal grid gap-6 lg:grid-cols-2">
           <div>
             <SectionHeading
               tier="secondary"
@@ -648,6 +666,7 @@ const Education: React.FC = () => {
 
       {/* ---------- Responsible offices ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={officesHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Building2}
@@ -655,15 +674,16 @@ const Education: React.FC = () => {
           title="Responsible Offices"
           helper="Government offices and official portals that handle education for General Santos City students."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div ref={officesGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {OFFICES.map(office => (
             <a
               key={office.name}
               href={office.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
                 <office.icon className="h-5 w-5" />
@@ -673,7 +693,7 @@ const Education: React.FC = () => {
                   <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700">
                     {office.name}
                   </h4>
-                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 group-hover:text-primary-700" />
+                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-700" />
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-gray-600">
                   {office.scope}

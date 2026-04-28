@@ -40,6 +40,7 @@ import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
 import SectionHeading from '../components/ui/SectionHeading';
 import PageSection from '../components/ui/PageSection';
+import useReveal from '../hooks/useReveal';
 
 // ---------- Quick start steps ----------
 
@@ -383,6 +384,17 @@ const RENEWAL_STEPS: RenewalStep[] = [
 ];
 
 const Business: React.FC = () => {
+  const heroRef = useReveal();
+  const stepsHeadRef = useReveal();
+  const stepsGridRef = useReveal<HTMLOListElement>();
+  const permitsHeadRef = useReveal();
+  const permitsGridRef = useReveal();
+  const onlineHeadRef = useReveal();
+  const onlineGridRef = useReveal();
+  const reqHeadRef = useReveal();
+  const officesHeadRef = useReveal();
+  const officesGridRef = useReveal();
+
   return (
     <>
       <SEO
@@ -428,7 +440,7 @@ const Business: React.FC = () => {
 
       {/* ---------- Hero ---------- */}
       <div className="bg-gray-50 py-10">
-        <div className="mx-auto max-w-[1100px] px-4">
+        <div ref={heroRef} className="reveal mx-auto max-w-[1100px] px-4" style={{ animation: 'fade-up var(--dur-slow) var(--ease-out-quart) both' } as React.CSSProperties}>
           <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
@@ -480,6 +492,7 @@ const Business: React.FC = () => {
 
       {/* ---------- Quick start steps ---------- */}
       <PageSection background="white" tier="secondary">
+        <div ref={stepsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Hash}
@@ -487,12 +500,13 @@ const Business: React.FC = () => {
           title="Start a business in 5 steps"
           helper="The standard registration path for most General Santos City businesses."
         />
+        </div>
 
-        <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <ol ref={stepsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {STEPS.map(step => (
             <li
               key={step.number}
-              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
@@ -531,6 +545,7 @@ const Business: React.FC = () => {
 
       {/* ---------- Permits & Registrations grid ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={permitsHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Stamp}
@@ -538,12 +553,13 @@ const Business: React.FC = () => {
           title="Permits & Registrations"
           helper="Seven core documents most General Santos City businesses need, color-coded by issuing level (Barangay, City, or National). Each card shows official fees and processing times."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={permitsGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {PERMITS.map(p => (
             <article
               key={p.title}
-              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
@@ -602,20 +618,20 @@ const Business: React.FC = () => {
                   href={p.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-primary-700"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-[var(--dur-fast)] hover:bg-primary-700"
                 >
                   {p.cta}
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-3.5 w-3.5 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
                 {p.secondaryHref && (
                   <a
                     href={p.secondaryHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 transition hover:border-primary-400 hover:bg-primary-50 hover:text-primary-700"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 transition-[border-color,background-color,color] duration-[var(--dur-fast)] hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700"
                   >
                     {p.secondaryCta}
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ExternalLink className="h-3.5 w-3.5 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </a>
                 )}
               </div>
@@ -626,6 +642,7 @@ const Business: React.FC = () => {
 
       {/* ---------- Apply Online via Filipizen ---------- */}
       <PageSection background="tinted" tier="secondary" id="apply-online">
+        <div ref={onlineHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Globe}
@@ -633,12 +650,13 @@ const Business: React.FC = () => {
           title="Apply Online via Filipizen"
           helper="General Santos City residents can now apply for, renew, and pay their Mayor's Permit online through the Filipizen portal. Paano mag-apply ng business permit online sa GenSan — sundan lang ang mga steps sa baba."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div ref={onlineGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {ONLINE_ACTIONS.map(a => (
             <article
               key={a.title}
-              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
                 <a.icon className="h-5 w-5" />
@@ -743,7 +761,7 @@ const Business: React.FC = () => {
 
       {/* ---------- Common requirements + helpful resources ---------- */}
       <PageSection background="white" tier="secondary">
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div ref={reqHeadRef} className="reveal grid gap-6 lg:grid-cols-2">
           {/* Requirements list */}
           <div>
             <SectionHeading
@@ -782,7 +800,7 @@ const Business: React.FC = () => {
                   href={r.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white p-3 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+                  className="group flex items-center gap-2.5 rounded-xl border border-gray-200 bg-white p-3 shadow-sm shadow-gray-900/[0.04] transition-[border-color,background-color] duration-[var(--dur-fast)] hover:border-primary-200 hover:bg-primary-50"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-600 text-white ring-1 ring-primary-700">
                     <r.icon className="h-4 w-4" />
@@ -800,6 +818,7 @@ const Business: React.FC = () => {
 
       {/* ---------- Responsible Offices ---------- */}
       <PageSection background="gray" tier="secondary">
+        <div ref={officesHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Building2}
@@ -807,15 +826,16 @@ const Business: React.FC = () => {
           title="Responsible Offices"
           helper="Government offices and official portals that handle business registration in General Santos City."
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div ref={officesGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {OFFICES.map(office => (
             <a
               key={office.name}
               href={office.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
                 <office.icon className="h-5 w-5" />
@@ -825,7 +845,7 @@ const Business: React.FC = () => {
                   <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700">
                     {office.name}
                   </h4>
-                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 group-hover:text-primary-700" />
+                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-700" />
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-gray-600">
                   {office.scope}
