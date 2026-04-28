@@ -38,6 +38,7 @@ import Accessibility from './pages/Accessibility';
 import FAQ from './pages/FAQ';
 import Placeholder from './pages/Placeholder';
 import CommandCenter from './pages/CommandCenter';
+import Eboss from './pages/Eboss';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import Sources from './pages/admin/Sources';
@@ -128,6 +129,7 @@ function App() {
                   />
                 }
               />
+              <Route path="/eboss" element={<Eboss />} />
               <Route path="/services" element={<Services />} />
               {/* Specific service category pages — must come BEFORE the
                   generic /services/:category catchall so curated slugs win.

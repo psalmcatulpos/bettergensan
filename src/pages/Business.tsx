@@ -8,16 +8,19 @@
 
 import {
   Activity,
+  ArrowRight,
   BadgeCheck,
   Briefcase,
   Building2,
   Calculator,
+  CalendarClock,
   CheckCircle2,
   ClipboardList,
   ExternalLink,
   FileSpreadsheet,
   FileText,
   Flame,
+  Globe,
   HandCoins,
   Hash,
   IdCard,
@@ -25,12 +28,14 @@ import {
   Lightbulb,
   Phone,
   Receipt,
+  RefreshCw,
   ShieldCheck,
   Stamp,
   Stethoscope,
   TrendingUp,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
 import SectionHeading from '../components/ui/SectionHeading';
@@ -43,6 +48,8 @@ interface Step {
   icon: LucideIcon;
   title: string;
   body: string;
+  linkLabel?: string;
+  linkHref?: string;
 }
 
 const STEPS: Step[] = [
@@ -69,6 +76,8 @@ const STEPS: Step[] = [
     icon: Stamp,
     title: "Secure Barangay Clearance and apply for a Mayor's Permit",
     body: "Get the Barangay Clearance from the barangay where your business is located, then file at the Business Permits & Licensing Office (BPLO) with all supporting clearances.",
+    linkLabel: 'or apply online',
+    linkHref: '#apply-online',
   },
   {
     number: '05',
@@ -92,6 +101,9 @@ interface Permit {
   issuer: string;
   href: string;
   cta: string;
+  secondaryHref?: string;
+  secondaryCta?: string;
+  mode?: string;
   cost: string;
   timeline: string;
   kind: PermitKind;
@@ -112,10 +124,13 @@ const PERMITS: Permit[] = [
   {
     icon: Stamp,
     title: "Mayor's Permit (Business Permit)",
-    body: 'Annual permit required to operate any business in General Santos City. Renewed every January.',
+    body: 'Annual permit required to operate any business in General Santos City. Apply online through Filipizen or walk in at the BPLO. Renewed every January.',
     issuer: 'BPLO · GenSan',
-    href: 'https://gensantos.gov.ph/',
-    cta: 'Apply at BPLO',
+    href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/newbusiness',
+    cta: 'Apply Online (Filipizen)',
+    secondaryHref: 'https://gensantos.gov.ph/',
+    secondaryCta: 'Apply at BPLO',
+    mode: 'Online or in-person',
     cost: 'Varies by business type',
     timeline: '3–7 working days',
     kind: 'CITY',
@@ -290,13 +305,125 @@ const RESOURCES: Resource[] = [
   },
 ];
 
+// ---------- Online filing (Filipizen) ----------
+
+interface OnlineAction {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  href: string;
+  cta: string;
+}
+
+const ONLINE_ACTIONS: OnlineAction[] = [
+  {
+    icon: Briefcase,
+    title: 'New Business Application',
+    description:
+      'Register a new business and apply for your first Mayor\'s Permit in General Santos City online.',
+    href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/newbusiness',
+    cta: 'Start application',
+  },
+  {
+    icon: RefreshCw,
+    title: 'Renew Business Permit',
+    description:
+      'Renew your annual Mayor\'s Permit and pay Local Business Tax online.',
+    href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/renewbusiness',
+    cta: 'Renew now',
+  },
+  {
+    icon: Receipt,
+    title: 'Pay Existing Bill',
+    description:
+      'Look up and pay an outstanding BPLO billing statement online.',
+    href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/billing',
+    cta: 'Pay bill',
+  },
+];
+
+const PREFLIGHT_CHECKLIST = [
+  'Working email address for account creation',
+  'Active mobile number for OTP verification',
+  'Previous year\'s permit and official receipts (for renewals)',
+  'BIR Certificate of Registration (Form 2303)',
+  'Gross sales / receipts figure for the preceding year',
+  'Barangay clearance for business',
+  'Scanned copies of all supporting documents (clear, legible PDFs)',
+];
+
+// ---------- Renewal timeline ----------
+
+interface RenewalStep {
+  number: string;
+  icon: LucideIcon;
+  title: string;
+  body: string;
+}
+
+const RENEWAL_STEPS: RenewalStep[] = [
+  {
+    number: '01',
+    icon: ClipboardList,
+    title: 'Gather requirements',
+    body: 'Prepare your previous permit, gross sales declaration, barangay clearance, and BIR 2303. Start by December so you\'re ready in January.',
+  },
+  {
+    number: '02',
+    icon: Globe,
+    title: 'File online or walk in',
+    body: 'Submit your renewal through the Filipizen portal or visit the BPLO office during the January 1–20 renewal window.',
+  },
+  {
+    number: '03',
+    icon: BadgeCheck,
+    title: 'Pay and claim your permit',
+    body: 'Pay taxes and fees online or at the City Treasurer\'s office, then claim and post your renewed permit.',
+  },
+];
+
 const Business: React.FC = () => {
   return (
     <>
       <SEO
-        title="Business & Permits — GenSan"
-        description="Everything you need to start and operate a business in General Santos City — permits, registrations, requirements, fees, and the responsible government offices."
-        keywords="gensan business permit, mayor's permit gensan, dti registration, bir tin, bplo gensan, sec registration"
+        title="Business Permits & Registration — General Santos City (Online via Filipizen) 2026"
+        description="How to start, register, or renew a business in General Santos City. Apply for your Mayor's Permit online via Filipizen or walk in at the BPLO. Complete guide to permits, fees, timelines, and requirements."
+        keywords="gensan business permit, mayor's permit gensan, eboss gensan, online business permit general santos, bplo gensan, dti registration, bir tin, renew business permit gensan, filipizen gensan, negosyo gensan, paano mag-renew ng business permit sa gensan"
+        path="/services/business"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'GovernmentService',
+          name: "Mayor's Permit / Business Permit — General Santos City",
+          serviceType: 'Business Permit Application and Renewal',
+          provider: {
+            '@type': 'GovernmentOrganization',
+            name: 'Business Permits & Licensing Office (BPLO)',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'General Santos City',
+              addressRegion: 'Region XII',
+              addressCountry: 'PH',
+            },
+            telephone: '(083) 552-2986',
+          },
+          areaServed: {
+            '@type': 'City',
+            name: 'General Santos City',
+          },
+          availableChannel: [
+            {
+              '@type': 'ServiceChannel',
+              serviceUrl:
+                'https://www.filipizen.com/partners/gensan_gensan/bpls/newbusiness',
+              name: 'Filipizen Online Portal',
+            },
+            {
+              '@type': 'ServiceChannel',
+              serviceUrl: 'https://gensantos.gov.ph/',
+              name: 'BPLO Walk-in Office',
+            },
+          ],
+        }}
       />
 
       {/* ---------- Hero ---------- */}
@@ -324,26 +451,25 @@ const Business: React.FC = () => {
               <p className="mt-2 max-w-2xl text-sm text-gray-900">
                 Permits, registrations, and clearances every General Santos
                 City business needs — from sole proprietorship to
-                corporation. Each link goes straight to the responsible
-                national or LGU office.
+                corporation. You can now apply for or renew your Mayor's
+                Permit online through the city's Filipizen portal, or walk
+                in at the BPLO.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  to="/eboss"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700"
+                >
+                  <Globe className="h-3.5 w-3.5" />
+                  Apply Online (Filipizen)
+                </Link>
                 <a
                   href="https://bnrs.dti.gov.ph/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700"
-                >
-                  <Lightbulb className="h-3.5 w-3.5" />
-                  Register on DTI BNRS
-                </a>
-                <a
-                  href="https://gensantos.gov.ph/"
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-primary-400 hover:bg-primary-50 hover:text-primary-700"
                 >
-                  Visit GenSan LGU
+                  Register on DTI BNRS
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               </div>
@@ -381,6 +507,17 @@ const Business: React.FC = () => {
               </h3>
               <p className="mt-1.5 text-xs leading-relaxed text-gray-600">
                 {step.body}
+                {step.linkHref && (
+                  <>
+                    {' '}
+                    <a
+                      href={step.linkHref}
+                      className="font-semibold text-primary-700 hover:text-primary-800"
+                    >
+                      {step.linkLabel}
+                    </a>
+                  </>
+                )}
               </p>
             </li>
           ))}
@@ -428,8 +565,10 @@ const Business: React.FC = () => {
                 {p.body}
               </p>
 
-              {/* Fees & timeline strip */}
-              <dl className="mt-4 grid grid-cols-2 gap-2 rounded-lg border border-gray-100 bg-gray-50 p-2.5">
+              {/* Fees, timeline & mode strip */}
+              <dl
+                className={`mt-4 grid gap-2 rounded-lg border border-gray-100 bg-gray-50 p-2.5 ${p.mode ? 'grid-cols-3' : 'grid-cols-2'}`}
+              >
                 <div>
                   <dt className="text-[9px] font-semibold uppercase tracking-wider text-gray-400">
                     Fee
@@ -446,19 +585,159 @@ const Business: React.FC = () => {
                     {p.timeline}
                   </dd>
                 </div>
+                {p.mode && (
+                  <div>
+                    <dt className="text-[9px] font-semibold uppercase tracking-wider text-gray-400">
+                      Mode
+                    </dt>
+                    <dd className="text-[11px] font-medium text-gray-900">
+                      {p.mode}
+                    </dd>
+                  </div>
+                )}
               </dl>
 
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a
+                  href={p.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-primary-700"
+                >
+                  {p.cta}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+                {p.secondaryHref && (
+                  <a
+                    href={p.secondaryHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 transition hover:border-primary-400 hover:bg-primary-50 hover:text-primary-700"
+                  >
+                    {p.secondaryCta}
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </PageSection>
+
+      {/* ---------- Apply Online via Filipizen ---------- */}
+      <PageSection background="tinted" tier="secondary" id="apply-online">
+        <SectionHeading
+          tier="secondary"
+          icon={Globe}
+          eyebrow="Skip the line"
+          title="Apply Online via Filipizen"
+          helper="General Santos City residents can now apply for, renew, and pay their Mayor's Permit online through the Filipizen portal. Paano mag-apply ng business permit online sa GenSan — sundan lang ang mga steps sa baba."
+        />
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {ONLINE_ACTIONS.map(a => (
+            <article
+              key={a.title}
+              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+            >
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
+                <a.icon className="h-5 w-5" />
+              </div>
+              <h3 className="text-sm font-semibold leading-snug text-gray-900">
+                {a.title}
+              </h3>
+              <p className="mt-1.5 flex-grow text-xs leading-relaxed text-gray-600">
+                {a.description}
+              </p>
               <a
-                href={p.href}
+                href={a.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-flex items-center gap-1.5 self-start rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-primary-700"
               >
-                {p.cta}
+                {a.cta}
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
             </article>
           ))}
+        </div>
+
+        {/* Pre-flight checklist */}
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04]">
+          <h3 className="mb-3 text-sm font-semibold text-gray-900">
+            Before you start online
+          </h3>
+          <ul className="space-y-2">
+            {PREFLIGHT_CHECKLIST.map(item => (
+              <li
+                key={item}
+                className="flex items-start gap-2 text-sm text-gray-700"
+              >
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Fallback note */}
+        <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+          <strong>Prefer walk-in?</strong> You can still apply or renew in
+          person at the BPLO office in General Santos City. Bring the same
+          documents listed above.
+        </div>
+
+        {/* ---------- Renewal mini-section ---------- */}
+        <div className="mt-10">
+          <SectionHeading
+            tier="secondary"
+            icon={CalendarClock}
+            eyebrow="Annual deadline"
+            title="Renewing your business permit?"
+            helper="All General Santos City businesses must renew their Mayor's Permit every January. Here's the renewal path in 3 steps."
+          />
+
+          <ol className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {RENEWAL_STEPS.map(step => (
+              <li
+                key={step.number}
+                className="relative flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04]"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
+                    <step.icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-2xl font-bold leading-none text-primary-100">
+                    {step.number}
+                  </span>
+                </div>
+                <h3 className="text-sm font-semibold leading-snug text-gray-900">
+                  {step.title}
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">
+                  {step.body}
+                </p>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+              <strong>Deadline:</strong> January 20 every year. Late
+              filings incur a 25% surcharge plus 2% monthly interest on
+              unpaid taxes (Local Government Code, Sec. 168).
+            </div>
+            <Link
+              to="/services/business/renew-permits-and-pay-local-business-taxes"
+              className="group flex items-center gap-2 rounded-xl border border-gray-200 bg-white p-3 text-xs font-medium text-gray-700 transition hover:border-primary-400 hover:text-primary-700"
+            >
+              <FileText className="h-4 w-4 shrink-0 text-primary-600" />
+              <span className="flex-1">
+                Full renewal guide with checklist
+              </span>
+              <ArrowRight className="h-3.5 w-3.5 shrink-0 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-primary-700" />
+            </Link>
+          </div>
         </div>
       </PageSection>
 

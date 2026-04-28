@@ -42,7 +42,7 @@ const SERVICES: ServiceLink[] = [
     icon: Briefcase,
     eyebrow: 'For Entrepreneurs',
     title: 'Business & Permits',
-    body: "Mayor's permit, DTI / SEC, BIR registration, and the 5-step path to launch a business.",
+    body: "Mayor's permit (apply online via Filipizen), DTI / SEC, BIR registration, and the 5-step path to launch a business.",
     href: '/services/business',
   },
   {

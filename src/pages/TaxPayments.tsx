@@ -40,6 +40,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
 import SectionHeading from '../components/ui/SectionHeading';
@@ -107,11 +108,11 @@ const LOCAL_TAXES: Tax[] = [
     icon: Building2,
     scope: 'Local · LGU',
     title: 'Real Property Tax (RPT)',
-    body: 'Annual tax on land, buildings, and machinery within General Santos City. Cities collect both the basic tax and the Special Education Fund (SEF). Discounts apply for early or full-year payment.',
+    body: 'Annual tax on land, buildings, and machinery within General Santos City. Cities collect both the basic tax and the Special Education Fund (SEF). Discounts apply for early or full-year payment. You can also pay RPT online via the Filipizen portal.',
     rate: 'Up to 2% of assessed value (1% basic + 1% SEF, per LGC)',
     deadline: 'Mar 31 for full-year discount · or quarterly (Mar 31 / Jun 30 / Sep 30 / Dec 31)',
-    href: 'https://gensantos.gov.ph/',
-    cta: 'Pay at City Treasurer',
+    href: 'https://www.filipizen.com/partners/gensan_gensan/rptis/billing',
+    cta: 'Pay RPT online',
   },
   {
     icon: Briefcase,
@@ -489,6 +490,7 @@ const TaxPayments: React.FC = () => {
   return (
     <>
       <SEO
+        path="/services/tax-payments"
         title="Tax Payments — GenSan"
         description="Complete guide to local and national taxes for General Santos City residents and businesses — Real Property Tax, Local Business Tax, Cedula, BIR Income Tax, VAT, withholding, the full tax calendar, and the official filing & payment channels."
         keywords="gensan tax payments, real property tax gensan, business tax gensan, bir income tax, vat philippines, ebirforms, efps, landbank linkbiz, gcash bir, cedula gensan, bir rdo 110"
@@ -759,6 +761,20 @@ const TaxPayments: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <Link
+          to="/eboss"
+          className="group mt-4 flex items-center gap-3 rounded-xl border border-primary-200 bg-primary-50 p-3 text-xs transition hover:border-primary-400"
+        >
+          <span className="flex-1 text-primary-900">
+            <strong>Pay local taxes online</strong> — Real Property Tax
+            and Local Business Tax can be paid through the city's
+            Filipizen portal.
+          </span>
+          <span className="font-semibold text-primary-700 group-hover:text-primary-800">
+            View online services &rarr;
+          </span>
+        </Link>
       </PageSection>
 
       {/* ---------- BIR forms quick reference ---------- */}

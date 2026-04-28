@@ -19,6 +19,7 @@ import {
   CornerDownLeft,
   FileText,
   Gift,
+  Globe,
   HandHeart,
   HardHat,
   Heart,
@@ -90,7 +91,18 @@ const INDEX: SearchEntry[] = [
     group: 'Services',
     href: '/services/business',
     description: "Mayor's permit, DTI, SEC, BIR, sanitary permit, fire safety.",
-    keywords: 'bplo dti sec bir mayors permit msme negosyo',
+    keywords:
+      'bplo dti sec bir mayors permit msme negosyo eboss filipizen online renewal',
+  },
+  {
+    icon: Globe,
+    label: 'Online Services (eBOSS)',
+    group: 'Services',
+    href: '/eboss',
+    description:
+      'Apply for permits, pay taxes, and track applications online via Filipizen.',
+    keywords:
+      'eboss filipizen online permit renewal billing rpt building occupancy professional',
   },
   {
     icon: Wallet,
