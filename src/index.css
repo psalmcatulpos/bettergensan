@@ -114,11 +114,73 @@
       opacity: 1;
     }
   }
+
+  /* ── Motion tokens ─────────────────────────────────────────────────────── */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --dur-fast: 150ms;
+  --dur-base: 240ms;
+  --dur-slow: 400ms;
+  --dur-reveal: 600ms;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
 }
 
 @theme inline {
   --font-sans: var(--font-kapwa-sans);
   --font-mono: var(--font-kapwa-mono);
+}
+
+/* ── Reveal-on-scroll ────────────────────────────────────────────────────
+ * Apply .reveal to any element observed by useReveal(). The hook adds
+ * .revealed when the element enters the viewport. Stagger via inline
+ * --reveal-delay (e.g. style="--reveal-delay: 80ms").
+ *
+ * Gated on motion-safe — reduced-motion users see the final state
+ * immediately.
+ * ----------------------------------------------------------------------- */
+.reveal {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .reveal.revealed {
+    animation: fade-up var(--dur-reveal) var(--ease-out-quart) both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+}
+
+/* ── Pulse-dot liveness indicator ────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .pulse-dot {
+    animation: pulse-dot 2s var(--ease-in-out-cubic) infinite;
+  }
 }
 
 /* Checklist styling */
