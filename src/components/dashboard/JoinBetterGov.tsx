@@ -20,6 +20,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageSection from '../ui/PageSection';
 import SectionHeading from '../ui/SectionHeading';
+import useReveal from '../../hooks/useReveal';
 
 interface Way {
   icon: LucideIcon;
@@ -71,6 +72,9 @@ const WAYS: Way[] = [
 ];
 
 const JoinBetterGov = () => {
+  const headingRef = useReveal();
+  const gridRef = useReveal();
+
   return (
     <PageSection
       id="join-bettergov"
@@ -78,6 +82,7 @@ const JoinBetterGov = () => {
       tier="utility"
       className="section-dots"
     >
+      <div ref={headingRef} className="reveal">
       <SectionHeading
         tier="utility"
         icon={Heart}
@@ -85,13 +90,14 @@ const JoinBetterGov = () => {
         title="Help build BetterGensan"
         helper="BetterGensan is built by GenSan residents, for GenSan residents. Four ways to plug in."
       />
+      </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div ref={gridRef} className="reveal grid gap-3 sm:grid-cols-2 lg:grid-cols-4" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
         {WAYS.map(w => {
           const disabled = w.href === '';
           const className = disabled
             ? 'flex flex-col rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 p-5 cursor-default'
-            : 'group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md';
+            : 'group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px';
           const inner = (
             <>
               <div

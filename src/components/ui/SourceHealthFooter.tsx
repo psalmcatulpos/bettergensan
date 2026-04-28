@@ -143,7 +143,7 @@ const SourceHealthFooter: React.FC<SourceHealthFooterProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
           <span
-            className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${tone.dot}`}
+            className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${tone.dot}${status === 'live' ? ' pulse-dot' : ''}`}
             aria-hidden
           />
           <span>

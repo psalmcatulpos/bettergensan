@@ -57,7 +57,7 @@ const FreshnessBadge = ({ tone, ageText }: FreshnessBadgeProps) => {
     <span
       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${t.bg} ${t.text}`}
     >
-      <span className={`h-2 w-2 rounded-full ${t.dot}`} />
+      <span className={`h-2 w-2 rounded-full ${t.dot}${tone === 'healthy' ? ' pulse-dot' : ''}`} />
       <span>{badgeText(tone, ageText)}</span>
     </span>
   );

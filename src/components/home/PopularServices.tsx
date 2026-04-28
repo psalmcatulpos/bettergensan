@@ -21,6 +21,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageSection from '../ui/PageSection';
 import SectionHeading from '../ui/SectionHeading';
+import useReveal from '../../hooks/useReveal';
 
 interface ServiceLink {
   icon: LucideIcon;
@@ -90,8 +91,12 @@ const SERVICES: ServiceLink[] = [
 ];
 
 const PopularServices = () => {
+  const headingRef = useReveal();
+  const gridRef = useReveal();
+
   return (
     <PageSection background="white" tier="secondary">
+      <div ref={headingRef} className="reveal">
       <SectionHeading
         tier="secondary"
         icon={LayoutGrid}
@@ -108,13 +113,14 @@ const PopularServices = () => {
           </Link>
         }
       />
+      </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div ref={gridRef} className="reveal grid gap-3 sm:grid-cols-2 lg:grid-cols-4" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
         {SERVICES.map(s => (
           <Link
             key={s.title}
             to={s.href}
-            className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+            className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
           >
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
               <s.icon className="h-5 w-5" />

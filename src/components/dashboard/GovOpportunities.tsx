@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import FreshnessBadge from '../ui/FreshnessBadge';
 import { ProcurementCard, TabPill } from '../procurement/shared';
+import useReveal from '../../hooks/useReveal';
 import {
   PROCUREMENT_ENDPOINTS,
   freshnessFromHealth,
@@ -208,8 +209,12 @@ const ProcurementSubsection = () => {
 };
 
 const GovOpportunities = () => {
+  const headingRef = useReveal();
+  const contentRef = useReveal();
+
   return (
     <PageSection background="gray" tier="primary">
+        <div ref={headingRef} className="reveal">
         <SectionHeading
           tier="primary"
           icon={Building2}
@@ -217,8 +222,11 @@ const GovOpportunities = () => {
           title="Government Opportunities"
           helper="Live procurement bids, scholarships, trainings, and cash aid programs from official LGU sources."
         />
+        </div>
 
+        <div ref={contentRef} className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
         <ProcurementSubsection />
+        </div>
     </PageSection>
   );
 };

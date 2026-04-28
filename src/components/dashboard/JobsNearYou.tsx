@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight, Briefcase } from 'lucide-react';
 import PageSection from '../ui/PageSection';
 import SectionHeading from '../ui/SectionHeading';
+import useReveal from '../../hooks/useReveal';
 import {
   cleanLocation,
   readJobsFromTable,
@@ -47,8 +48,12 @@ const JobsNearYou = () => {
     return () => controller.abort();
   }, []);
 
+  const headingRef = useReveal();
+  const listRef = useReveal();
+
   return (
     <PageSection background="gray" tier="primary">
+      <div ref={headingRef} className="reveal">
       <SectionHeading
         tier="primary"
         icon={Briefcase}
@@ -64,7 +69,9 @@ const JobsNearYou = () => {
           </Link>
         }
       />
+      </div>
 
+      <div ref={listRef} className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
       {loading ? (
         <SkeletonList />
       ) : error && rows.length === 0 ? (
@@ -82,6 +89,7 @@ const JobsNearYou = () => {
           ))}
         </ul>
       )}
+      </div>
     </PageSection>
   );
 };
@@ -103,7 +111,7 @@ const JobRow: React.FC<{ job: JobRow }> = ({ job }) => {
         href={apply}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-between gap-4 py-2.5 transition"
+        className="flex items-center justify-between gap-4 py-2.5 transition-colors duration-[var(--dur-fast)]"
       >
         <div className="min-w-0 flex-1">
           <h4 className="line-clamp-1 text-sm font-semibold text-gray-900 transition group-hover:text-primary-700">
@@ -116,9 +124,9 @@ const JobRow: React.FC<{ job: JobRow }> = ({ job }) => {
           </p>
         </div>
 
-        <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-gray-500 transition group-hover:text-primary-700">
+        <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-gray-500 transition-colors duration-[var(--dur-fast)] group-hover:text-primary-700">
           Apply
-          <ArrowUpRight className="h-3 w-3" />
+          <ArrowUpRight className="h-3 w-3 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
       </a>
     </li>

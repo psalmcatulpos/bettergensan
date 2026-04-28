@@ -16,9 +16,11 @@ import {
   Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageSection from '../ui/PageSection';
 import SectionHeading from '../ui/SectionHeading';
+import useReveal from '../../hooks/useReveal';
 
 interface Stat {
   icon: LucideIcon;
@@ -64,11 +66,97 @@ const TOP_BARANGAYS = [
 
 const fmt = (n: number) => n.toLocaleString();
 
+/** Animate a number from 0 to `end` over 800ms (ease-out-quart). */
+const CountUp: React.FC<{ value: string; active: boolean }> = ({
+  value,
+  active,
+}) => {
+  const [display, setDisplay] = useState(value);
+  const rafRef = useRef(0);
+
+  useEffect(() => {
+    if (!active) return;
+    /* Respect reduced motion */
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) {
+      setDisplay(value);
+      return;
+    }
+
+    /* Extract numeric part for animation.
+       Match the first run of digits (possibly with commas and a decimal). */
+    const m = value.match(/[\d,]+\.?\d*/);
+    if (!m) {
+      setDisplay(value);
+      return;
+    }
+    const matchStr = m[0];
+    const numericStr = matchStr.replace(/,/g, '');
+    const end = parseFloat(numericStr);
+    if (isNaN(end)) {
+      setDisplay(value);
+      return;
+    }
+    const prefix = value.slice(0, m.index!);
+    const suffix = value.slice(m.index! + matchStr.length);
+    const isFloat = numericStr.includes('.');
+    const decimals = isFloat
+      ? numericStr.split('.')[1]?.length ?? 0
+      : 0;
+    const duration = 800;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      /* ease-out-quart: 1 - (1-t)^4 */
+      const ease = 1 - Math.pow(1 - t, 4);
+      const current = ease * end;
+      const formatted = isFloat
+        ? current.toFixed(decimals)
+        : Math.round(current).toLocaleString();
+      setDisplay(`${prefix}${formatted}${suffix}`);
+      if (t < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [active, value]);
+
+  return <>{display}</>;
+};
+
 const PopulationSpotlight = () => {
   const max = Math.max(...TOP_BARANGAYS.map(b => b.pop));
+  const headingRef = useReveal();
+  const statsRef = useReveal();
+
+  /* Track when the stats grid scrolls into view for count-up */
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsObsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = statsObsRef.current;
+    if (!el) return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) {
+      setStatsVisible(true);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <PageSection background="white" tier="secondary">
+      <div ref={headingRef} className="reveal">
       <SectionHeading
         tier="secondary"
         icon={Users}
@@ -85,20 +173,21 @@ const PopulationSpotlight = () => {
           </Link>
         }
       />
+      </div>
 
-      <div className="grid gap-4 lg:grid-cols-5">
+      <div ref={statsRef} className="reveal grid gap-4 lg:grid-cols-5" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
         {/* ----- Left: 4 stat cards (3-wide) ----- */}
-        <div className="grid grid-cols-2 gap-3 lg:col-span-3">
+        <div ref={statsObsRef} className="grid grid-cols-2 gap-3 lg:col-span-3">
           {STATS.map(s => (
             <div
               key={s.label}
-              className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04]"
+              className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color] duration-[var(--dur-fast)] hover:border-primary-200"
             >
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
                 <s.icon className="h-5 w-5" />
               </div>
               <div className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                {s.value}
+                <CountUp value={s.value} active={statsVisible} />
               </div>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-primary-700">
                 {s.label}
@@ -127,7 +216,7 @@ const PopulationSpotlight = () => {
           </div>
 
           <ul className="flex-grow space-y-2.5">
-            {TOP_BARANGAYS.map(b => {
+            {TOP_BARANGAYS.map((b, i) => {
               const w = (b.pop / max) * 100;
               return (
                 <li key={b.name} className="flex flex-col gap-1">
@@ -141,8 +230,11 @@ const PopulationSpotlight = () => {
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
                     <div
-                      className="h-full rounded-full bg-primary-600"
-                      style={{ width: `${w}%` }}
+                      className="h-full rounded-full bg-primary-600 motion-safe:transition-[width] motion-safe:duration-[600ms] motion-safe:ease-[var(--ease-out-quart)]"
+                      style={{
+                        width: statsVisible ? `${w}%` : '0%',
+                        transitionDelay: `${i * 80}ms`,
+                      }}
                     />
                   </div>
                 </li>

@@ -24,6 +24,7 @@ import PageSection from '../ui/PageSection';
 import SectionHeading from '../ui/SectionHeading';
 import FreshnessBadge from '../ui/FreshnessBadge';
 import SourceHealthFooter from '../ui/SourceHealthFooter';
+import useReveal from '../../hooks/useReveal';
 import {
   EO_SOURCE_SLUG,
   SPLIS_ORDINANCES_SLUG,
@@ -152,7 +153,7 @@ const ExecutiveOrderCard: React.FC<{ o: ExecutiveOrderRow }> = ({ o }) => {
       className={`flex w-[260px] shrink-0 snap-start flex-col rounded-xl border bg-white px-3 pb-3 pt-2.5 transition hover:shadow-sm ${
         isMissing
           ? 'border-gray-200 opacity-80 hover:border-gray-300'
-          : 'border-gray-200 hover:border-primary-300'
+          : 'border-gray-200 hover:border-primary-200'
       }`}
     >
       <div className="mb-1 flex flex-wrap items-center gap-1">
@@ -420,9 +421,13 @@ const CivicDecisions: React.FC = () => {
   }, []);
 
   const sectionTotal = eoCount + splisCount;
+  const headingRef = useReveal();
+  const eoRef = useReveal();
+  const splisRef = useReveal();
 
   return (
     <PageSection id="civic-decisions" background="tinted" tier="primary">
+      <div ref={headingRef} className="reveal">
       <SectionHeading
         tier="primary"
         icon={Scale}
@@ -436,13 +441,17 @@ const CivicDecisions: React.FC = () => {
         iconClassName="!bg-primary-600 !text-white !ring-primary-700 shadow-md shadow-primary-900/20 h-12 w-12"
         titleClassName="!text-gray-950"
       />
+      </div>
 
+      <div ref={eoRef} className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
       <ExecutiveOrdersBlock
         rows={eoRows}
         loading={eoLoading}
         freshness={eoFreshness}
         totalCount={eoCount}
       />
+      </div>
+      <div ref={splisRef} className="reveal" style={{ '--reveal-delay': '200ms' } as React.CSSProperties}>
       <SangguniangBlock
         rows={splisRows}
         loading={splisLoading}
@@ -450,6 +459,7 @@ const CivicDecisions: React.FC = () => {
         totalCount={splisCount}
         perType={splisPerType}
       />
+      </div>
     </PageSection>
   );
 };

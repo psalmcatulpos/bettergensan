@@ -10,6 +10,7 @@
 import { Briefcase, Gavel, Scale } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import useReveal from '../../hooks/useReveal';
 
 interface ValueCard {
   icon: LucideIcon;
@@ -48,11 +49,14 @@ const CARDS: ValueCard[] = [
 ];
 
 const PlatformValue = () => {
+  const headingRef = useReveal();
+  const cardsRef = useReveal();
+
   return (
     <section className="section-dots border-y border-gray-100">
       <div className="mx-auto max-w-[1100px] px-4 py-7 sm:py-8">
         {/* ----- Heading ----- */}
-        <div className="mb-5 max-w-2xl">
+        <div ref={headingRef} className="reveal mb-5 max-w-2xl">
           <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-700">
             Citizen Portal
           </div>
@@ -68,11 +72,11 @@ const PlatformValue = () => {
         </div>
 
         {/* ----- Cards ----- */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={cardsRef} className="reveal grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {CARDS.map(card => (
             <article
               key={card.title}
-              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-md"
+              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
             >
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary-700 ring-1 ring-primary-100">
                 <card.icon className="h-5 w-5" />

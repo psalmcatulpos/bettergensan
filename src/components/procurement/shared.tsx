@@ -144,10 +144,10 @@ export const TabPill = ({
       type="button"
       onClick={onClick}
       title={cfg.headline}
-      className={`flex shrink-0 snap-start flex-col items-start gap-0.5 rounded-xl border px-4 py-2.5 text-left transition ${
+      className={`flex shrink-0 snap-start flex-col items-start gap-0.5 rounded-xl border px-4 py-2.5 text-left transition-[border-color,background-color,color] duration-[var(--dur-fast)] ${
         isActive
           ? 'border-primary-700 bg-primary-600 text-white shadow-sm shadow-primary-900/10'
-          : 'border-gray-200 bg-white hover:border-primary-300 hover:bg-primary-50/40'
+          : 'border-gray-200 bg-white hover:border-primary-200 hover:bg-primary-50/40'
       }`}
     >
       <div className="flex w-full items-center gap-2">
