@@ -37,7 +37,9 @@ const InfoBar = () => {
           </span>
           <span className="flex items-center gap-1.5 whitespace-nowrap">
             <Clock className="h-3 w-3" />
-            {formattedTime}
+            <span className="motion-safe:transition-opacity motion-safe:duration-[200ms]">
+              {formattedTime}
+            </span>
           </span>
         </div>
       </div>

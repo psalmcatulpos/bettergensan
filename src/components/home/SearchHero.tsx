@@ -45,7 +45,7 @@ import {
   useState,
   type KeyboardEvent,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // ---------- Quick action pills (left column) ----------
 
@@ -291,8 +291,20 @@ const SearchHero = () => {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  /* Track whether this is the first mount at "/" so fade-up only fires on
+     initial page load, not on every client-side navigation back to home. */
+  const isFirstPaint = useRef(
+    typeof window !== 'undefined' &&
+      (location.key === 'default' ||
+        !sessionStorage.getItem('_hero_seen')),
+  );
+  useEffect(() => {
+    sessionStorage.setItem('_hero_seen', '1');
+  }, []);
 
   // Filter the index for the current query.
   const results = useMemo(() => {
@@ -363,18 +375,55 @@ const SearchHero = () => {
         <div className="grid items-start gap-8 lg:grid-cols-2">
           {/* ---------- Left column ---------- */}
           <div className="text-white">
-            <p className="mb-1.5 text-xs opacity-90">
+            <p
+              className="mb-1.5 text-xs opacity-90"
+              style={
+                isFirstPaint.current
+                  ? {
+                      animation:
+                        'fade-up var(--dur-slow) var(--ease-out-quart) both',
+                    }
+                  : undefined
+              }
+            >
               Your citizen portal for General Santos City
             </p>
-            <h1 className="mb-3 text-2xl font-bold leading-tight md:text-3xl lg:text-4xl">
+            <h1
+              className="mb-3 text-2xl font-bold leading-tight md:text-3xl lg:text-4xl"
+              style={
+                isFirstPaint.current
+                  ? {
+                      animation:
+                        'fade-up var(--dur-slow) var(--ease-out-quart) 60ms both',
+                    }
+                  : undefined
+              }
+            >
               What do you want to do today?
             </h1>
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {QUICK_ACTIONS.map(({ icon: Icon, label, href }) => (
+            <div
+              className="mt-4 flex flex-wrap gap-1.5"
+              style={
+                isFirstPaint.current
+                  ? {
+                      animation:
+                        'fade-up var(--dur-slow) var(--ease-out-quart) 140ms both',
+                    }
+                  : undefined
+              }
+            >
+              {QUICK_ACTIONS.map(({ icon: Icon, label, href }, i) => (
                 <a
                   key={label}
                   href={href}
-                  className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white transition hover:bg-white/20"
+                  className="motion-safe:transition-transform motion-safe:duration-[120ms] flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white transition hover:bg-white/20 motion-safe:hover:-translate-y-px"
+                  style={
+                    isFirstPaint.current
+                      ? {
+                          animation: `fade-up var(--dur-base) var(--ease-out-quart) ${180 + i * 40}ms both`,
+                        }
+                      : undefined
+                  }
                 >
                   <Icon className="h-3.5 w-3.5" />
                   {label}
@@ -386,7 +435,7 @@ const SearchHero = () => {
           {/* ---------- Right column — functional search ---------- */}
           <div className="relative" ref={containerRef}>
             <div className="rounded-2xl bg-white p-3 shadow-xl shadow-primary-900/20 ring-1 ring-white/10">
-              <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 transition focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500">
+              <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus-within:border-primary-300 focus-within:ring-1 focus-within:ring-primary-300">
                 <Search className="h-4 w-4 shrink-0 text-gray-400" />
                 <input
                   ref={inputRef}
@@ -432,7 +481,7 @@ const SearchHero = () => {
                       setOpen(true);
                       inputRef.current?.focus();
                     }}
-                    className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] text-gray-700 transition hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700"
+                    className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] text-gray-700 transition-[border-color,background-color,color,transform] duration-[var(--dur-fast)] hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700 motion-safe:hover:-translate-y-px"
                   >
                     {p.label}
                   </button>

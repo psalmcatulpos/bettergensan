@@ -183,6 +183,35 @@
   }
 }
 
+/* ── Announcement shimmer — single sweep on mount ────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .announcement-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(249, 184, 102, 0.15) 40%,
+      rgba(245, 137, 0, 0.15) 50%,
+      rgba(249, 184, 102, 0.15) 60%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-sweep 1.5s var(--ease-out-expo) forwards;
+    pointer-events: none;
+  }
+
+  @keyframes shimmer-sweep {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
 /* Checklist styling */
 .task-list-item {
   @apply text-base text-gray-700 leading-relaxed relative flex items-start gap-3 font-sans rounded-md mb-5 transition-all duration-200 border border-transparent cursor-pointer items-center;

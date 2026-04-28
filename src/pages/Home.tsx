@@ -25,7 +25,10 @@ import JoinBetterGov from '../components/dashboard/JoinBetterGov';
 
 function InfraAnnouncement() {
   return (
-    <div className="border-b border-[#f58900]/20" style={{ backgroundColor: '#f58900' }}>
+    <div
+      className="announcement-shimmer relative overflow-hidden border-b border-[#f58900]/20"
+      style={{ backgroundColor: '#f58900' }}
+    >
       <div className="mx-auto flex max-w-[1100px] items-start gap-3 px-4 py-3 sm:items-center">
         <MapPin className="h-5 w-5 shrink-0 text-white" />
 
@@ -42,7 +45,7 @@ function InfraAnnouncement() {
 
         <Link
           to="/command-center"
-          className="hidden shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition hover:bg-white/90 sm:inline-flex"
+          className="hidden shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80 sm:inline-flex"
         >
           Open Smart Map
         </Link>
@@ -52,7 +55,7 @@ function InfraAnnouncement() {
       <div className="mx-auto max-w-[1100px] px-4 pb-3 sm:hidden">
         <Link
           to="/command-center"
-          className="inline-flex rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition hover:bg-white/90"
+          className="inline-flex rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80"
         >
           Open Smart Map
         </Link>
