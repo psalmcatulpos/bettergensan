@@ -112,7 +112,7 @@ const SERVICES: Service[] = [
     benefit: 'Single number for all emergencies, 24/7 dispatch',
     who: 'Anyone in the Philippines',
     href: 'https://911.gov.ph/',
-    cta: 'Visit 911',
+    cta: 'Call 911',
     agency: 'NEHRC',
   },
   {
@@ -408,7 +408,7 @@ const PublicSafety: React.FC = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-primary-400 hover:bg-primary-50 hover:text-primary-700"
                 >
-                  Visit 911
+                  Call 911
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               </div>
