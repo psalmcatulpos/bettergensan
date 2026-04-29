@@ -1,3 +1,9 @@
+// Caching contract: fetchGovJobs() is called once per page mount. Callers hold
+// the result in component state and run all filter/sort operations in memory.
+// Refresh is the scraper's job (gensan-gov-jobs-refresh edge function writes to
+// gov_jobs_cache on a schedule); the frontend does not trigger refreshes and
+// does not refetch on filter, tab, or sort changes.
+//
 // Shared helper for reading government job vacancies from the HRMDO
 // scraper cache. Mirrors the shape of jobsSource.ts.
 

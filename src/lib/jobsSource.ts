@@ -1,3 +1,10 @@
+// Caching contract: refreshAndReadJobs() / readJobsFromTable() are called once
+// per page mount. Callers hold the result in component state and run all
+// filter/sort operations in memory. Refresh is the scraper's job (jobs-refresh
+// and linkedin-refresh edge functions write to public.jobs on a schedule); the
+// frontend fires a background refresh on mount but does not refetch on filter,
+// tab, or sort changes.
+//
 // Shared helper for reading merged Indeed + LinkedIn jobs from Supabase.
 // The two edge functions (jobs-refresh, linkedin-refresh) are invoked in
 // parallel to trigger their 24h cache gates, then we do a single select on
