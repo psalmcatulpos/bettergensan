@@ -124,7 +124,8 @@ const Navbar: React.FC = () => {
                   )}
                 </a>
                 {item.children && (
-                  <div className="invisible absolute left-1/2 z-50 mt-2 w-56 -translate-x-1/2 translate-y-1 rounded-md bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-[opacity,transform] duration-[180ms] ease-[var(--ease-out-quart)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="invisible absolute left-1/2 z-50 w-56 -translate-x-1/2 translate-y-1 pt-2 opacity-0 transition-[opacity,transform] duration-[180ms] ease-[var(--ease-out-quart)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="rounded-md bg-white shadow-lg ring-1 ring-black/5">
                     <div className="py-1" role="menu" aria-orientation="vertical">
                       {item.children.map(child => (
                         <Link
@@ -137,6 +138,7 @@ const Navbar: React.FC = () => {
                         </Link>
                       ))}
                     </div>
+                  </div>
                   </div>
                 )}
               </div>
