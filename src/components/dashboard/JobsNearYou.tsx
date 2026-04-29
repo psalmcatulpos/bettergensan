@@ -123,14 +123,26 @@ const JobsNearYou = () => {
           </div>
         )}
 
-        {/* ---------- Divider ---------- */}
+        {/* ---------- Divider + Private header ---------- */}
         {showGov && (
-          <div className="mb-4 flex items-center gap-3">
-            <div className="h-px flex-1 bg-gray-200" />
-            <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
-              Private sector
-            </span>
-            <div className="h-px flex-1 bg-gray-200" />
+          <div className="mb-4">
+            <div className="mb-2 h-px bg-gray-200" />
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="flex items-center gap-1.5 text-xs font-semibold text-gray-700">
+                <Briefcase className="h-3.5 w-3.5 text-primary-600" />
+                Private sector
+                <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">
+                  {rows.length}
+                </span>
+              </h3>
+              <Link
+                to="/jobs"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary-700 transition-colors hover:text-primary-800"
+              >
+                View all private jobs
+                <ArrowRight className="h-3 w-3 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5" />
+              </Link>
+            </div>
           </div>
         )}
       </div>
@@ -156,7 +168,7 @@ const JobsNearYou = () => {
             No cached jobs available right now.
           </p>
         ) : (
-          <ul className="divide-y divide-gray-200">
+          <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
             {rows.map(job => (
               <PrivateJobRow key={job.id} job={job} />
             ))}
@@ -257,7 +269,7 @@ const PrivateJobRow: React.FC<{ job: JobRow }> = ({ job }) => {
         href={apply}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-between gap-4 py-2.5 transition-colors duration-[var(--dur-fast)]"
+        className="flex items-center justify-between gap-3 px-3 py-2.5 transition-colors duration-[var(--dur-fast)] hover:bg-primary-50/30"
       >
         <div className="min-w-0 flex-1">
           <h4 className="line-clamp-1 text-sm font-semibold text-gray-900 transition group-hover:text-primary-700">
