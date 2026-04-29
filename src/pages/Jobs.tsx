@@ -1,23 +1,18 @@
-// Jobs page — refined civic job-board UI.
+// Jobs page — two-tab civic job board: Private Sector + Government.
 //
-// Goals:
-//   - Compact, scannable row-cards instead of bulky tiles
-//   - Tight toolbar with search, source filter, posted-window filter, sort
-//   - Title dominant; meta row (company · location · posted · source) muted
-//   - Apply CTA visible but not oversized
-//   - Skeleton loaders + clean empty state
-//
-// Data flow is preserved verbatim from the previous version. Only the UI
-// shell + filtering/sorting layers were reworked.
+// Private tab shows merged Indeed/LinkedIn listings from Supabase.
+// Government tab shows HRMDO vacancies (fixtures for now, supabase later).
+// ?tab=gov query param selects the Government tab on mount.
 
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowUpRight,
   Briefcase,
   Building2,
   Calendar,
   Clock,
+  Landmark,
   ListFilter,
   MapPin,
   Search,
@@ -32,13 +27,20 @@ import {
   timeAgo,
   type JobRow,
 } from '../lib/jobsSource';
+import type { GovJob } from '../types';
+import {
+  fetchGovJobs,
+  filterGovJobs,
+  sortGovJobs,
+  type EligibilityFilter,
+} from '../lib/govJobsSource';
 
 // =============================================================================
-// Filter types
+// Filter types (private tab)
 // =============================================================================
 
 type SourceFilter = 'all' | 'indeed' | 'linkedin';
-type PostedFilter = 'any' | 'today' | '3d' | '7d';
+type PostedFilter = 'any' | 'today' | '3d' | '7d' | '30d';
 type SortKey = 'newest' | 'relevance';
 
 const SOURCE_OPTIONS: { value: SourceFilter; label: string }[] = [
@@ -49,9 +51,10 @@ const SOURCE_OPTIONS: { value: SourceFilter; label: string }[] = [
 
 const POSTED_OPTIONS: { value: PostedFilter; label: string }[] = [
   { value: 'any', label: 'Any time' },
-  { value: 'today', label: 'Today' },
+  { value: 'today', label: 'Past 24h' },
   { value: '3d', label: 'Past 3 days' },
   { value: '7d', label: 'Past 7 days' },
+  { value: '30d', label: 'Past 30 days' },
 ];
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
@@ -66,26 +69,65 @@ const POSTED_WINDOW_DAYS: Record<PostedFilter, number | null> = {
   today: 1,
   '3d': 3,
   '7d': 7,
+  '30d': 30,
+};
+
+// =============================================================================
+// Filter types (government tab)
+// =============================================================================
+
+type ClosingFilter = 'all' | '7d' | '30d';
+
+const CLOSING_OPTIONS: { value: ClosingFilter; label: string }[] = [
+  { value: 'all', label: 'All open' },
+  { value: '7d', label: 'Closing in 7 days' },
+  { value: '30d', label: 'Closing in 30 days' },
+];
+
+const ELIGIBILITY_OPTIONS: { value: EligibilityFilter; label: string }[] = [
+  { value: 'any', label: 'Any' },
+  { value: 'none', label: 'None required' },
+  { value: 'subprofessional', label: 'Subprofessional' },
+  { value: 'professional', label: 'Professional' },
+  { value: 'ra1080', label: 'RA 1080' },
+];
+
+const CLOSING_DAYS: Record<ClosingFilter, number | undefined> = {
+  all: undefined,
+  '7d': 7,
+  '30d': 30,
 };
 
 // =============================================================================
 // Page
 // =============================================================================
 
+type TabKey = 'private' | 'gov';
+
 const Jobs: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<TabKey>(
+    searchParams.get('tab') === 'gov' ? 'gov' : 'private',
+  );
+
+  const switchTab = (tab: TabKey) => {
+    setActiveTab(tab);
+    setSearchParams(tab === 'gov' ? { tab: 'gov' } : {}, { replace: true });
+  };
+
+  // ----- Private sector data -----
   const [query, setQuery] = useState('');
   const [source, setSource] = useState<SourceFilter>('all');
   const [posted, setPosted] = useState<PostedFilter>('any');
   const [sort, setSort] = useState<SortKey>('newest');
-
   const [jobs, setJobs] = useState<JobRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [privateLoading, setPrivateLoading] = useState(true);
+  const [privateError, setPrivateError] = useState<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setError(null);
+    setPrivateLoading(true);
+    setPrivateError(null);
     (async () => {
       try {
         const data = await refreshAndReadJobs(100, controller.signal);
@@ -98,46 +140,59 @@ const Jobs: React.FC = () => {
         if (fallback.length > 0) {
           setJobs(fallback);
         } else {
-          setError(e instanceof Error ? e.message : 'Failed to load jobs');
+          setPrivateError(
+            e instanceof Error ? e.message : 'Failed to load jobs',
+          );
         }
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) setPrivateLoading(false);
       }
     })();
     return () => controller.abort();
   }, []);
 
-  // ---------- Filter pipeline ----------
-  const filtered = useMemo(() => {
+  // ----- Government data -----
+  const [govJobs, setGovJobs] = useState<GovJob[]>([]);
+  const [govLoading, setGovLoading] = useState(true);
+  const [closing, setClosing] = useState<ClosingFilter>('all');
+  const [eligibility, setEligibility] = useState<EligibilityFilter>('any');
+
+  useEffect(() => {
+    (async () => {
+      const data = await fetchGovJobs();
+      setGovJobs(data);
+      setGovLoading(false);
+    })();
+  }, []);
+
+  // ----- Private filter pipeline -----
+  const filteredPrivate = useMemo(() => {
     const q = query.trim().toLowerCase();
     const windowDays = POSTED_WINDOW_DAYS[posted];
-    const cutoff = windowDays != null ? Date.now() - windowDays * DAY_MS : null;
+    const cutoff =
+      windowDays != null ? Date.now() - windowDays * DAY_MS : null;
 
     let out = jobs;
-
-    if (source !== 'all') {
-      out = out.filter(j => j.source === source);
-    }
-
-    if (cutoff != null) {
+    if (source !== 'all') out = out.filter(j => j.source === source);
+    if (cutoff != null)
+      out = out.filter(
+        j => j.date_published && new Date(j.date_published).getTime() >= cutoff,
+      );
+    if (q)
       out = out.filter(j => {
-        if (!j.date_published) return false;
-        return new Date(j.date_published).getTime() >= cutoff;
-      });
-    }
-
-    if (q) {
-      out = out.filter(j => {
-        const hay = `${j.title} ${j.company_name ?? ''} ${j.location ?? ''}`.toLowerCase();
+        const hay =
+          `${j.title} ${j.company_name ?? ''} ${j.location ?? ''}`.toLowerCase();
         return hay.includes(q);
       });
-    }
 
-    // Sorting
     if (sort === 'newest') {
       out = [...out].sort((a, b) => {
-        const ta = a.date_published ? new Date(a.date_published).getTime() : 0;
-        const tb = b.date_published ? new Date(b.date_published).getTime() : 0;
+        const ta = a.date_published
+          ? new Date(a.date_published).getTime()
+          : 0;
+        const tb = b.date_published
+          ? new Date(b.date_published).getTime()
+          : 0;
         return tb - ta;
       });
     } else if (sort === 'relevance' && q) {
@@ -153,18 +208,33 @@ const Jobs: React.FC = () => {
         return score(b) - score(a);
       });
     }
-
     return out;
   }, [jobs, query, source, posted, sort]);
 
-  const hasActiveFilters =
+  // ----- Government filter pipeline -----
+  const filteredGov = useMemo(() => {
+    const filtered = filterGovJobs(govJobs, {
+      closingWithinDays: CLOSING_DAYS[closing],
+      eligibility,
+    });
+    return sortGovJobs(filtered);
+  }, [govJobs, closing, eligibility]);
+
+  const hasPrivateFilters =
     query.trim().length > 0 || source !== 'all' || posted !== 'any';
 
-  const resetFilters = () => {
+  const resetPrivateFilters = () => {
     setQuery('');
     setSource('all');
     setPosted('any');
     setSort('newest');
+  };
+
+  const hasGovFilters = closing !== 'all' || eligibility !== 'any';
+
+  const resetGovFilters = () => {
+    setClosing('all');
+    setEligibility('any');
   };
 
   return (
@@ -172,8 +242,8 @@ const Jobs: React.FC = () => {
       <SEO
         path="/jobs"
         title="Jobs in General Santos City"
-        description="Browse the latest job openings in General Santos City, pulled from Indeed and LinkedIn."
-        keywords="gensan jobs, general santos city jobs, hiring gensan, employment south cotabato"
+        description="Browse the latest job openings in General Santos City — private sector listings from Indeed and LinkedIn, plus government vacancies from the HRMDO."
+        keywords="gensan jobs, general santos city jobs, hiring gensan, employment south cotabato, hrmdo gensan, government jobs gensan"
       />
 
       {/* ---------- Page header ---------- */}
@@ -192,8 +262,8 @@ const Jobs: React.FC = () => {
                 Jobs in General Santos City
               </h1>
               <p className="mt-1 max-w-2xl text-sm text-gray-600">
-                Live local openings merged daily from Indeed and LinkedIn. Click
-                any role to apply on the source site.
+                Private sector listings from Indeed and LinkedIn, plus
+                government vacancies from the City HRMDO.
               </p>
             </div>
           </div>
@@ -201,70 +271,175 @@ const Jobs: React.FC = () => {
       </div>
 
       <div className="mx-auto max-w-[960px] px-4 py-6">
-        {/* ---------- Toolbar ---------- */}
-        <Toolbar
-          query={query}
-          onQuery={setQuery}
-          source={source}
-          onSource={setSource}
-          posted={posted}
-          onPosted={setPosted}
-          sort={sort}
-          onSort={setSort}
-        />
+        {/* ---------- Tab bar ---------- */}
+        <div className="relative mb-5 flex border-b border-gray-200">
+          <TabButton
+            active={activeTab === 'private'}
+            onClick={() => switchTab('private')}
+            icon={<Building2 className="h-4 w-4" />}
+            label="Private Sector"
+            count={jobs.length}
+            loading={privateLoading}
+          />
+          <TabButton
+            active={activeTab === 'gov'}
+            onClick={() => switchTab('gov')}
+            icon={<Landmark className="h-4 w-4" />}
+            label="Government"
+            count={govJobs.length}
+            loading={govLoading}
+          />
+        </div>
 
-        {/* ---------- Result count + reset ---------- */}
-        {!loading && !error && (
-          <div className="mt-3 mb-3 flex items-center justify-between text-[11px] text-gray-500">
-            <span>
-              {filtered.length === 0 ? (
-                <>No matches</>
-              ) : (
-                <>
-                  Showing{' '}
-                  <strong className="text-gray-700">
-                    {filtered.length.toLocaleString()}
-                  </strong>{' '}
-                  of {jobs.length.toLocaleString()} jobs
-                </>
-              )}
-            </span>
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700"
-              >
-                <X className="h-3 w-3" />
-                Clear filters
-              </button>
+        {/* ---------- Private tab ---------- */}
+        {activeTab === 'private' && (
+          <>
+            <PrivateToolbar
+              query={query}
+              onQuery={setQuery}
+              source={source}
+              onSource={setSource}
+              posted={posted}
+              onPosted={setPosted}
+              sort={sort}
+              onSort={setSort}
+            />
+
+            {!privateLoading && !privateError && (
+              <div className="mt-3 mb-3 flex items-center justify-between text-[11px] text-gray-500">
+                <span>
+                  {filteredPrivate.length === 0 ? (
+                    <>No matches</>
+                  ) : (
+                    <>
+                      Showing{' '}
+                      <strong className="text-gray-700">
+                        {filteredPrivate.length.toLocaleString()}
+                      </strong>{' '}
+                      of {jobs.length.toLocaleString()} jobs
+                    </>
+                  )}
+                </span>
+                {hasPrivateFilters && (
+                  <button
+                    type="button"
+                    onClick={resetPrivateFilters}
+                    className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700"
+                  >
+                    <X className="h-3 w-3" />
+                    Clear filters
+                  </button>
+                )}
+              </div>
             )}
-          </div>
+
+            {privateLoading ? (
+              <SkeletonList />
+            ) : privateError ? (
+              <ErrorState message={privateError} />
+            ) : filteredPrivate.length === 0 ? (
+              <EmptyState
+                onReset={resetPrivateFilters}
+                hasFilters={hasPrivateFilters}
+              />
+            ) : (
+              <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                {filteredPrivate.map(job => (
+                  <JobRowCard key={job.id} job={job} />
+                ))}
+              </ul>
+            )}
+
+            {!privateLoading && !privateError && jobs.length > 0 && (
+              <p className="mt-4 text-center text-[11px] text-gray-400">
+                Sources cached daily via Regiment ·{' '}
+                <Link
+                  to="/"
+                  className="underline decoration-dotted hover:text-gray-600"
+                >
+                  Back to home
+                </Link>
+              </p>
+            )}
+          </>
         )}
 
-        {/* ---------- Body ---------- */}
-        {loading ? (
-          <SkeletonList />
-        ) : error ? (
-          <ErrorState message={error} />
-        ) : filtered.length === 0 ? (
-          <EmptyState onReset={resetFilters} hasFilters={hasActiveFilters} />
-        ) : (
-          <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
-            {filtered.map(job => (
-              <JobRowCard key={job.id} job={job} />
-            ))}
-          </ul>
-        )}
+        {/* ---------- Government tab ---------- */}
+        {activeTab === 'gov' && (
+          <>
+            <GovToolbar
+              closing={closing}
+              onClosing={setClosing}
+              eligibility={eligibility}
+              onEligibility={setEligibility}
+            />
 
-        {/* ---------- Footer ---------- */}
-        {!loading && !error && jobs.length > 0 && (
-          <p className="mt-4 text-center text-[11px] text-gray-400">
-            Sources cached daily via Regiment ·{' '}
-            <Link to="/" className="underline decoration-dotted hover:text-gray-600">
-              Back to home
-            </Link>
-          </p>
+            {!govLoading && (
+              <div className="mt-3 mb-3 flex items-center justify-between text-[11px] text-gray-500">
+                <span>
+                  {filteredGov.length === 0 ? (
+                    <>No matches</>
+                  ) : (
+                    <>
+                      Showing{' '}
+                      <strong className="text-gray-700">
+                        {filteredGov.length.toLocaleString()}
+                      </strong>{' '}
+                      of {govJobs.length.toLocaleString()} vacancies
+                    </>
+                  )}
+                </span>
+                {hasGovFilters && (
+                  <button
+                    type="button"
+                    onClick={resetGovFilters}
+                    className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700"
+                  >
+                    <X className="h-3 w-3" />
+                    Clear filters
+                  </button>
+                )}
+              </div>
+            )}
+
+            {govLoading ? (
+              <SkeletonList />
+            ) : filteredGov.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
+                <Landmark className="mx-auto mb-3 h-8 w-8 text-gray-300" />
+                <p className="text-sm font-medium text-gray-700">
+                  No vacancies match the current filters.
+                </p>
+                {hasGovFilters && (
+                  <button
+                    type="button"
+                    onClick={resetGovFilters}
+                    className="mt-4 inline-flex items-center gap-1 rounded-md bg-primary-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-primary-700"
+                  >
+                    Clear filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                {filteredGov.map(job => (
+                  <GovJobRowCard key={job.id} job={job} />
+                ))}
+              </ul>
+            )}
+
+            <p className="mt-4 text-center text-[11px] text-gray-400">
+              Source: City HRMDO ·{' '}
+              <a
+                href="https://gensantos.gov.ph/city-human-resource-management-and-development-office/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-dotted hover:text-gray-600"
+              >
+                gensantos.gov.ph
+              </a>
+            </p>
+          </>
         )}
       </div>
     </>
@@ -272,10 +447,48 @@ const Jobs: React.FC = () => {
 };
 
 // =============================================================================
-// Toolbar
+// Tab button
 // =============================================================================
 
-interface ToolbarProps {
+const TabButton: React.FC<{
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  count: number;
+  loading: boolean;
+}> = ({ active, onClick, icon, label, count, loading }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`relative flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors duration-[var(--dur-fast)] ${
+      active ? 'text-primary-700' : 'text-gray-500 hover:text-gray-700'
+    }`}
+  >
+    {icon}
+    {label}
+    {!loading && (
+      <span
+        className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+          active
+            ? 'bg-primary-100 text-primary-700'
+            : 'bg-gray-100 text-gray-500'
+        }`}
+      >
+        {count}
+      </span>
+    )}
+    {active && (
+      <span className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full bg-primary-600" />
+    )}
+  </button>
+);
+
+// =============================================================================
+// Private toolbar
+// =============================================================================
+
+interface PrivateToolbarProps {
   query: string;
   onQuery: (v: string) => void;
   source: SourceFilter;
@@ -286,7 +499,7 @@ interface ToolbarProps {
   onSort: (v: SortKey) => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({
+const PrivateToolbar: React.FC<PrivateToolbarProps> = ({
   query,
   onQuery,
   source,
@@ -298,8 +511,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
 }) => {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-3">
-      {/* Search */}
-      <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 transition focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500">
+      <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus-within:border-primary-300 focus-within:ring-1 focus-within:ring-primary-300">
         <Search className="h-4 w-4 shrink-0 text-gray-400" />
         <input
           type="text"
@@ -322,7 +534,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
         )}
       </div>
 
-      {/* Filter row */}
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-gray-400">
           <ListFilter className="h-3 w-3" />
@@ -357,6 +568,46 @@ const Toolbar: React.FC<ToolbarProps> = ({
   );
 };
 
+// =============================================================================
+// Government toolbar
+// =============================================================================
+
+const GovToolbar: React.FC<{
+  closing: ClosingFilter;
+  onClosing: (v: ClosingFilter) => void;
+  eligibility: EligibilityFilter;
+  onEligibility: (v: EligibilityFilter) => void;
+}> = ({ closing, onClosing, eligibility, onEligibility }) => {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-white p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-gray-400">
+          <ListFilter className="h-3 w-3" />
+          Filters
+        </span>
+        <FilterSelect
+          icon={<Calendar className="h-3.5 w-3.5" />}
+          value={closing}
+          onChange={v => onClosing(v as ClosingFilter)}
+          options={CLOSING_OPTIONS}
+          ariaLabel="Filter by closing date"
+        />
+        <FilterSelect
+          icon={<Landmark className="h-3.5 w-3.5" />}
+          value={eligibility}
+          onChange={v => onEligibility(v as EligibilityFilter)}
+          options={ELIGIBILITY_OPTIONS}
+          ariaLabel="Filter by eligibility"
+        />
+      </div>
+    </div>
+  );
+};
+
+// =============================================================================
+// Shared filter select
+// =============================================================================
+
 interface FilterSelectProps {
   icon: React.ReactNode;
   value: string;
@@ -375,7 +626,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   prefix,
 }) => {
   return (
-    <label className="group inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-medium text-gray-700 transition hover:border-primary-300 hover:bg-primary-50/50 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500">
+    <label className="group inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-medium text-gray-700 transition-[border-color,background-color] duration-[var(--dur-fast)] hover:border-primary-200 hover:bg-primary-50/50 focus-within:border-primary-300 focus-within:ring-1 focus-within:ring-primary-300">
       <span className="text-gray-500 group-hover:text-primary-600">{icon}</span>
       {prefix && <span className="text-gray-400">{prefix}</span>}
       <select
@@ -395,7 +646,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
 };
 
 // =============================================================================
-// Job row card
+// Private job row card (unchanged from previous version)
 // =============================================================================
 
 const JobRowCard: React.FC<{ job: JobRow }> = ({ job }) => {
@@ -422,8 +673,6 @@ const JobRowCard: React.FC<{ job: JobRow }> = ({ job }) => {
               </span>
             )}
           </div>
-
-          {/* Meta row — single tight line, wraps gracefully */}
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-gray-600">
             {job.company_name && (
               <span className="inline-flex items-center gap-1 font-medium text-gray-700">
@@ -446,8 +695,6 @@ const JobRowCard: React.FC<{ job: JobRow }> = ({ job }) => {
             <SourcePill source={job.source} />
           </div>
         </div>
-
-        {/* Apply CTA */}
         <span className="inline-flex shrink-0 items-center gap-1 self-center rounded-md border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-gray-700 transition group-hover:border-primary-400 group-hover:bg-primary-600 group-hover:text-white">
           Apply
           <ArrowUpRight className="h-3 w-3" />
@@ -457,7 +704,6 @@ const JobRowCard: React.FC<{ job: JobRow }> = ({ job }) => {
   );
 };
 
-// Source pill — refined, low-key, sits inside the meta row
 const SourcePill: React.FC<{ source: string }> = ({ source }) => {
   const tone: Record<string, string> = {
     indeed: 'border-indigo-200 bg-indigo-50 text-indigo-700',
@@ -471,6 +717,82 @@ const SourcePill: React.FC<{ source: string }> = ({ source }) => {
     >
       {source}
     </span>
+  );
+};
+
+// =============================================================================
+// Government job row card
+// =============================================================================
+
+const fmtSalary = (n: number) =>
+  '₱' + n.toLocaleString('en-PH', { maximumFractionDigits: 0 });
+
+const fmtClosingDate = (iso: string) => {
+  const d = new Date(iso);
+  const now = new Date();
+  const sameYear = d.getFullYear() === now.getFullYear();
+  return d.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    ...(sameYear ? {} : { year: 'numeric' }),
+  });
+};
+
+const isClosingSoon = (iso: string) => {
+  const diff = new Date(iso).getTime() - Date.now();
+  return diff >= 0 && diff <= 7 * DAY_MS;
+};
+
+const GovJobRowCard: React.FC<{ job: GovJob }> = ({ job }) => {
+  const soon = isClosingSoon(job.closing_date);
+
+  return (
+    <li className="group relative bg-white transition hover:bg-primary-50/30">
+      <div className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
+        <div className="min-w-0 flex-1">
+          <h3 className="line-clamp-1 text-sm font-semibold text-gray-900 sm:text-[15px]">
+            {job.position}
+          </h3>
+          <p className="mt-0.5 text-[12px] text-gray-500">
+            {job.place_of_assignment}
+          </p>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+            <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">
+              SG {job.salary_grade}
+            </span>
+            <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">
+              {fmtSalary(job.monthly_salary)}
+            </span>
+            <span className="inline-flex items-center truncate rounded-full border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">
+              {job.eligibility.length > 35
+                ? job.eligibility.slice(0, 35) + '…'
+                : job.eligibility}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <span
+            className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+              soon
+                ? 'border-warning-200 bg-warning-50 text-warning-700'
+                : 'border-gray-200 bg-gray-50 text-gray-600'
+            }`}
+          >
+            Closes {fmtClosingDate(job.closing_date)}
+          </span>
+          <a
+            href={job.apply_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-gray-700 transition-[border-color,background-color,color] duration-[var(--dur-fast)] hover:border-primary-400 hover:bg-primary-600 hover:text-white"
+          >
+            Apply
+            <ArrowUpRight className="h-3 w-3" />
+          </a>
+        </div>
+      </div>
+    </li>
   );
 };
 
