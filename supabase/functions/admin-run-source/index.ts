@@ -57,6 +57,7 @@ const SLUG_TO_FN: Record<string, Route> = {
     body: { record_type: 'Resolution' },
   },
   'bisto-infrastructure': { fn: 'bisto-sync' },
+  'gensan-hrmdo': { fn: 'hrmdo-refresh' },
 };
 
 const cors = {

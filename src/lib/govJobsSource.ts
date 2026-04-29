@@ -8,12 +8,23 @@
 // scraper cache. Mirrors the shape of jobsSource.ts.
 
 import type { GovJob } from '../types';
+import { supabase } from './supabase';
 import { GOV_JOBS_FIXTURE } from '../data/govJobsFixture';
 
-// TODO: replace with a supabase query against gov_jobs_cache once the
-// HRMDO scraper ships. For now, returns the fixture array directly.
 export async function fetchGovJobs(): Promise<GovJob[]> {
-  return GOV_JOBS_FIXTURE;
+  const { data, error } = await supabase
+    .from('gov_jobs_cache')
+    .select(
+      'id, position, plantilla_item_no, salary_grade, monthly_salary, place_of_assignment, evaluator_email, education, training, experience, eligibility, competency, posting_date, closing_date, source_url, apply_url, first_seen_at, last_seen_at, missing_from_source',
+    )
+    .eq('missing_from_source', false)
+    .order('closing_date', { ascending: true });
+
+  if (error || !data || data.length === 0) {
+    // Fall back to fixtures until the scraper has run at least once
+    return GOV_JOBS_FIXTURE;
+  }
+  return data as GovJob[];
 }
 
 export type EligibilityFilter =
