@@ -12,6 +12,7 @@ import {
   Building2,
   Calendar,
   Clock,
+  Hash,
   Landmark,
   ListFilter,
   MapPin,
@@ -92,6 +93,24 @@ const ELIGIBILITY_OPTIONS: { value: EligibilityFilter; label: string }[] = [
   { value: 'ra1080', label: 'RA 1080' },
 ];
 
+type SalaryGradeFilter = 'any' | '1-8' | '9-15' | '16-23' | '24+';
+
+const SALARY_GRADE_OPTIONS: { value: SalaryGradeFilter; label: string }[] = [
+  { value: 'any', label: 'Any SG' },
+  { value: '1-8', label: 'SG 1–8' },
+  { value: '9-15', label: 'SG 9–15' },
+  { value: '16-23', label: 'SG 16–23' },
+  { value: '24+', label: 'SG 24+' },
+];
+
+const SALARY_GRADE_RANGE: Record<SalaryGradeFilter, [number, number] | null> = {
+  any: null,
+  '1-8': [1, 8],
+  '9-15': [9, 15],
+  '16-23': [16, 23],
+  '24+': [24, 99],
+};
+
 const CLOSING_DAYS: Record<ClosingFilter, number | undefined> = {
   all: undefined,
   '7d': 7,
@@ -157,6 +176,7 @@ const Jobs: React.FC = () => {
   const [govQuery, setGovQuery] = useState('');
   const [closing, setClosing] = useState<ClosingFilter>('all');
   const [eligibility, setEligibility] = useState<EligibilityFilter>('any');
+  const [salaryGrade, setSalaryGrade] = useState<SalaryGradeFilter>('any');
 
   useEffect(() => {
     (async () => {
@@ -218,6 +238,12 @@ const Jobs: React.FC = () => {
       closingWithinDays: CLOSING_DAYS[closing],
       eligibility,
     });
+    const sgRange = SALARY_GRADE_RANGE[salaryGrade];
+    if (sgRange) {
+      out = out.filter(
+        j => j.salary_grade >= sgRange[0] && j.salary_grade <= sgRange[1],
+      );
+    }
     const gq = govQuery.trim().toLowerCase();
     if (gq) {
       out = out.filter(j => {
@@ -227,7 +253,7 @@ const Jobs: React.FC = () => {
       });
     }
     return sortGovJobs(out);
-  }, [govJobs, closing, eligibility, govQuery]);
+  }, [govJobs, closing, eligibility, salaryGrade, govQuery]);
 
   const hasPrivateFilters =
     query.trim().length > 0 || source !== 'all' || posted !== 'any';
@@ -240,12 +266,16 @@ const Jobs: React.FC = () => {
   };
 
   const hasGovFilters =
-    govQuery.trim().length > 0 || closing !== 'all' || eligibility !== 'any';
+    govQuery.trim().length > 0 ||
+    closing !== 'all' ||
+    eligibility !== 'any' ||
+    salaryGrade !== 'any';
 
   const resetGovFilters = () => {
     setGovQuery('');
     setClosing('all');
     setEligibility('any');
+    setSalaryGrade('any');
   };
 
   return (
@@ -385,6 +415,8 @@ const Jobs: React.FC = () => {
               onClosing={setClosing}
               eligibility={eligibility}
               onEligibility={setEligibility}
+              salaryGrade={salaryGrade}
+              onSalaryGrade={setSalaryGrade}
             />
 
             {!govLoading && (
@@ -592,7 +624,9 @@ const GovToolbar: React.FC<{
   onClosing: (v: ClosingFilter) => void;
   eligibility: EligibilityFilter;
   onEligibility: (v: EligibilityFilter) => void;
-}> = ({ query, onQuery, closing, onClosing, eligibility, onEligibility }) => {
+  salaryGrade: SalaryGradeFilter;
+  onSalaryGrade: (v: SalaryGradeFilter) => void;
+}> = ({ query, onQuery, closing, onClosing, eligibility, onEligibility, salaryGrade, onSalaryGrade }) => {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-3">
       <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus-within:border-primary-300 focus-within:ring-1 focus-within:ring-primary-300">
@@ -629,6 +663,13 @@ const GovToolbar: React.FC<{
           onChange={v => onClosing(v as ClosingFilter)}
           options={CLOSING_OPTIONS}
           ariaLabel="Filter by closing date"
+        />
+        <FilterSelect
+          icon={<Hash className="h-3.5 w-3.5" />}
+          value={salaryGrade}
+          onChange={v => onSalaryGrade(v as SalaryGradeFilter)}
+          options={SALARY_GRADE_OPTIONS}
+          ariaLabel="Filter by salary grade"
         />
         <FilterSelect
           icon={<Landmark className="h-3.5 w-3.5" />}
