@@ -37,7 +37,7 @@ insert into public.sources (slug, name, type, expected_ttl_minutes, domain, base
 values (
   'gensan-hrmdo',
   'HRMDO Job Vacancies',
-  'scraper',
+  'jobs',
   1440,
   'hrmdo.gensantos.gov.ph',
   'https://hrmdo.gensantos.gov.ph/index.php/Careers'
