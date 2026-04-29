@@ -7,11 +7,11 @@
 // Secondary links (Join Us, Official Gov.ph, Official City Website) live in
 // the footer to keep this row uncluttered.
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { X, Menu, ChevronDown, Globe, Search } from 'lucide-react';
 import { mainNavigation } from '../../data/navigation';
 import type { LanguageType } from '../../types/index';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '../../i18n/languages';
 
@@ -19,6 +19,38 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const { t, i18n } = useTranslation('common');
+  const location = useLocation();
+  const navRef = useRef<HTMLDivElement>(null);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false });
+
+  /** Compute which top-level nav item is "active" based on the current path. */
+  const isActive = useCallback(
+    (item: (typeof mainNavigation)[number]) => {
+      const p = location.pathname;
+      if (item.href === '/' && p === '/') return true;
+      if (item.href !== '/' && p.startsWith(item.href)) return true;
+      return item.children?.some(c => p.startsWith(c.href)) ?? false;
+    },
+    [location.pathname],
+  );
+
+  /** Position the sliding underline under the active nav item. */
+  useEffect(() => {
+    if (!navRef.current) return;
+    const container = navRef.current;
+    const activeEl = container.querySelector<HTMLElement>('[data-nav-active="true"]');
+    if (activeEl) {
+      const cRect = container.getBoundingClientRect();
+      const eRect = activeEl.getBoundingClientRect();
+      setIndicator({
+        left: eRect.left - cRect.left,
+        width: eRect.width,
+        visible: true,
+      });
+    } else {
+      setIndicator(prev => ({ ...prev, visible: false }));
+    }
+  }, [location.pathname]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -67,12 +99,24 @@ const Navbar: React.FC = () => {
           </Link>
 
           {/* ---------- Center: primary nav ---------- */}
-          <div className="hidden flex-1 items-center justify-center gap-6 lg:flex">
-            {mainNavigation.map(item => (
+          <div ref={navRef} className="relative hidden flex-1 items-center justify-center gap-6 lg:flex">
+            {/* Sliding active indicator */}
+            <span
+              className="pointer-events-none absolute bottom-0 h-0.5 rounded-full bg-primary-600 transition-[left,width,opacity] duration-[var(--dur-base)] ease-[var(--ease-out-quart)]"
+              style={{
+                left: indicator.left,
+                width: indicator.width,
+                opacity: indicator.visible ? 1 : 0,
+              }}
+            />
+            {mainNavigation.map(item => {
+              const active = isActive(item);
+              return (
               <div key={item.label} className="group relative">
                 <a
                   href={item.href}
-                  className="flex items-center text-sm font-medium text-gray-700 transition-colors hover:text-primary-700"
+                  data-nav-active={active || undefined}
+                  className={`flex items-center py-1 text-sm font-medium transition-colors duration-[120ms] hover:text-primary-700 ${active ? 'text-primary-700' : 'text-gray-700'}`}
                 >
                   {t(navKey(item.label))}
                   {item.children && (
@@ -80,13 +124,13 @@ const Navbar: React.FC = () => {
                   )}
                 </a>
                 {item.children && (
-                  <div className="invisible absolute left-1/2 z-50 mt-2 w-56 -translate-x-1/2 rounded-md bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                  <div className="invisible absolute left-1/2 z-50 mt-2 w-56 -translate-x-1/2 translate-y-1 rounded-md bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-[opacity,transform] duration-[180ms] ease-[var(--ease-out-quart)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                     <div className="py-1" role="menu" aria-orientation="vertical">
                       {item.children.map(child => (
                         <Link
                           key={child.label}
                           to={child.href}
-                          className="block px-4 py-2 text-left text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-700"
+                          className="block px-4 py-2 text-left text-sm text-gray-700 transition-[background-color,color] duration-[120ms] hover:bg-primary-50 hover:text-primary-700"
                           role="menuitem"
                         >
                           {child.label}
@@ -96,7 +140,8 @@ const Navbar: React.FC = () => {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* ---------- Right: about · search · language ---------- */}
@@ -146,8 +191,27 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* ---------- Mobile drawer ---------- */}
-      <div className={`lg:hidden ${isOpen ? 'block' : 'hidden'}`}>
-        <div className="space-y-1 border-t border-gray-200 bg-white px-2 pb-4 pt-2">
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/20 transition-opacity duration-[var(--dur-base)] lg:hidden ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        onClick={closeMenu}
+        aria-hidden
+      />
+      <div
+        className={`fixed right-0 top-0 z-50 h-full w-72 overflow-y-auto bg-white shadow-xl transition-transform duration-[var(--dur-base)] ease-[var(--ease-out-expo)] lg:hidden ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+          <span className="text-sm font-bold text-gray-900">Menu</span>
+          <button
+            type="button"
+            onClick={closeMenu}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="space-y-1 px-2 pb-4 pt-2">
           {mainNavigation.map(item => (
             <div key={item.label}>
               <button

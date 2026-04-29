@@ -212,6 +212,43 @@
   }
 }
 
+/* ── Footer link underline — left-to-right reveal on hover ────────── */
+.footer-link {
+  background-image: linear-gradient(var(--color-primary-200), var(--color-primary-200));
+  background-size: 0% 1px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  transition: background-size 200ms var(--ease-out-quart), color 200ms;
+}
+
+.footer-link:hover {
+  background-size: 100% 1px;
+}
+
+/* ── Route transition (view-transition API) ──────────────────────────
+ * Cross-fade on navigation for browsers that support it. Falls back
+ * gracefully — no visible effect where unsupported.
+ * -------------------------------------------------------------------- */
+::view-transition-old(root) {
+  animation: fade-out 200ms var(--ease-in-out-cubic) both;
+}
+
+::view-transition-new(root) {
+  animation: fade-in-vt 200ms var(--ease-in-out-cubic) both;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in-vt {
+  from {
+    opacity: 0;
+  }
+}
+
 /* Checklist styling */
 .task-list-item {
   @apply text-base text-gray-700 leading-relaxed relative flex items-start gap-3 font-sans rounded-md mb-5 transition-all duration-200 border border-transparent cursor-pointer items-center;

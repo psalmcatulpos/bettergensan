@@ -99,7 +99,7 @@ const SOCIAL_LINKS = [
 
 const FooterLinkItem: React.FC<{ link: FooterLink }> = ({ link }) => {
   const className =
-    'text-sm text-gray-400 hover:text-white transition-colors';
+    'footer-link text-sm text-gray-400 hover:text-white transition-colors duration-[200ms]';
   if (link.external) {
     return (
       <a
