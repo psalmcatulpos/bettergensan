@@ -154,6 +154,7 @@ const Jobs: React.FC = () => {
   // ----- Government data -----
   const [govJobs, setGovJobs] = useState<GovJob[]>([]);
   const [govLoading, setGovLoading] = useState(true);
+  const [govQuery, setGovQuery] = useState('');
   const [closing, setClosing] = useState<ClosingFilter>('all');
   const [eligibility, setEligibility] = useState<EligibilityFilter>('any');
 
@@ -213,12 +214,20 @@ const Jobs: React.FC = () => {
 
   // ----- Government filter pipeline -----
   const filteredGov = useMemo(() => {
-    const filtered = filterGovJobs(govJobs, {
+    let out = filterGovJobs(govJobs, {
       closingWithinDays: CLOSING_DAYS[closing],
       eligibility,
     });
-    return sortGovJobs(filtered);
-  }, [govJobs, closing, eligibility]);
+    const gq = govQuery.trim().toLowerCase();
+    if (gq) {
+      out = out.filter(j => {
+        const hay =
+          `${j.position} ${j.place_of_assignment} ${j.eligibility}`.toLowerCase();
+        return hay.includes(gq);
+      });
+    }
+    return sortGovJobs(out);
+  }, [govJobs, closing, eligibility, govQuery]);
 
   const hasPrivateFilters =
     query.trim().length > 0 || source !== 'all' || posted !== 'any';
@@ -230,9 +239,11 @@ const Jobs: React.FC = () => {
     setSort('newest');
   };
 
-  const hasGovFilters = closing !== 'all' || eligibility !== 'any';
+  const hasGovFilters =
+    govQuery.trim().length > 0 || closing !== 'all' || eligibility !== 'any';
 
   const resetGovFilters = () => {
+    setGovQuery('');
     setClosing('all');
     setEligibility('any');
   };
@@ -368,6 +379,8 @@ const Jobs: React.FC = () => {
         {activeTab === 'gov' && (
           <>
             <GovToolbar
+              query={govQuery}
+              onQuery={setGovQuery}
               closing={closing}
               onClosing={setClosing}
               eligibility={eligibility}
@@ -511,14 +524,14 @@ const PrivateToolbar: React.FC<PrivateToolbarProps> = ({
 }) => {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-3">
-      <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus-within:border-primary-300 focus-within:ring-1 focus-within:ring-primary-300">
-        <Search className="h-4 w-4 shrink-0 text-gray-400" />
+      <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus-within:border-primary-300 focus-within:ring-1 focus-within:ring-primary-300">
+        <Search className="h-3.5 w-3.5 shrink-0 text-gray-400" />
         <input
           type="text"
           value={query}
           onChange={e => onQuery(e.target.value)}
           placeholder="Search by title, skill, or company…"
-          className="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+          className="w-full bg-transparent text-[13px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
           aria-label="Search jobs"
           autoComplete="off"
         />
@@ -573,14 +586,39 @@ const PrivateToolbar: React.FC<PrivateToolbarProps> = ({
 // =============================================================================
 
 const GovToolbar: React.FC<{
+  query: string;
+  onQuery: (v: string) => void;
   closing: ClosingFilter;
   onClosing: (v: ClosingFilter) => void;
   eligibility: EligibilityFilter;
   onEligibility: (v: EligibilityFilter) => void;
-}> = ({ closing, onClosing, eligibility, onEligibility }) => {
+}> = ({ query, onQuery, closing, onClosing, eligibility, onEligibility }) => {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-3">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus-within:border-primary-300 focus-within:ring-1 focus-within:ring-primary-300">
+        <Search className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+        <input
+          type="text"
+          value={query}
+          onChange={e => onQuery(e.target.value)}
+          placeholder="Search by position, office, or eligibility…"
+          className="w-full bg-transparent text-[13px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
+          aria-label="Search government jobs"
+          autoComplete="off"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => onQuery('')}
+            aria-label="Clear search"
+            className="flex h-5 w-5 items-center justify-center rounded text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+
+      <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-gray-400">
           <ListFilter className="h-3 w-3" />
           Filters
