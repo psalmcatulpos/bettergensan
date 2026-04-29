@@ -17,3 +17,25 @@ export interface NavigationItem {
   href: string;
   children?: NavigationItem[];
 }
+
+export interface GovJob {
+  id: string;
+  position: string;
+  plantilla_item_no: string;
+  salary_grade: number;
+  monthly_salary: number;
+  place_of_assignment: string;
+  evaluator_email: string | null;
+  education: string;
+  training: string;
+  experience: string;
+  eligibility: string;
+  competency: string;
+  posting_date: string;
+  closing_date: string;
+  source_url: string;
+  apply_url: string;
+  first_seen_at: string;
+  last_seen_at: string;
+  missing_from_source: boolean;
+}

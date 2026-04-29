@@ -89,6 +89,72 @@ export type Database = {
         }
         Relationships: []
       }
+      gov_jobs_cache: {
+        Row: {
+          id: string
+          position: string
+          plantilla_item_no: string
+          salary_grade: number
+          monthly_salary: number
+          place_of_assignment: string
+          evaluator_email: string | null
+          education: string
+          training: string
+          experience: string
+          eligibility: string
+          competency: string
+          posting_date: string
+          closing_date: string
+          source_url: string
+          apply_url: string
+          first_seen_at: string
+          last_seen_at: string
+          missing_from_source: boolean
+        }
+        Insert: {
+          id: string
+          position: string
+          plantilla_item_no: string
+          salary_grade: number
+          monthly_salary: number
+          place_of_assignment: string
+          evaluator_email?: string | null
+          education: string
+          training: string
+          experience: string
+          eligibility: string
+          competency: string
+          posting_date: string
+          closing_date: string
+          source_url: string
+          apply_url: string
+          first_seen_at?: string
+          last_seen_at?: string
+          missing_from_source?: boolean
+        }
+        Update: {
+          id?: string
+          position?: string
+          plantilla_item_no?: string
+          salary_grade?: number
+          monthly_salary?: number
+          place_of_assignment?: string
+          evaluator_email?: string | null
+          education?: string
+          training?: string
+          experience?: string
+          eligibility?: string
+          competency?: string
+          posting_date?: string
+          closing_date?: string
+          source_url?: string
+          apply_url?: string
+          first_seen_at?: string
+          last_seen_at?: string
+          missing_from_source?: boolean
+        }
+        Relationships: []
+      }
       infrastructure_projects: {
         Row: {
           id: string
