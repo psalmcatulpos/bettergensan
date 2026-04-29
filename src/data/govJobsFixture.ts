@@ -1,7 +1,7 @@
 import type { GovJob } from '../types';
 
 const HRMDO_BASE = 'https://gensantos.gov.ph/city-human-resource-management-and-development-office/';
-const HRMDO_APPLY = 'https://gensantos.gov.ph/hrmdo-apply/';
+const HRMDO_APPLY = 'https://hrmdo.gensantos.gov.ph/index.php/Careers/Apply';
 
 export const GOV_JOBS_FIXTURE: GovJob[] = [
   // ── Batch 1 — scraped 2026-04-14 ──────────────────────────────────────
