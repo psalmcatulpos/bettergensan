@@ -171,7 +171,8 @@ const JobsNearYou = () => {
 const fmtSalary = (n: number) =>
   '₱' + n.toLocaleString('en-PH', { maximumFractionDigits: 0 });
 
-const fmtClosingDate = (iso: string) => {
+const fmtClosingDate = (iso: string | null) => {
+  if (!iso) return 'No date';
   const d = new Date(iso);
   const now = new Date();
   const sameYear = d.getFullYear() === now.getFullYear();
@@ -182,7 +183,8 @@ const fmtClosingDate = (iso: string) => {
   });
 };
 
-const isClosingSoon = (iso: string) => {
+const isClosingSoon = (iso: string | null) => {
+  if (!iso) return false;
   const diff = new Date(iso).getTime() - Date.now();
   return diff >= 0 && diff <= 7 * DAY_MS;
 };
@@ -223,7 +225,7 @@ const GovJobRow: React.FC<{ job: GovJob }> = ({ job }) => {
                 : 'border-gray-200 bg-gray-50 text-gray-500'
             }`}
           >
-            Closes {fmtClosingDate(job.closing_date)}
+            {job.closing_date ? `Closes ${fmtClosingDate(job.closing_date)}` : 'No closing date'}
           </span>
           <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-gray-500 transition-colors duration-[var(--dur-fast)] group-hover:text-primary-700">
             Apply

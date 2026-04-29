@@ -48,6 +48,7 @@ export function filterGovJobs(
     const now = Date.now();
     const cutoff = now + filters.closingWithinDays * 24 * 60 * 60 * 1000;
     result = result.filter(j => {
+      if (!j.closing_date) return false;
       const close = new Date(j.closing_date).getTime();
       return close >= now && close <= cutoff;
     });
@@ -68,11 +69,12 @@ export function filterGovJobs(
 
 export function sortGovJobs(jobs: GovJob[]): GovJob[] {
   return [...jobs].sort((a, b) => {
-    const closeDiff =
-      new Date(a.closing_date).getTime() - new Date(b.closing_date).getTime();
-    if (closeDiff !== 0) return closeDiff;
-    return (
-      new Date(b.posting_date).getTime() - new Date(a.posting_date).getTime()
-    );
+    // Null closing dates sort last
+    const ca = a.closing_date ? new Date(a.closing_date).getTime() : Infinity;
+    const cb = b.closing_date ? new Date(b.closing_date).getTime() : Infinity;
+    if (ca !== cb) return ca - cb;
+    const pa = a.posting_date ? new Date(a.posting_date).getTime() : 0;
+    const pb = b.posting_date ? new Date(b.posting_date).getTime() : 0;
+    return pb - pa;
   });
 }

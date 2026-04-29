@@ -31,8 +31,8 @@ export interface GovJob {
   experience: string;
   eligibility: string;
   competency: string;
-  posting_date: string;
-  closing_date: string;
+  posting_date: string | null;
+  closing_date: string | null;
   source_url: string;
   apply_url: string;
   first_seen_at: string;

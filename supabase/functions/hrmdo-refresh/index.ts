@@ -44,8 +44,8 @@ interface RawVacancy {
   experience: string;
   eligibility: string;
   competency: string;
-  posting_date: string;
-  closing_date: string;
+  posting_date: string | null;
+  closing_date: string | null;
 }
 
 function parseVacancies(html: string): RawVacancy[] {
@@ -76,10 +76,18 @@ function parseVacancies(html: string): RawVacancy[] {
 
     const sg = parseInt(attr('salarygrade'), 10);
     const salary = parseFloat(attr('monthlysalary'));
-    const postingDate = attr('postingdate');
-    const closingDate = attr('closingdate');
+    const rawPostingDate = attr('postingdate');
+    const rawClosingDate = attr('closingdate');
 
-    if (!postingDate || !closingDate) continue;
+    // HRMDO uses 0000-00-00 for blank dates — treat as null
+    const postingDate =
+      rawPostingDate && !rawPostingDate.startsWith('0000')
+        ? rawPostingDate
+        : null;
+    const closingDate =
+      rawClosingDate && !rawClosingDate.startsWith('0000')
+        ? rawClosingDate
+        : null;
 
     vacancies.push({
       id,
@@ -115,10 +123,11 @@ function decodeHtmlEntities(s: string): string {
 // --- Hash for dedup ---
 
 async function hashId(
+  hrmdoId: string,
   plantillaItemNo: string,
-  postingDate: string,
+  postingDate: string | null,
 ): Promise<string> {
-  const raw = `${plantillaItemNo}|${postingDate}`;
+  const raw = `${hrmdoId}|${plantillaItemNo}|${postingDate ?? ''}`;
   const buf = await crypto.subtle.digest(
     'SHA-1',
     new TextEncoder().encode(raw),
@@ -137,7 +146,7 @@ async function mapToRows(
   const rows: Record<string, unknown>[] = [];
 
   for (const v of vacancies) {
-    const id = await hashId(v.plantilla_item_no, v.posting_date);
+    const id = await hashId(v.id, v.plantilla_item_no, v.posting_date);
     rows.push({
       id,
       position: v.position,
