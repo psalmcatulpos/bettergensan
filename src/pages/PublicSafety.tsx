@@ -111,7 +111,7 @@ const SERVICES: Service[] = [
     law: 'EO 56, s. 2018 (911 nationwide rollout)',
     benefit: 'Single number for all emergencies, 24/7 dispatch',
     who: 'Anyone in the Philippines',
-    href: 'https://911.gov.ph/',
+    href: 'tel:911',
     cta: 'Call 911',
     agency: 'NEHRC',
   },
@@ -401,15 +401,6 @@ const PublicSafety: React.FC = () => {
                 >
                   <Phone className="h-3.5 w-3.5" />
                   Call 911
-                </a>
-                <a
-                  href="https://911.gov.ph/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-primary-400 hover:bg-primary-50 hover:text-primary-700"
-                >
-                  Visit 911.gov.ph
-                  <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               </div>
             </div>
