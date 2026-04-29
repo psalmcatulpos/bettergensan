@@ -11,7 +11,10 @@ import {
   Briefcase,
   Building2,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
   Clock,
+  ExternalLink,
   Hash,
   Landmark,
   ListFilter,
@@ -96,11 +99,11 @@ const ELIGIBILITY_OPTIONS: { value: EligibilityFilter; label: string }[] = [
 type SalaryGradeFilter = 'any' | '1-8' | '9-15' | '16-23' | '24+';
 
 const SALARY_GRADE_OPTIONS: { value: SalaryGradeFilter; label: string }[] = [
-  { value: 'any', label: 'Any SG' },
-  { value: '1-8', label: 'SG 1–8' },
-  { value: '9-15', label: 'SG 9–15' },
-  { value: '16-23', label: 'SG 16–23' },
-  { value: '24+', label: 'SG 24+' },
+  { value: 'any', label: 'Any Salary Grade' },
+  { value: '1-8', label: 'Salary Grade 1–8' },
+  { value: '9-15', label: 'Salary Grade 9–15' },
+  { value: '16-23', label: 'Salary Grade 16–23' },
+  { value: '24+', label: 'Salary Grade 24+' },
 ];
 
 const SALARY_GRADE_RANGE: Record<SalaryGradeFilter, [number, number] | null> = {
@@ -120,6 +123,9 @@ const CLOSING_DAYS: Record<ClosingFilter, number | undefined> = {
 // =============================================================================
 // Page
 // =============================================================================
+
+const PRIVATE_PAGE_SIZE = 20;
+const GOV_PAGE_SIZE = 20;
 
 type TabKey = 'private' | 'gov';
 
@@ -177,6 +183,13 @@ const Jobs: React.FC = () => {
   const [closing, setClosing] = useState<ClosingFilter>('all');
   const [eligibility, setEligibility] = useState<EligibilityFilter>('any');
   const [salaryGrade, setSalaryGrade] = useState<SalaryGradeFilter>('any');
+
+  // Pagination
+  const [privatePage, setPrivatePage] = useState(1);
+  const [govPage, setGovPage] = useState(1);
+
+  // Detail modal
+  const [selectedGovJob, setSelectedGovJob] = useState<GovJob | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -255,8 +268,26 @@ const Jobs: React.FC = () => {
     return sortGovJobs(out);
   }, [govJobs, closing, eligibility, salaryGrade, govQuery]);
 
+  // Paginated slices
+  const privateTotalPages = Math.max(1, Math.ceil(filteredPrivate.length / PRIVATE_PAGE_SIZE));
+  const privatePageClamped = Math.min(privatePage, privateTotalPages);
+  const privateSlice = filteredPrivate.slice(
+    (privatePageClamped - 1) * PRIVATE_PAGE_SIZE,
+    privatePageClamped * PRIVATE_PAGE_SIZE,
+  );
+
+  const govTotalPages = Math.max(1, Math.ceil(filteredGov.length / GOV_PAGE_SIZE));
+  const govPageClamped = Math.min(govPage, govTotalPages);
+  const govSlice = filteredGov.slice(
+    (govPageClamped - 1) * GOV_PAGE_SIZE,
+    govPageClamped * GOV_PAGE_SIZE,
+  );
+
   const hasPrivateFilters =
     query.trim().length > 0 || source !== 'all' || posted !== 'any';
+
+  // Reset private page when filters change
+  useEffect(() => setPrivatePage(1), [query, source, posted, sort]);
 
   const resetPrivateFilters = () => {
     setQuery('');
@@ -270,6 +301,9 @@ const Jobs: React.FC = () => {
     closing !== 'all' ||
     eligibility !== 'any' ||
     salaryGrade !== 'any';
+
+  // Reset gov page when filters change
+  useEffect(() => setGovPage(1), [govQuery, closing, eligibility, salaryGrade]);
 
   const resetGovFilters = () => {
     setGovQuery('');
@@ -384,11 +418,20 @@ const Jobs: React.FC = () => {
                 hasFilters={hasPrivateFilters}
               />
             ) : (
-              <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
-                {filteredPrivate.map(job => (
-                  <JobRowCard key={job.id} job={job} />
-                ))}
-              </ul>
+              <>
+                <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                  {privateSlice.map(job => (
+                    <JobRowCard key={job.id} job={job} />
+                  ))}
+                </ul>
+                {privateTotalPages > 1 && (
+                  <Pagination
+                    page={privatePageClamped}
+                    totalPages={privateTotalPages}
+                    onPage={setPrivatePage}
+                  />
+                )}
+              </>
             )}
 
             {!privateLoading && !privateError && jobs.length > 0 && (
@@ -466,11 +509,31 @@ const Jobs: React.FC = () => {
                 )}
               </div>
             ) : (
-              <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
-                {filteredGov.map(job => (
-                  <GovJobRowCard key={job.id} job={job} />
-                ))}
-              </ul>
+              <>
+                <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                  {govSlice.map(job => (
+                    <GovJobRowCard
+                      key={job.id}
+                      job={job}
+                      onSelect={setSelectedGovJob}
+                    />
+                  ))}
+                </ul>
+                {govTotalPages > 1 && (
+                  <Pagination
+                    page={govPageClamped}
+                    totalPages={govTotalPages}
+                    onPage={setGovPage}
+                  />
+                )}
+              </>
+            )}
+
+            {selectedGovJob && (
+              <GovJobDetailModal
+                job={selectedGovJob}
+                onClose={() => setSelectedGovJob(null)}
+              />
             )}
 
             <p className="mt-4 text-center text-[11px] text-gray-400">
@@ -824,11 +887,14 @@ const isClosingSoon = (iso: string | null) => {
   return diff >= 0 && diff <= 7 * DAY_MS;
 };
 
-const GovJobRowCard: React.FC<{ job: GovJob }> = ({ job }) => {
+const GovJobRowCard: React.FC<{
+  job: GovJob;
+  onSelect: (job: GovJob) => void;
+}> = ({ job, onSelect }) => {
   const soon = isClosingSoon(job.closing_date);
 
   return (
-    <li className="group relative bg-white transition hover:bg-primary-50/30">
+    <li className="group relative cursor-pointer bg-white transition hover:bg-primary-50/30" onClick={() => onSelect(job)}>
       <div className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
         <div className="min-w-0 flex-1">
           <h3 className="line-clamp-1 text-sm font-semibold text-gray-900 sm:text-[15px]">
@@ -839,7 +905,7 @@ const GovJobRowCard: React.FC<{ job: GovJob }> = ({ job }) => {
           </p>
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">
-              SG {job.salary_grade}
+              Salary Grade {job.salary_grade}
             </span>
             <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">
               {fmtSalary(job.monthly_salary)}
@@ -866,6 +932,7 @@ const GovJobRowCard: React.FC<{ job: GovJob }> = ({ job }) => {
             href={job.apply_url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
             className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-gray-700 transition-[border-color,background-color,color] duration-[var(--dur-fast)] hover:border-primary-400 hover:bg-primary-600 hover:text-white"
           >
             Apply
@@ -934,6 +1001,227 @@ const ErrorState: React.FC<{ message: string }> = ({ message }) => {
   return (
     <div className="rounded-xl border border-error-200 bg-error-50 p-4 text-sm text-error-800">
       <strong className="font-semibold">Couldn't load jobs.</strong> {message}
+    </div>
+  );
+};
+
+// =============================================================================
+// Pagination
+// =============================================================================
+
+interface PaginationProps {
+  page: number;
+  totalPages: number;
+  onPage: (p: number) => void;
+}
+
+const Pagination = ({ page, totalPages, onPage }: PaginationProps) => {
+  const pages: (number | 'gap')[] = [];
+  const push = (n: number) => {
+    if (!pages.includes(n)) pages.push(n);
+  };
+  push(1);
+  for (let p = page - 2; p <= page + 2; p++) {
+    if (p > 1 && p < totalPages) push(p);
+  }
+  if (totalPages > 1) push(totalPages);
+  const withGaps: (number | 'gap')[] = [];
+  pages.forEach((p, i) => {
+    if (i > 0) {
+      const prev = pages[i - 1] as number;
+      if ((p as number) - prev > 1) withGaps.push('gap');
+    }
+    withGaps.push(p);
+  });
+
+  const btn =
+    'inline-flex h-7 w-7 items-center justify-center rounded border border-gray-200 text-gray-500 transition hover:border-primary-200 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:border-gray-200';
+
+  return (
+    <nav
+      aria-label="Pagination"
+      className="mt-4 flex flex-wrap items-center justify-center gap-1"
+    >
+      <button
+        type="button"
+        onClick={() => onPage(page - 1)}
+        disabled={page <= 1}
+        className={btn}
+        aria-label="Previous page"
+      >
+        <ChevronLeft className="h-3.5 w-3.5" />
+      </button>
+
+      {withGaps.map((p, i) =>
+        p === 'gap' ? (
+          <span key={`gap-${i}`} className="px-0.5 text-[11px] text-gray-400" aria-hidden>
+            …
+          </span>
+        ) : (
+          <button
+            key={p}
+            type="button"
+            onClick={() => onPage(p)}
+            aria-current={p === page ? 'page' : undefined}
+            className={`inline-flex h-7 min-w-7 items-center justify-center rounded border px-1.5 text-[11px] font-medium transition ${
+              p === page
+                ? 'border-primary-700 bg-primary-600 text-white'
+                : 'border-gray-200 text-gray-600 hover:border-primary-200 hover:bg-primary-50'
+            }`}
+          >
+            {p}
+          </button>
+        ),
+      )}
+
+      <button
+        type="button"
+        onClick={() => onPage(page + 1)}
+        disabled={page >= totalPages}
+        className={btn}
+        aria-label="Next page"
+      >
+        <ChevronRight className="h-3.5 w-3.5" />
+      </button>
+    </nav>
+  );
+};
+
+// =============================================================================
+// Government job detail modal
+// =============================================================================
+
+const GovJobDetailModal: React.FC<{
+  job: GovJob;
+  onClose: () => void;
+}> = ({ job, onClose }) => {
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4"
+      onClick={e => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="relative max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-xl">
+        <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-5 py-3">
+          <h2 className="text-base font-bold text-gray-900">
+            Vacancy Details
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="space-y-4 px-5 py-4">
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">{job.position}</h3>
+            <p className="mt-0.5 text-sm text-gray-500">
+              {job.place_of_assignment}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <DetailField label="Plantilla Item No." value={job.plantilla_item_no} />
+            <DetailField label="Salary Grade" value={String(job.salary_grade)} />
+            <DetailField
+              label="Monthly Salary"
+              value={fmtSalary(job.monthly_salary)}
+            />
+            <DetailField
+              label="Evaluator Email"
+              value={job.evaluator_email}
+            />
+          </div>
+
+          <div className="space-y-3 border-t border-gray-100 pt-4">
+            <DetailField label="Education" value={job.education} full />
+            <DetailField label="Training" value={job.training} full />
+            <DetailField label="Experience" value={job.experience} full />
+            <DetailField label="Eligibility" value={job.eligibility} full />
+            <DetailField label="Competency" value={job.competency} full />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 border-t border-gray-100 pt-4">
+            <DetailField
+              label="Posting Date"
+              value={
+                job.posting_date
+                  ? new Date(job.posting_date).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : null
+              }
+            />
+            <DetailField
+              label="Closing Date"
+              value={
+                job.closing_date
+                  ? new Date(job.closing_date).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : null
+              }
+            />
+          </div>
+        </div>
+
+        <div className="sticky bottom-0 flex items-center gap-2 border-t border-gray-200 bg-gray-50 px-5 py-3">
+          <a
+            href={job.apply_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700"
+          >
+            Apply on HRMDO Portal
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-50"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DetailField: React.FC<{
+  label: string;
+  value: string | null | undefined;
+  full?: boolean;
+}> = ({ label, value, full }) => {
+  const display = value?.trim() || null;
+  return (
+    <div className={full ? 'col-span-2' : ''}>
+      <dt className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+        {label}
+      </dt>
+      <dd
+        className={`mt-0.5 text-sm ${display ? 'text-gray-900' : 'italic text-gray-400'}`}
+      >
+        {display ?? 'Not specified'}
+      </dd>
     </div>
   );
 };

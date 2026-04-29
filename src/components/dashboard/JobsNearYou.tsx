@@ -26,6 +26,7 @@ const JobsNearYou = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [govJobs, setGovJobs] = useState<GovJob[]>([]);
+  const [govTotal, setGovTotal] = useState(0);
   const [govLoading, setGovLoading] = useState(true);
 
   useEffect(() => {
@@ -56,7 +57,9 @@ const JobsNearYou = () => {
   useEffect(() => {
     (async () => {
       const data = await fetchGovJobs();
-      setGovJobs(sortGovJobs(data).slice(0, 3));
+      const sorted = sortGovJobs(data);
+      setGovTotal(sorted.length);
+      setGovJobs(sorted.slice(0, 3));
       setGovLoading(false);
     })();
   }, []);
@@ -100,7 +103,7 @@ const JobsNearYou = () => {
                 <Landmark className="h-3.5 w-3.5 text-primary-600" />
                 Government vacancies
                 <span className="rounded-full bg-primary-100 px-1.5 py-0.5 text-[10px] font-semibold text-primary-700">
-                  {govJobs.length}
+                  {govTotal}
                 </span>
               </h3>
               <Link
@@ -208,7 +211,7 @@ const GovJobRow: React.FC<{ job: GovJob }> = ({ job }) => {
             <span>{job.place_of_assignment}</span>
             <span className="text-gray-300">·</span>
             <span className="font-medium text-gray-600">
-              SG {job.salary_grade}
+              Salary Grade {job.salary_grade}
             </span>
             <span className="text-gray-300">·</span>
             <span className="font-medium text-gray-600">
