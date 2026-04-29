@@ -9,7 +9,6 @@
 
 import type { GovJob } from '../types';
 import { supabase } from './supabase';
-import { GOV_JOBS_FIXTURE } from '../data/govJobsFixture';
 
 export async function fetchGovJobs(): Promise<GovJob[]> {
   const { data, error } = await supabase
@@ -20,11 +19,11 @@ export async function fetchGovJobs(): Promise<GovJob[]> {
     .eq('missing_from_source', false)
     .order('closing_date', { ascending: true });
 
-  if (error || !data || data.length === 0) {
-    // Fall back to fixtures until the scraper has run at least once
-    return GOV_JOBS_FIXTURE;
+  if (error) {
+    console.warn('[govJobsSource] fetchGovJobs failed', error.message);
+    return [];
   }
-  return data as GovJob[];
+  return (data ?? []) as GovJob[];
 }
 
 export type EligibilityFilter =
