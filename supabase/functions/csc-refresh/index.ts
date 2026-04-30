@@ -17,7 +17,7 @@ const SOURCE_SLUG = 'csc-gensan';
 const CSC_URL = 'https://csc.gov.ph/career/inc/server_processing.php';
 const PAGE_SIZE = 1000;
 const PAGE_DELAY_MS = 600;
-const MAX_RECORDS_SANITY = 20000;
+const MAX_RECORDS_SANITY = 150000;
 const MAX_RETRIES = 3;
 
 const USER_AGENT =
@@ -62,7 +62,7 @@ async function fetchPage(
     draw: String(draw),
     start: String(start),
     length: String(PAGE_SIZE),
-    'search[value]': '',
+    'search[value]': 'General Santos',
     'order[0][column]': '4',
     'order[0][dir]': 'desc',
   });
