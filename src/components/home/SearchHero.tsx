@@ -96,9 +96,9 @@ const INDEX: SearchEntry[] = [
   },
   {
     icon: Globe,
-    label: 'Online Services (eBOSS)',
+    label: 'Online Services (Filipizen)',
     group: 'Services',
-    href: '/eboss',
+    href: '/services/business#apply-online',
     description:
       'Apply for permits, pay taxes, and track applications online via Filipizen.',
     keywords:

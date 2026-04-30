@@ -22,6 +22,7 @@ import {
   Flame,
   Globe,
   HandCoins,
+  HardHat,
   Hash,
   IdCard,
   Landmark,
@@ -35,6 +36,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
@@ -306,41 +308,41 @@ const RESOURCES: Resource[] = [
   },
 ];
 
-// ---------- Online filing (Filipizen) ----------
+// ---------- Online services (Filipizen) — all 14 verified transactions ----------
 
-interface OnlineAction {
+type OnlineCategory = 'Business' | 'Tax & Payments' | 'Building & Occupancy' | 'Professional';
+
+interface OnlineService {
   icon: LucideIcon;
   title: string;
   description: string;
   href: string;
   cta: string;
+  category: OnlineCategory;
 }
 
-const ONLINE_ACTIONS: OnlineAction[] = [
-  {
-    icon: Briefcase,
-    title: 'New Business Application',
-    description:
-      'Register a new business and apply for your first Mayor\'s Permit in General Santos City online.',
-    href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/newbusiness',
-    cta: 'Start application',
-  },
-  {
-    icon: RefreshCw,
-    title: 'Renew Business Permit',
-    description:
-      'Renew your annual Mayor\'s Permit and pay Local Business Tax online.',
-    href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/renewbusiness',
-    cta: 'Renew now',
-  },
-  {
-    icon: Receipt,
-    title: 'Pay Existing Bill',
-    description:
-      'Look up and pay an outstanding BPLO billing statement online.',
-    href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/billing',
-    cta: 'Pay bill',
-  },
+const ONLINE_CATEGORIES: OnlineCategory[] = [
+  'Business',
+  'Tax & Payments',
+  'Building & Occupancy',
+  'Professional',
+];
+
+const ONLINE_SERVICES: OnlineService[] = [
+  { icon: Briefcase, title: 'New Business Application', description: "Apply for your first Mayor's Permit online.", href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/newbusiness', cta: 'Apply now', category: 'Business' },
+  { icon: RefreshCw, title: 'Renew Business Permit', description: "Renew your annual Mayor's Permit and pay Local Business Tax.", href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/renewbusiness', cta: 'Renew now', category: 'Business' },
+  { icon: Receipt, title: 'Business Billing & Payment', description: 'Pay outstanding BPLO billing statements.', href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/billing', cta: 'Pay bill', category: 'Business' },
+  { icon: Landmark, title: 'Realty Tax (RPT) Payment', description: 'Pay annual Real Property Tax online.', href: 'https://www.filipizen.com/partners/gensan_gensan/rptis/billing', cta: 'Pay RPT', category: 'Tax & Payments' },
+  { icon: Receipt, title: 'Online Payment Order', description: 'Process a general payment order for city services.', href: 'https://www.filipizen.com/partners/gensan_gensan/po/billing', cta: 'Pay now', category: 'Tax & Payments' },
+  { icon: ClipboardList, title: 'Building Permit Requirements', description: 'View documentary requirements for a building permit.', href: 'https://www.filipizen.com/partners/gensan_gensan/obo/requirement/building', cta: 'View', category: 'Building & Occupancy' },
+  { icon: HardHat, title: 'Building Permit Application', description: 'File a building permit application online.', href: 'https://www.filipizen.com/partner/gensan_gensan/obo/bldgpermit', cta: 'Apply', category: 'Building & Occupancy' },
+  { icon: FileText, title: 'Occupancy Certificate Requirements', description: 'View requirements for a certificate of occupancy.', href: 'https://www.filipizen.com/partners/gensan_gensan/obo/requirement/occupancy', cta: 'View', category: 'Building & Occupancy' },
+  { icon: FileText, title: 'Occupancy Certificate Application', description: 'Apply for a certificate of occupancy online.', href: 'https://www.filipizen.com/partner/gensan_gensan/obo/occupancypermit', cta: 'Apply', category: 'Building & Occupancy' },
+  { icon: Receipt, title: 'OSCP Billing & Payment', description: 'Pay outstanding OBO/OSCP billing statements.', href: 'https://www.filipizen.com/partners/gensan_gensan/obo/obobilling', cta: 'Pay', category: 'Building & Occupancy' },
+  { icon: ClipboardList, title: 'Application Tracking', description: 'Track building permit or occupancy application status.', href: 'https://www.filipizen.com/partner/gensan_gensan/obo/apptracking', cta: 'Track', category: 'Building & Occupancy' },
+  { icon: IdCard, title: 'Pay PTR (Professional Tax)', description: 'Pay your Professional Tax Receipt online.', href: 'https://www.filipizen.com/partner/gensan_gensan/obo/ptrbilling', cta: 'Pay PTR', category: 'Professional' },
+  { icon: IdCard, title: 'Register Professional', description: 'Register as a licensed professional in GenSan.', href: 'https://www.filipizen.com/partner/gensan_gensan/obo/registerprofessionals', cta: 'Register', category: 'Professional' },
+  { icon: IdCard, title: 'Update Professional Record', description: 'Update your professional registration details.', href: 'https://www.filipizen.com/partner/gensan_gensan/obo/updateprofessional', cta: 'Update', category: 'Professional' },
 ];
 
 const PREFLIGHT_CHECKLIST = [
@@ -384,6 +386,7 @@ const RENEWAL_STEPS: RenewalStep[] = [
 ];
 
 const Business: React.FC = () => {
+  const [onlineCat, setOnlineCat] = useState<OnlineCategory>('Business');
   const heroRef = useReveal();
   const stepsHeadRef = useReveal();
   const stepsGridRef = useReveal<HTMLOListElement>();
@@ -640,69 +643,96 @@ const Business: React.FC = () => {
         </div>
       </PageSection>
 
-      {/* ---------- Apply Online via Filipizen ---------- */}
+      {/* ---------- Online Services via Filipizen (14 transactions) ---------- */}
       <PageSection background="tinted" tier="secondary" id="apply-online">
         <div ref={onlineHeadRef} className="reveal">
         <SectionHeading
           tier="secondary"
           icon={Globe}
-          eyebrow="Skip the line"
-          title="Apply Online via Filipizen"
-          helper="General Santos City residents can now apply for, renew, and pay their Mayor's Permit online through the Filipizen portal. Paano mag-apply ng business permit online sa GenSan — sundan lang ang mga steps sa baba."
+          eyebrow="Skip the line · 14 services"
+          title="Online Services via Filipizen"
+          helper="Apply, renew, and pay online — business permits, real property tax, building permits, and professional registrations. All transactions route to the official Filipizen portal."
         />
         </div>
 
-        <div ref={onlineGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
-          {ONLINE_ACTIONS.map(a => (
-            <article
-              key={a.title}
-              className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04] transition-[border-color,transform] duration-[var(--dur-fast)] hover:border-primary-200 motion-safe:hover:-translate-y-px"
-            >
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
-                <a.icon className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-semibold leading-snug text-gray-900">
-                {a.title}
-              </h3>
-              <p className="mt-1.5 flex-grow text-xs leading-relaxed text-gray-600">
-                {a.description}
-              </p>
+        <div ref={onlineGridRef} className="reveal" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+          {/* Category tabs */}
+          <div className="mb-4 flex flex-wrap gap-1.5">
+            {ONLINE_CATEGORIES.map(cat => {
+              const count = ONLINE_SERVICES.filter(s => s.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setOnlineCat(cat)}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-[background-color,color,border-color] duration-[var(--dur-fast)] ${
+                    onlineCat === cat
+                      ? 'bg-primary-600 text-white'
+                      : 'border border-gray-200 bg-white text-gray-600 hover:border-primary-200 hover:bg-primary-50'
+                  }`}
+                >
+                  {cat}
+                  <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
+                    onlineCat === cat
+                      ? 'bg-white/20 text-white'
+                      : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Service rows for active category */}
+          <div className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+            {ONLINE_SERVICES.filter(s => s.category === onlineCat).map(s => (
               <a
-                href={a.href}
+                key={s.title}
+                href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-1.5 self-start rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-primary-700"
+                className="group flex items-center gap-3 px-4 py-3 transition-colors duration-[var(--dur-fast)] hover:bg-primary-50/30"
               >
-                {a.cta}
-                <ExternalLink className="h-3.5 w-3.5" />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-600 text-white ring-1 ring-primary-700">
+                  <s.icon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-700">
+                    {s.title}
+                  </h4>
+                  <p className="mt-0.5 text-[11px] text-gray-500">{s.description}</p>
+                </div>
+                <span className="hidden shrink-0 items-center gap-1 text-[11px] font-semibold text-primary-700 sm:inline-flex">
+                  {s.cta}
+                  <ExternalLink className="h-3 w-3 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5" />
+                </span>
+                <ExternalLink className="h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-[var(--dur-fast)] group-hover:text-primary-600 sm:hidden" />
               </a>
-            </article>
-          ))}
-        </div>
-
-        {/* Pre-flight checklist */}
-        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04]">
-          <h3 className="mb-3 text-sm font-semibold text-gray-900">
-            Before you start online
-          </h3>
-          <ul className="space-y-2">
-            {PREFLIGHT_CHECKLIST.map(item => (
-              <li
-                key={item}
-                className="flex items-start gap-2 text-sm text-gray-700"
-              >
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
-                <span>{item}</span>
-              </li>
             ))}
-          </ul>
-        </div>
+          </div>
 
-        {/* Fallback note */}
-        <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
-          <strong>Prefer walk-in?</strong> You can still apply or renew in
-          person at the BPLO office in General Santos City. Bring the same
-          documents listed above.
+          {/* Compact checklist + fallback */}
+          <details className="mt-4 rounded-xl border border-gray-200 bg-white">
+            <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-gray-900 hover:text-primary-700">
+              What you need before applying online
+            </summary>
+            <ul className="space-y-1.5 border-t border-gray-100 px-4 py-3">
+              {PREFLIGHT_CHECKLIST.map(item => (
+                <li key={item} className="flex items-start gap-2 text-[13px] text-gray-700">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary-600" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
+
+          <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+            <strong>Prefer walk-in?</strong> You can still apply or renew in
+            person at the relevant city office. Visit the BPLO for business
+            permits, the City Treasurer for tax payments, or the OBO for
+            building permits.
+          </div>
         </div>
 
         {/* ---------- Renewal mini-section ---------- */}

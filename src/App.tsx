@@ -1,6 +1,6 @@
 import { NuqsAdapter } from 'nuqs/adapters/react';
 import { HelmetProvider } from 'react-helmet-async';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import PublicLayout from './components/layout/PublicLayout';
 import ScrollToTop from './components/ui/ScrollToTop';
 import AdminLayout from './components/admin/AdminLayout';
@@ -38,7 +38,6 @@ import Accessibility from './pages/Accessibility';
 import FAQ from './pages/FAQ';
 import Placeholder from './pages/Placeholder';
 import CommandCenter from './pages/CommandCenter';
-import Eboss from './pages/Eboss';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import Sources from './pages/admin/Sources';
@@ -129,7 +128,7 @@ function App() {
                   />
                 }
               />
-              <Route path="/eboss" element={<Eboss />} />
+              <Route path="/eboss" element={<Navigate to="/services/business#apply-online" replace />} />
               <Route path="/services" element={<Services />} />
               {/* Specific service category pages — must come BEFORE the
                   generic /services/:category catchall so curated slugs win.
