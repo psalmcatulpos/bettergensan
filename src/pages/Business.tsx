@@ -130,7 +130,7 @@ const PERMITS: Permit[] = [
     body: 'Annual permit required to operate any business in General Santos City. Apply online through Filipizen or walk in at the BPLO. Renewed every January.',
     issuer: 'BPLO · GenSan',
     href: 'https://www.filipizen.com/partners/gensan_gensan/bpls/newbusiness',
-    cta: 'Apply Online (Filipizen)',
+    cta: 'Apply Online',
     secondaryHref: 'https://gensantos.gov.ph/',
     secondaryCta: 'Apply at BPLO',
     mode: 'Online or in-person',
@@ -471,13 +471,17 @@ const Business: React.FC = () => {
                 in at the BPLO.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <Link
-                  to="/eboss"
+                <a
+                  href="#apply-online"
+                  onClick={e => {
+                    e.preventDefault();
+                    document.getElementById('apply-online')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700"
                 >
                   <Globe className="h-3.5 w-3.5" />
-                  Apply Online (Filipizen)
-                </Link>
+                  Apply Online
+                </a>
                 <a
                   href="https://bnrs.dti.gov.ph/"
                   target="_blank"
