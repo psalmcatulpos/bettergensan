@@ -416,7 +416,7 @@ const Business: React.FC = () => {
               addressRegion: 'Region XII',
               addressCountry: 'PH',
             },
-            telephone: '(083) 552-2986',
+            telephone: '0951 828 1852',
           },
           areaServed: {
             '@type': 'City',
@@ -869,10 +869,10 @@ const Business: React.FC = () => {
             <span>
               <strong>BPLO Hotline:</strong>{' '}
               <a
-                href="tel:+63835522986"
+                href="tel:+639518281852"
                 className="font-semibold text-primary-700 hover:text-primary-800"
               >
-                (083) 552-2986
+                0951 828 1852
               </a>
             </span>
           </div>
