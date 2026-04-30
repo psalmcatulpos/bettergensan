@@ -22,6 +22,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 const JobsNearYou = () => {
   const [rows, setRows] = useState<JobRow[]>([]);
+  const [privateTotal, setPrivateTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +37,7 @@ const JobsNearYou = () => {
       try {
         const data = await refreshAndReadJobs(50, controller.signal);
         if (controller.signal.aborted) return;
+        setPrivateTotal(data.length);
         setRows(data.slice(0, 5));
       } catch (e) {
         if (controller.signal.aborted) return;
@@ -132,7 +134,7 @@ const JobsNearYou = () => {
                 <Briefcase className="h-3.5 w-3.5 text-primary-600" />
                 Private sector
                 <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">
-                  {rows.length}
+                  {privateTotal}
                 </span>
               </h3>
               <Link
