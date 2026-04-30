@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Briefcase, Landmark } from 'lucide-react';
 import PageSection from '../ui/PageSection';
 import SectionHeading from '../ui/SectionHeading';
+import FreshnessBadge from '../ui/FreshnessBadge';
+import SourceHealthFooter from '../ui/SourceHealthFooter';
 import useReveal from '../../hooks/useReveal';
 import {
   cleanLocation,
@@ -15,6 +17,12 @@ import {
   timeAgo,
   type JobRow,
 } from '../../lib/jobsSource';
+import {
+  freshnessFromHealth,
+  aggregateFreshness,
+  readSourceHealth,
+  type FreshnessInfo,
+} from '../../lib/gensanCache';
 import type { GovJob } from '../../types';
 import { fetchGovJobs, sortGovJobs } from '../../lib/govJobsSource';
 
@@ -29,6 +37,10 @@ const JobsNearYou = () => {
   const [govJobs, setGovJobs] = useState<GovJob[]>([]);
   const [govTotal, setGovTotal] = useState(0);
   const [govLoading, setGovLoading] = useState(true);
+
+  const UNKNOWN_FRESHNESS: FreshnessInfo = { tone: 'unknown', ageText: 'never', ageMs: null, lastSuccessAt: null, lastSuccessLabel: 'Loading…' };
+  const [privateFreshness, setPrivateFreshness] = useState<FreshnessInfo>(UNKNOWN_FRESHNESS);
+  const [govFreshness, setGovFreshness] = useState<FreshnessInfo>(UNKNOWN_FRESHNESS);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -54,6 +66,21 @@ const JobsNearYou = () => {
     })();
 
     return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const healthMap = await readSourceHealth([
+        'indeed-jobs', 'linkedin-jobs', 'gensan-hrmdo',
+      ]);
+      setPrivateFreshness(
+        aggregateFreshness([
+          freshnessFromHealth(healthMap['indeed-jobs']),
+          freshnessFromHealth(healthMap['linkedin-jobs']),
+        ]),
+      );
+      setGovFreshness(freshnessFromHealth(healthMap['gensan-hrmdo']));
+    })();
   }, []);
 
   useEffect(() => {
@@ -101,12 +128,13 @@ const JobsNearYou = () => {
         {showGov && (
           <div className="mb-4">
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="flex items-center gap-1.5 text-xs font-semibold text-gray-700">
+              <h3 className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-gray-700">
                 <Landmark className="h-3.5 w-3.5 text-primary-600" />
                 Government vacancies
                 <span className="rounded-full bg-primary-100 px-1.5 py-0.5 text-[10px] font-semibold text-primary-700">
                   {govTotal}
                 </span>
+                <FreshnessBadge tone={govFreshness.tone} ageText={govFreshness.ageText} />
               </h3>
               <Link
                 to="/jobs?tab=gov"
@@ -122,6 +150,13 @@ const JobsNearYou = () => {
                 <GovJobRow key={job.id} job={job} />
               ))}
             </ul>
+
+            <SourceHealthFooter
+              sourceKeys={['gensan-hrmdo']}
+              sourceDomain="hrmdo.gensantos.gov.ph"
+              sourceHref="https://hrmdo.gensantos.gov.ph/index.php/Careers"
+              hasCachedData={govJobs.length > 0}
+            />
           </div>
         )}
 
@@ -130,12 +165,13 @@ const JobsNearYou = () => {
           <div className="mb-4">
             <div className="mb-2 h-px bg-gray-200" />
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="flex items-center gap-1.5 text-xs font-semibold text-gray-700">
+              <h3 className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-gray-700">
                 <Briefcase className="h-3.5 w-3.5 text-primary-600" />
                 Private sector
                 <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">
                   {privateTotal}
                 </span>
+                <FreshnessBadge tone={privateFreshness.tone} ageText={privateFreshness.ageText} />
               </h3>
               <Link
                 to="/jobs"
@@ -170,11 +206,22 @@ const JobsNearYou = () => {
             No cached jobs available right now.
           </p>
         ) : (
-          <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
-            {rows.map(job => (
-              <PrivateJobRow key={job.id} job={job} />
-            ))}
-          </ul>
+          <>
+            <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              {rows.map(job => (
+                <PrivateJobRow key={job.id} job={job} />
+              ))}
+            </ul>
+
+            <SourceHealthFooter
+              sourceKeys={['indeed-jobs', 'linkedin-jobs']}
+              sourceDomain="indeed.com"
+              sourceHref="https://indeed.com"
+              extraDomain="linkedin.com"
+              extraHref="https://linkedin.com"
+              hasCachedData={rows.length > 0}
+            />
+          </>
         )}
       </div>
     </PageSection>

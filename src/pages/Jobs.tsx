@@ -5,7 +5,7 @@
 // ?tab=gov query param selects the Government tab on mount.
 
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
   ArrowUpRight,
   Briefcase,
@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import Breadcrumbs from '../components/ui/Breadcrumbs';
 import SEO from '../components/SEO';
+import FreshnessBadge from '../components/ui/FreshnessBadge';
+import SourceHealthFooter from '../components/ui/SourceHealthFooter';
 import {
   cleanLocation,
   readJobsFromTable,
@@ -31,6 +33,12 @@ import {
   timeAgo,
   type JobRow,
 } from '../lib/jobsSource';
+import {
+  freshnessFromHealth,
+  aggregateFreshness,
+  readSourceHealth,
+  type FreshnessInfo,
+} from '../lib/gensanCache';
 import type { GovJob } from '../types';
 import {
   fetchGovJobs,
@@ -190,6 +198,25 @@ const Jobs: React.FC = () => {
 
   // Detail modal
   const [selectedGovJob, setSelectedGovJob] = useState<GovJob | null>(null);
+
+  const UNKNOWN_F: FreshnessInfo = { tone: 'unknown', ageText: 'never', ageMs: null, lastSuccessAt: null, lastSuccessLabel: 'Loading…' };
+  const [privateFreshness, setPrivateFreshness] = useState<FreshnessInfo>(UNKNOWN_F);
+  const [govFreshness, setGovFreshness] = useState<FreshnessInfo>(UNKNOWN_F);
+
+  useEffect(() => {
+    (async () => {
+      const healthMap = await readSourceHealth([
+        'indeed-jobs', 'linkedin-jobs', 'gensan-hrmdo',
+      ]);
+      setPrivateFreshness(
+        aggregateFreshness([
+          freshnessFromHealth(healthMap['indeed-jobs']),
+          freshnessFromHealth(healthMap['linkedin-jobs']),
+        ]),
+      );
+      setGovFreshness(freshnessFromHealth(healthMap['gensan-hrmdo']));
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -355,6 +382,7 @@ const Jobs: React.FC = () => {
             label="Private Sector"
             count={jobs.length}
             loading={privateLoading}
+            freshness={privateFreshness}
           />
           <TabButton
             active={activeTab === 'gov'}
@@ -363,6 +391,7 @@ const Jobs: React.FC = () => {
             label="Government"
             count={govJobs.length}
             loading={govLoading}
+            freshness={govFreshness}
           />
         </div>
 
@@ -435,15 +464,14 @@ const Jobs: React.FC = () => {
             )}
 
             {!privateLoading && !privateError && jobs.length > 0 && (
-              <p className="mt-4 text-center text-[11px] text-gray-400">
-                Sources cached daily via Regiment ·{' '}
-                <Link
-                  to="/"
-                  className="underline decoration-dotted hover:text-gray-600"
-                >
-                  Back to home
-                </Link>
-              </p>
+              <SourceHealthFooter
+                sourceKeys={['indeed-jobs', 'linkedin-jobs']}
+                sourceDomain="indeed.com"
+                sourceHref="https://indeed.com"
+                extraDomain="linkedin.com"
+                extraHref="https://linkedin.com"
+                hasCachedData={jobs.length > 0}
+              />
             )}
           </>
         )}
@@ -536,17 +564,12 @@ const Jobs: React.FC = () => {
               />
             )}
 
-            <p className="mt-4 text-center text-[11px] text-gray-400">
-              Source: City HRMDO ·{' '}
-              <a
-                href="https://gensantos.gov.ph/city-human-resource-management-and-development-office/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline decoration-dotted hover:text-gray-600"
-              >
-                gensantos.gov.ph
-              </a>
-            </p>
+            <SourceHealthFooter
+              sourceKeys={['gensan-hrmdo']}
+              sourceDomain="hrmdo.gensantos.gov.ph"
+              sourceHref="https://hrmdo.gensantos.gov.ph/index.php/Careers"
+              hasCachedData={govJobs.length > 0}
+            />
           </>
         )}
       </div>
@@ -565,11 +588,12 @@ const TabButton: React.FC<{
   label: string;
   count: number;
   loading: boolean;
-}> = ({ active, onClick, icon, label, count, loading }) => (
+  freshness?: FreshnessInfo;
+}> = ({ active, onClick, icon, label, count, loading, freshness }) => (
   <button
     type="button"
     onClick={onClick}
-    className={`relative flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors duration-[var(--dur-fast)] ${
+    className={`relative flex flex-wrap items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors duration-[var(--dur-fast)] ${
       active ? 'text-primary-700' : 'text-gray-500 hover:text-gray-700'
     }`}
   >
@@ -585,6 +609,9 @@ const TabButton: React.FC<{
       >
         {count}
       </span>
+    )}
+    {freshness && active && (
+      <FreshnessBadge tone={freshness.tone} ageText={freshness.ageText} />
     )}
     {active && (
       <span className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full bg-primary-600" />
