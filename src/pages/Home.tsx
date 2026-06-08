@@ -34,12 +34,12 @@ function InfraAnnouncement() {
 
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold text-white">
-            New: Smart Map Command Center
+            New: PHIVOLCS Tsunami Layer on the Smart Map
           </p>
           <p className="mt-0.5 text-[12px] leading-relaxed text-white/80 sm:line-clamp-1">
-            Live incident monitoring, hazard maps, infrastructure tracking,
-            marine analytics, and flight/ship tracking for General Santos
-            City — all in one 3D operational map.
+            Tsunami inundation modeling for the General Santos coastline,
+            now overlaid on the 3D Smart Map alongside flood, landslide,
+            storm surge, infrastructure, and live incident feeds.
           </p>
         </div>
 

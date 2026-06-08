@@ -67,10 +67,11 @@ Every record links back to its official source. Records are **never deleted** by
 - **`/population`** — PSA-sourced demographic data and 26-barangay breakdown
 - **`/city-map`** — Infrastructure projects listing with map view, table view, and filter sidebar (year, category, status). Data sourced from Bisto.ph, scoped to GenSan city boundary via point-in-polygon filtering
 - **`/city-map/:projectId`** — Project detail dossier: overview metrics, timeline, procurement, implementation details, embedded map with GenSan boundary overlay, record integrity metadata, related projects, sticky intelligence sidebar
-- **`/command-center`** — Full-page 3D operational map (MapLibre GL) with 8 toggleable layer groups:
+- **`/command-center`** — Full-page 3D operational map (MapLibre GL) with 9 toggleable layer groups:
   - **Incidents** — Community safety reports (Facebook backfill) with category/severity filtering, heatmap, clustering
   - **Infrastructure** — DPWH/GenSan projects from Bisto.ph, color-coded by status
   - **Hazard Maps** — 9 Project NOAH layers (flood, landslide, storm surge) via PMTiles
+  - **PHIVOLCS Hazards** — Tsunami inundation modeling for the GenSan coastline, sourced from PHIVOLCS HazardHunterPH KMZ ground overlays (15 L4 tiles with exact WGS84 bounds, per-layer opacity slider)
   - **Population** — Meta HRSL density (visual heatmap + analyst grid modes)
   - **Marine Analytics** — 4 satellite ocean layers for fishing intelligence: Chlorophyll-a (NASA PACE OCI), SST Anomaly (GHRSST MUR L4), Bathymetry (Esri Ocean), Salinity (NASA SMAP 8-day). 3 layers locked pending Copernicus Marine proxy: Sea Level Anomaly, Surface Currents, Wind & Waves.
   - **Live Tracking** — Real-time aircraft (ADSB.fi) + AIS ship tracking (AISStream.io WebSocket) with click popups showing flight/vessel details

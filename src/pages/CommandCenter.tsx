@@ -140,6 +140,70 @@ const HAZARD_GROUP_ICONS: Record<string, string> = {
   'Storm Surge': '🌊',
 };
 
+// ── PHIVOLCS Tsunami Inundation (HazardHunterPH KMZ L4 pyramid) ──────
+// Pyramidal LOD tile set from PHIVOLCS HazardHunterPH for GenSan
+// (PSGC 126303000, tsu_2025_126303000_05). The L4 tier is the highest
+// resolution: 3 rows × 5 cols of 1024×1024 PNGs with alpha, no chrome.
+// Each tile's [west, south, east, north] WGS84 bounds come straight
+// from the KML LatLonBox — do NOT crop or reproject. Hosted as static
+// assets under /public/maps/phivolcs/tsunami/.
+type PhivolcsLayerKey = 'tsunami';
+
+interface PhivolcsTile {
+  file: string;
+  west: number;
+  south: number;
+  east: number;
+  north: number;
+}
+
+interface PhivolcsLayerDef {
+  key: PhivolcsLayerKey;
+  label: string;
+  publishedYear: number;
+  basePath: string;
+  defaultOpacity: number;
+  tiles: PhivolcsTile[];
+  gradient: [string, string];
+  description: string;
+  legend: { color: string; label: string }[];
+}
+
+const PHIVOLCS_LAYERS: PhivolcsLayerDef[] = [
+  {
+    key: 'tsunami',
+    label: 'Tsunami Inundation',
+    publishedYear: 2025,
+    basePath: '/maps/phivolcs/tsunami',
+    defaultOpacity: 0.7,
+    gradient: ['#fde047', '#0c4a6e'],
+    description: 'Modeled tsunami inundation along the GenSan coastline (Sarangani Bay) from credible offshore earthquake sources.',
+    legend: [
+      { color: '#fde047', label: '≤3 m' },
+      { color: '#0ea5e9', label: '3–6 m' },
+      { color: '#0c4a6e', label: '>6 m' },
+    ],
+    // Bounds copied verbatim from the KML LatLonBox. No coordinate math.
+    tiles: [
+      { file: 'L4_0_0.png', west: 124.91207, south: 6.19806, east: 125.05497, north: 6.34088 },
+      { file: 'L4_0_1.png', west: 125.05497, south: 6.19806, east: 125.19787, north: 6.34088 },
+      { file: 'L4_0_2.png', west: 125.19787, south: 6.19806, east: 125.34076, north: 6.34088 },
+      { file: 'L4_0_3.png', west: 125.34076, south: 6.19806, east: 125.48366, north: 6.34088 },
+      { file: 'L4_0_4.png', west: 125.48366, south: 6.19806, east: 125.49999, north: 6.34088 },
+      { file: 'L4_1_0.png', west: 124.91207, south: 6.05524, east: 125.05497, north: 6.19806 },
+      { file: 'L4_1_1.png', west: 125.05497, south: 6.05524, east: 125.19787, north: 6.19806 },
+      { file: 'L4_1_2.png', west: 125.19787, south: 6.05524, east: 125.34076, north: 6.19806 },
+      { file: 'L4_1_3.png', west: 125.34076, south: 6.05524, east: 125.48366, north: 6.19806 },
+      { file: 'L4_1_4.png', west: 125.48366, south: 6.05524, east: 125.49999, north: 6.19806 },
+      { file: 'L4_2_0.png', west: 124.91207, south: 5.92525, east: 125.05497, north: 6.05524 },
+      { file: 'L4_2_1.png', west: 125.05497, south: 5.92525, east: 125.19787, north: 6.05524 },
+      { file: 'L4_2_2.png', west: 125.19787, south: 5.92525, east: 125.34076, north: 6.05524 },
+      { file: 'L4_2_3.png', west: 125.34076, south: 5.92525, east: 125.48366, north: 6.05524 },
+      { file: 'L4_2_4.png', west: 125.48366, south: 5.92525, east: 125.49999, north: 6.05524 },
+    ],
+  },
+];
+
 // ── Marine Analytics Layers (WMTS / XYZ raster tiles) ───────
 
 
@@ -897,7 +961,7 @@ export default function CommandCenter() {
   const [trendWindow, setTrendWindow] = useState<'24h' | '7d' | '30d'>('24h');
   const [mapReady, setMapReady] = useState(false);
   const [mobileView, setMobileView] = useState<'map' | 'layers' | 'intel'>('map');
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({ Incidents: false, Infrastructure: false, 'Hazard Maps': false, 'Population': false, 'Ocean': false, 'Tracking': false, 'Critical Infra': false });
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({ Incidents: false, Infrastructure: false, 'Hazard Maps': false, PHIVOLCS: false, 'Population': false, 'Ocean': false, 'Tracking': false, 'Critical Infra': false });
   const [showInfra, setShowInfra] = useState(false);
   const [infraStatuses, setInfraStatuses] = useState<Record<InfraStatus, boolean>>({
     Completed: false, 'On-Going': false, 'For Procurement': false, 'Not Yet Started': false,
@@ -911,6 +975,12 @@ export default function CommandCenter() {
   const [darkMode, setDarkMode] = useState(false);
   const [hazardLayers, setHazardLayers] = useState<Record<HazardLayerKey, boolean>>(
     () => Object.fromEntries(HAZARD_LAYERS.map(l => [l.key, false])) as Record<HazardLayerKey, boolean>,
+  );
+  const [phivolcsLayers, setPhivolcsLayers] = useState<Record<PhivolcsLayerKey, boolean>>(
+    () => Object.fromEntries(PHIVOLCS_LAYERS.map(l => [l.key, false])) as Record<PhivolcsLayerKey, boolean>,
+  );
+  const [phivolcsOpacity, setPhivolcsOpacity] = useState<Record<PhivolcsLayerKey, number>>(
+    () => Object.fromEntries(PHIVOLCS_LAYERS.map(l => [l.key, l.defaultOpacity])) as Record<PhivolcsLayerKey, number>,
   );
   const [popMode, setPopMode] = useState<'off' | 'visual' | 'analyst'>('off');
   const [showBarangays, setShowBarangays] = useState(true);
@@ -1249,7 +1319,7 @@ export default function CommandCenter() {
 
   const infraGeoJSON = useMemo(() => infraProjectsToGeoJSON(filteredInfraProjects), [filteredInfraProjects]);
 
-  const activeLayerCount = Object.values(layers).filter(Boolean).length + Object.values(hazardLayers).filter(Boolean).length + (popMode !== 'off' ? 1 : 0) + PHASE1_OCEAN.filter(l => oceanLayers[l.key]).length + (showFlights ? 1 : 0) + (showShips ? 1 : 0) + Object.values(infraPOI).filter(Boolean).length;
+  const activeLayerCount = Object.values(layers).filter(Boolean).length + Object.values(hazardLayers).filter(Boolean).length + Object.values(phivolcsLayers).filter(Boolean).length + (popMode !== 'off' ? 1 : 0) + PHASE1_OCEAN.filter(l => oceanLayers[l.key]).length + (showFlights ? 1 : 0) + (showShips ? 1 : 0) + Object.values(infraPOI).filter(Boolean).length;
 
   // Dynamic category distribution from real data
   const categoryDistribution = useMemo(() => {
@@ -1845,6 +1915,34 @@ export default function CommandCenter() {
         'barangay-fills',
       );
 
+      // ── PHIVOLCS ground overlays (image sources, one per L4 tile) ──
+      for (const layer of PHIVOLCS_LAYERS) {
+        layer.tiles.forEach((tile, i) => {
+          const srcId = `phivolcs-${layer.key}-${i}`;
+          map.addSource(srcId, {
+            type: 'image',
+            url: `${layer.basePath}/${tile.file}`,
+            // MapLibre image source coordinates: TL, TR, BR, BL (lng, lat)
+            coordinates: [
+              [tile.west, tile.north],
+              [tile.east, tile.north],
+              [tile.east, tile.south],
+              [tile.west, tile.south],
+            ],
+          });
+          map.addLayer(
+            {
+              id: `phivolcs-${layer.key}-${i}-raster`,
+              type: 'raster',
+              source: srcId,
+              paint: { 'raster-opacity': 0, 'raster-fade-duration': 0 },
+              layout: { visibility: 'none' },
+            },
+            'barangay-fills',
+          );
+        });
+      }
+
 
       // ── Population density layer (Meta HRSL via HDX) ──
       // Grid cell ≈ 0.001° × 0.001° ≈ 111m × 111m at equator ≈ 0.0123 km²
@@ -2362,6 +2460,22 @@ export default function CommandCenter() {
     }
   }, [hazardLayers, mapReady]);
 
+  // ── Toggle PHIVOLCS L4 tile visibility ──────────────────────────────
+  useEffect(() => {
+    if (!mapRef.current || !mapReady) return;
+    for (const layer of PHIVOLCS_LAYERS) {
+      const on = phivolcsLayers[layer.key];
+      const opacity = phivolcsOpacity[layer.key];
+      layer.tiles.forEach((_, i) => {
+        const layerId = `phivolcs-${layer.key}-${i}-raster`;
+        if (mapRef.current?.getLayer(layerId)) {
+          mapRef.current.setLayoutProperty(layerId, 'visibility', on ? 'visible' : 'none');
+          mapRef.current.setPaintProperty(layerId, 'raster-opacity', on ? opacity : 0);
+        }
+      });
+    }
+  }, [phivolcsLayers, phivolcsOpacity, mapReady]);
+
   // ── Toggle ocean layer visibility ──────────────────────────────────
   useEffect(() => {
     if (!mapRef.current || !mapReady) return;
@@ -2844,6 +2958,81 @@ export default function CommandCenter() {
                             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#93c5fd' }} />Low</span>
                             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#3b82f6' }} />Med</span>
                             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#1d4ed8' }} />High</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* PHIVOLCS Hazards (HazardHunterPH L4 ground overlays) */}
+                {(() => {
+                  const activeCount = PHIVOLCS_LAYERS.filter(l => phivolcsLayers[l.key]).length;
+                  const expanded = expandedGroups['PHIVOLCS'];
+                  return (
+                    <div className="border-b border-gray-200">
+                      <button
+                        onClick={() => setExpandedGroups(p => ({ ...p, PHIVOLCS: !p.PHIVOLCS }))}
+                        className="w-full px-3 py-2 flex items-center gap-2 hover:bg-white transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={activeCount === PHIVOLCS_LAYERS.length}
+                          ref={el => { if (el) el.indeterminate = activeCount > 0 && activeCount < PHIVOLCS_LAYERS.length; }}
+                          onChange={e => {
+                            e.stopPropagation();
+                            const next = activeCount < PHIVOLCS_LAYERS.length;
+                            setPhivolcsLayers(p => {
+                              const updated = { ...p };
+                              PHIVOLCS_LAYERS.forEach(l => { updated[l.key] = next; });
+                              return updated;
+                            });
+                          }}
+                          onClick={e => e.stopPropagation()}
+                          className="rounded-sm border-gray-300 text-primary-600 focus:ring-primary-500 h-3 w-3"
+                        />
+                        <span className="text-[9px] font-bold text-gray-500 uppercase tracking-[0.15em] flex-1 text-left">PHIVOLCS Hazards</span>
+                        <span className="text-[9px] text-gray-400">{activeCount}/{PHIVOLCS_LAYERS.length}</span>
+                        <ChevronDown size={10} className={`text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                      </button>
+                      {expanded && (
+                        <div className="px-3 pb-2 space-y-1">
+                          {PHIVOLCS_LAYERS.map(layer => (
+                            <div key={layer.key} className="ml-2">
+                              <label className="flex items-center gap-2 cursor-pointer text-gray-700 py-0.5 px-1.5 rounded hover:bg-white transition-colors">
+                                <input
+                                  type="checkbox"
+                                  checked={phivolcsLayers[layer.key]}
+                                  onChange={() => setPhivolcsLayers(p => ({ ...p, [layer.key]: !p[layer.key] }))}
+                                  className="rounded-sm border-gray-300 text-primary-600 focus:ring-primary-500 h-3 w-3"
+                                />
+                                <span className="text-[10px]">🌊</span>
+                                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: `linear-gradient(135deg, ${layer.gradient[0]}, ${layer.gradient[1]})` }} />
+                                <span className="font-medium flex-1">{layer.label}</span>
+                                <span className="text-[9px] text-gray-400">{layer.publishedYear}</span>
+                              </label>
+                              {phivolcsLayers[layer.key] && (
+                                <div className="ml-6 mt-0.5 mb-1 flex items-center gap-1.5">
+                                  <span className="text-[9px] text-gray-400">Opacity</span>
+                                  <input
+                                    type="range" min={0.2} max={1} step={0.05}
+                                    value={phivolcsOpacity[layer.key]}
+                                    onChange={e => setPhivolcsOpacity(p => ({ ...p, [layer.key]: parseFloat(e.target.value) }))}
+                                    className="flex-1 h-1 accent-primary-600"
+                                  />
+                                  <span className="text-[9px] text-gray-500 font-mono w-7 text-right">{Math.round(phivolcsOpacity[layer.key] * 100)}%</span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                          <div className="ml-2 mt-1 text-[9px] text-gray-400 flex items-center gap-1">
+                            <span>Source:</span>
+                            <span className="text-primary-600 font-medium">PHIVOLCS HazardHunterPH</span>
+                          </div>
+                          <div className="ml-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[9px] text-gray-400">
+                            {PHIVOLCS_LAYERS[0].legend.map((sw, i) => (
+                              <span key={i} className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: sw.color }} />{sw.label}</span>
+                            ))}
                           </div>
                         </div>
                       )}
@@ -3671,6 +3860,31 @@ export default function CommandCenter() {
                           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#93c5fd' }} />Low</span>
                           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#3b82f6' }} />Med</span>
                           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#1d4ed8' }} />High</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* PHIVOLCS (mobile) */}
+                  <div className="border-b border-gray-200">
+                    <button onClick={() => setExpandedGroups(p => ({ ...p, PHIVOLCS: !p.PHIVOLCS }))} className="w-full px-3 py-2.5 flex items-center gap-2">
+                      <span className="text-[9px] font-bold text-gray-500 uppercase tracking-[0.15em] flex-1 text-left">PHIVOLCS Hazards</span>
+                      <span className="text-[9px] text-gray-400">{PHIVOLCS_LAYERS.filter(l => phivolcsLayers[l.key]).length}/{PHIVOLCS_LAYERS.length}</span>
+                      <ChevronDown size={10} className={`text-gray-400 transition-transform ${expandedGroups['PHIVOLCS'] ? 'rotate-180' : ''}`} />
+                    </button>
+                    {expandedGroups['PHIVOLCS'] && (
+                      <div className="px-3 pb-2 space-y-1">
+                        {PHIVOLCS_LAYERS.map(layer => (
+                          <label key={layer.key} className="flex items-center gap-2 cursor-pointer py-0.5 px-1.5 rounded hover:bg-white transition-colors ml-2">
+                            <input type="checkbox" checked={phivolcsLayers[layer.key]} onChange={() => setPhivolcsLayers(p => ({ ...p, [layer.key]: !p[layer.key] }))} className="rounded-sm border-gray-300 text-primary-600 focus:ring-primary-500 h-3.5 w-3.5" />
+                            <span className="text-[10px]">🌊</span>
+                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: `linear-gradient(135deg, ${layer.gradient[0]}, ${layer.gradient[1]})` }} />
+                            <span className="font-medium">{layer.label}</span>
+                          </label>
+                        ))}
+                        <div className="ml-2 mt-1 text-[9px] text-gray-400 flex items-center gap-1">
+                          <span>Source:</span>
+                          <span className="text-primary-600 font-medium">PHIVOLCS HazardHunterPH</span>
                         </div>
                       </div>
                     )}
