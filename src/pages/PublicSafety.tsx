@@ -32,10 +32,12 @@ import {
   MapPin,
   Mountain,
   Phone,
+  Radio,
   Shield,
   ShieldAlert,
   ShieldCheck,
   Siren,
+  Stethoscope,
   Truck,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -179,6 +181,10 @@ interface CoreUnit {
   name: string;
   scope: string;
   phones: string[];
+  /** Additional numbers from the City Emergency Directory. Rendered with a
+   *  small "Directory" badge so the source is visible. Never replaces
+   *  existing verified phones — additive only. */
+  directoryPhones?: string[];
   hotline?: string;
 }
 
@@ -188,6 +194,7 @@ const CORE_UNITS: CoreUnit[] = [
     name: 'GSC Police Office',
     scope: 'Headquarters of the Philippine National Police in General Santos City.',
     phones: ['552-5573', '0998-598-7207'],
+    directoryPhones: ['552-5773'],
   },
   {
     icon: ShieldAlert,
@@ -209,6 +216,12 @@ const CORE_UNITS: CoreUnit[] = [
     hotline: '160',
   },
   {
+    icon: Radio,
+    name: 'City Radio Communication Services (Delta 9)',
+    scope: 'City-wide emergency radio coordination. Critical when mobile networks fail during typhoons, earthquakes, or wide-area power outages.',
+    phones: ['554-0474', '0998-848-1093'],
+  },
+  {
     icon: ShieldAlert,
     name: 'Philippine Coast Guard (PCG)',
     scope: 'Sea rescue, port emergencies, maritime incidents, and oil spill response. Critical for General Santos City as a coastal port city.',
@@ -228,6 +241,55 @@ const CORE_UNITS: CoreUnit[] = [
     phones: ['822-0215'],
   },
 ];
+
+// ---------- Hospitals (City Emergency Directory) ----------
+//
+// Sourced from the official City Emergency Directory. Numbers shown here
+// complement the verified hospital data on /services/health-services
+// (positions, addresses, OpenStreetMap pins). These are additive — the
+// existing hospitals.ts data is untouched.
+
+interface DirectoryHospital {
+  name: string;
+  type?: string;
+  tels?: string[];
+  mobiles?: string[];
+}
+
+const DIRECTORY_HOSPITALS: DirectoryHospital[] = [
+  { name: 'Mindanao Medical Center', tels: ['553-8207', '554-9640'] },
+  { name: 'Auguis Clinic & Hospital', tels: ['552-4911'] },
+  { name: "Gensan Doctor's Hospital", tels: ['553-3891'], mobiles: ['0933-821-7257'] },
+  { name: 'Diagan Hospital', mobiles: ['0923-809-4705'] },
+  { name: 'St. Elizabeth Hospital', tels: ['552-3162'] },
+  { name: 'Gensan Medical Center', tels: ['887-9898'] },
+  { name: 'Socsargen County Hospital', tels: ['553-8906'] },
+  { name: 'Sarangani Bay Specialist Medical Center', tels: ['887-8888'], mobiles: ['0919-067-8395'] },
+  { name: 'Dr. Jorge P. Royeca City Hospital', type: 'City-run', tels: ['552-2811'], mobiles: ['0912-376-2331'] },
+  { name: 'Labella Hospital', tels: ['887-6409'], mobiles: ['0922-859-0044'] },
+];
+
+// ---------- Police station directory phones ----------
+//
+// Landlines and additional mobile numbers from the City Emergency
+// Directory. Keyed by station number so the rendered cards in the
+// Police Stations directory can show them next to the existing phone.
+// Never overwrites POLICE_STATIONS.phone — those are the verified
+// numbers tied to OSM positions.
+
+const STATION_DIRECTORY: Record<
+  number,
+  { tel?: string; mobiles?: string[] }
+> = {
+  1: { tel: '825-3801', mobiles: ['0998-598-7208'] },
+  2: { tel: '552-7410', mobiles: ['0909-748-3878'] },
+  3: { tel: '878-4296', mobiles: ['0998-598-7212', '0907-760-3271'] },
+  4: { tel: '552-5646', mobiles: ['0998-598-7214', '0946-340-3678', '0921-724-5745'] },
+  5: { tel: '554-0046', mobiles: ['0907-313-4517'] },
+  6: { tel: '552-8434', mobiles: ['0998-598-7218', '0917-310-5151'] },
+  7: { mobiles: ['0921-558-4056', '0916-272-6009'] },
+  8: { mobiles: ['0998-598-7223', '0955-200-1366'] },
+};
 
 // ---------- Crisis hotlines ----------
 
@@ -394,14 +456,52 @@ const PublicSafety: React.FC = () => {
                 station directory and a live map of all 10 stations are on
                 this page.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <a
-                  href="tel:911"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-error-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-error-700"
-                >
-                  <Phone className="h-3.5 w-3.5" />
-                  Call 911
-                </a>
+              <div className="mt-4 -mx-4 sm:mx-0">
+                <div className="px-4 sm:px-0 mb-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">
+                    Jump to contacts
+                  </p>
+                </div>
+                <div className="overflow-x-auto px-4 sm:px-0 [scrollbar-width:thin]">
+                  <div className="flex gap-2 pb-2 min-w-max">
+                    <a
+                      href="tel:911"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-error-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-error-700 whitespace-nowrap shadow-sm"
+                    >
+                      <Phone className="h-3.5 w-3.5" />
+                      Call 911
+                    </a>
+                    {[
+                      { href: '#emergency-units', label: 'CDRRMO · BFP · Delta 9', icon: Siren },
+                      { href: '#hospitals', label: 'Hospitals', icon: Stethoscope, isNew: true },
+                      { href: '#police-stations', label: 'Police Stations', icon: Shield },
+                      { href: '#crisis-hotlines', label: 'Crisis Hotlines', icon: HeartHandshake },
+                    ].map(({ href, label, icon: Icon, isNew }) => (
+                      <a
+                        key={href}
+                        href={href}
+                        onClick={e => {
+                          e.preventDefault();
+                          const id = href.replace('#', '');
+                          const target = document.getElementById(id);
+                          if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            history.replaceState(null, '', href);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-white border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-800 transition hover:bg-gray-50 hover:border-primary-300 whitespace-nowrap shadow-sm"
+                      >
+                        <Icon className="h-3.5 w-3.5 text-primary-600" />
+                        {label}
+                        {isNew && (
+                          <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                            NEW
+                          </span>
+                        )}
+                      </a>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -516,6 +616,7 @@ const PublicSafety: React.FC = () => {
       </PageSection>
 
       {/* ---------- Core emergency units ---------- */}
+      <div id="emergency-units" />
       <PageSection background="white" tier="secondary">
         <div ref={unitsHeadRef} className="reveal">
         <SectionHeading
@@ -528,7 +629,9 @@ const PublicSafety: React.FC = () => {
         </div>
 
         <div ref={unitsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
-          {CORE_UNITS.map(u => (
+          {CORE_UNITS.map(u => {
+            const isNewUnit = u.name.startsWith('City Radio Communication Services');
+            return (
             <article
               key={u.name}
               className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04]"
@@ -538,9 +641,16 @@ const PublicSafety: React.FC = () => {
                   <u.icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-grow">
-                  <h3 className="text-sm font-semibold leading-snug text-gray-900">
-                    {u.name}
-                  </h3>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <h3 className="text-sm font-semibold leading-snug text-gray-900">
+                      {u.name}
+                    </h3>
+                    {isNewUnit && (
+                      <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
+                        NEW
+                      </span>
+                    )}
+                  </div>
                   <p className="mt-1 text-xs leading-relaxed text-gray-600">
                     {u.scope}
                   </p>
@@ -558,6 +668,19 @@ const PublicSafety: React.FC = () => {
                     {p}
                   </a>
                 ))}
+                {u.directoryPhones?.map(p => (
+                  <a
+                    key={p}
+                    href={`tel:${p.replace(/\D/g, '')}`}
+                    className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                  >
+                    <Phone className="h-3 w-3" />
+                    {p}
+                    <span className="ml-0.5 rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                      NEW
+                    </span>
+                  </a>
+                ))}
                 {u.hotline && (
                   <a
                     href={`tel:${u.hotline}`}
@@ -568,11 +691,13 @@ const PublicSafety: React.FC = () => {
                 )}
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </PageSection>
 
       {/* ---------- Police stations: map + directory ---------- */}
+      <div id="police-stations" />
       <PageSection background="gray" tier="secondary">
         <div ref={stationsHeadRef} className="reveal">
         <SectionHeading
@@ -595,7 +720,12 @@ const PublicSafety: React.FC = () => {
         </div>
 
         <div ref={stationsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
-          {POLICE_STATIONS.map(s => (
+          {POLICE_STATIONS.map(s => {
+            const directory = STATION_DIRECTORY[s.number];
+            const directoryMobiles = (directory?.mobiles ?? []).filter(
+              m => m.replace(/\D/g, '') !== s.phone.replace(/\D/g, ''),
+            );
+            return (
             <article
               key={s.number}
               className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04]"
@@ -617,20 +747,127 @@ const PublicSafety: React.FC = () => {
                 <p className="mt-1 text-xs leading-snug text-gray-600">
                   {s.address}
                 </p>
-                <a
-                  href={`tel:${s.phone.replace(/\D/g, '')}`}
-                  className="mt-1.5 inline-flex items-center gap-1 text-sm font-bold text-primary-700 hover:text-primary-800"
-                >
-                  <Phone className="h-3 w-3" />
-                  {s.phone}
-                </a>
+                <div className="mt-1.5 flex flex-col gap-1">
+                  <a
+                    href={`tel:${s.phone.replace(/\D/g, '')}`}
+                    className="inline-flex items-center gap-1 text-sm font-bold text-primary-700 hover:text-primary-800"
+                  >
+                    <Phone className="h-3 w-3" />
+                    {s.phone}
+                  </a>
+                  {directory?.tel && (
+                    <a
+                      href={`tel:${directory.tel.replace(/\D/g, '')}`}
+                      className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {directory.tel}
+                      <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                        NEW
+                      </span>
+                    </a>
+                  )}
+                  {directoryMobiles.map(m => (
+                    <a
+                      key={m}
+                      href={`tel:${m.replace(/\D/g, '')}`}
+                      className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {m}
+                      <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                        NEW
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </article>
+            );
+          })}
+        </div>
+      </PageSection>
+
+      {/* ---------- Hospitals (City Emergency Directory) ---------- */}
+      <div id="hospitals" />
+      <PageSection background="white" tier="secondary">
+        <div className="reveal">
+          <SectionHeading
+            tier="secondary"
+            icon={Stethoscope}
+            eyebrow="Hospital hotlines"
+            title="Hospitals — emergency contacts"
+            helper="Hospital landlines and mobile numbers from the official City Emergency Directory. For verified positions, addresses, and the live hospital map, see /services/health-services."
+          />
+          <div className="-mt-3 mb-4 ml-1">
+            <span className="inline-block rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+              NEW
+            </span>
+          </div>
+        </div>
+
+        <div className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+          {DIRECTORY_HOSPITALS.map(h => (
+            <article
+              key={h.name}
+              className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04]"
+            >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
+                <Stethoscope className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-grow">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <h4 className="text-sm font-semibold text-gray-900">
+                    {h.name}
+                  </h4>
+                  {h.type && (
+                    <span className="rounded bg-primary-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary-700">
+                      {h.type}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-1.5 flex flex-col gap-1">
+                  {h.tels?.map(p => (
+                    <a
+                      key={p}
+                      href={`tel:${p.replace(/\D/g, '')}`}
+                      className="inline-flex items-center gap-1 text-[13px] font-bold text-primary-700 hover:text-primary-800"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {p}
+                      <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                        NEW
+                      </span>
+                    </a>
+                  ))}
+                  {h.mobiles?.map(m => (
+                    <a
+                      key={m}
+                      href={`tel:${m.replace(/\D/g, '')}`}
+                      className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {m}
+                      <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                        NEW
+                      </span>
+                    </a>
+                  ))}
+                </div>
               </div>
             </article>
           ))}
         </div>
+
+        <p className="mt-4 text-[11px] text-gray-500">
+          Source: City Emergency Directory. Always confirm a hospital is
+          accepting patients before you head out, especially during
+          disasters or pandemics.
+        </p>
       </PageSection>
 
       {/* ---------- Quick safety tips + Hotlines ---------- */}
+      <div id="crisis-hotlines" />
       <PageSection background="gray" tier="secondary">
         <div ref={tipsHeadRef} className="reveal grid gap-6 lg:grid-cols-2">
           <div>
