@@ -418,6 +418,8 @@ const PublicSafety: React.FC = () => {
   const tipsHeadRef = useReveal();
   const officesHeadRef = useReveal();
   const officesGridRef = useReveal();
+  const hospitalsHeadRef = useReveal();
+  const hospitalsGridRef = useReveal();
 
   return (
     <>
@@ -791,7 +793,7 @@ const PublicSafety: React.FC = () => {
       {/* ---------- Hospitals (City Emergency Directory) ---------- */}
       <div id="hospitals" />
       <PageSection background="white" tier="secondary">
-        <div className="reveal">
+        <div ref={hospitalsHeadRef} className="reveal">
           <SectionHeading
             tier="secondary"
             icon={Stethoscope}
@@ -806,7 +808,7 @@ const PublicSafety: React.FC = () => {
           </div>
         </div>
 
-        <div className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+        <div ref={hospitalsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
           {DIRECTORY_HOSPITALS.map(h => (
             <article
               key={h.name}
