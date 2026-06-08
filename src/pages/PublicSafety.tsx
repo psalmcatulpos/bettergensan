@@ -266,7 +266,7 @@ const DIRECTORY_HOSPITALS: DirectoryHospital[] = [
   { name: 'Gensan Medical Center', tels: ['887-9898'] },
   { name: 'Socsargen County Hospital', tels: ['553-8906'], mobiles: ['0932-692-4708'] },
   { name: 'Sarangani Bay Specialist Medical Center', tels: ['887-8888'], mobiles: ['0919-067-8395'] },
-  { name: 'Dr. Jorge P. Royeca City Hospital', type: 'City-run', tels: ['552-2811'], mobiles: ['0912-376-2331'] },
+  { name: 'Dr. Jorge P. Royeca City Hospital', tels: ['552-2811'], mobiles: ['0912-376-2331'] },
   { name: 'Labella Hospital', tels: ['887-6409', '553-3509'], mobiles: ['0922-859-0044'] },
   { name: 'Dadiangas Medical Center', mobiles: ['0917-190-2561'] },
 ];
