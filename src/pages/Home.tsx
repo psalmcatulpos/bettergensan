@@ -34,12 +34,12 @@ function InfraAnnouncement() {
 
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold text-white">
-            Update: 2 New Smart-Map Hazard Layers
+            New: Smart Map Command Center
           </p>
           <p className="mt-0.5 text-[12px] leading-relaxed text-white/80 sm:line-clamp-1">
-            Liquefaction and tsunami inundation zones for General Santos —
-            sourced from PHIVOLCS HazardHunterPH and now layered alongside
-            flood, landslide, storm surge, and live incident feeds.
+            Live incident monitoring, hazard maps, infrastructure tracking,
+            marine analytics, and flight/ship tracking for General Santos
+            City — all in one 3D operational map.
           </p>
         </div>
 
