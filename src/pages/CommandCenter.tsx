@@ -142,9 +142,12 @@ const HAZARD_GROUP_ICONS: Record<string, string> = {
 
 // ── PHIVOLCS Geophysical Hazard Maps (KMZ ground overlays) ──────────
 // Raster image tiles from PHIVOLCS HazardHunterPH for GenSan
-// (PSGC 126303000). Each layer is a 2-row × 3-col mosaic of L3 tiles
-// covering the full city bounds. Hosted as static assets under
-// /public/maps/phivolcs/{layer}/.
+// (PSGC 126303000). PHIVOLCS exports include a poster-style legend +
+// title block on the right side of the source KMZ — the east column
+// (lng > ~125.30°) is non-map chrome. We assemble each layer from
+// chrome-free pieces: the full L3 west quadrants (col 0) plus the L4
+// column-2 sub-tiles (which stop just before the chrome zone).
+// Hosted as static assets under /public/maps/phivolcs/{layer}/.
 type PhivolcsLayerKey = 'liquefaction' | 'tsunami';
 
 interface PhivolcsTile {
@@ -183,12 +186,14 @@ const PHIVOLCS_LAYERS: PhivolcsLayerDef[] = [
       { color: '#b45309', label: 'High' },
     ],
     tiles: [
+      // West quadrants — full L3 tiles, pure map content
       { file: 'L3_0_0.jpg', north: 6.34089182941441900, south: 6.08366177990313430, east: 125.16881014572314000, west: 124.91158294677734000 },
-      { file: 'L3_0_1.jpg', north: 6.34089182941441900, south: 6.08366177990313430, east: 125.42603734466896000, west: 125.16881014572314000 },
-      { file: 'L3_0_2.jpg', north: 6.34089182941441900, south: 6.08366177990313430, east: 125.49951288733658000, west: 125.42603734466896000 },
       { file: 'L3_1_0.jpg', north: 6.08366177990313430, south: 5.92502820933050070, east: 125.16881014572314000, west: 124.91158294677734000 },
-      { file: 'L3_1_1.jpg', north: 6.08366177990313430, south: 5.92502820933050070, east: 125.42603734466896000, west: 125.16881014572314000 },
-      { file: 'L3_1_2.jpg', north: 6.08366177990313430, south: 5.92502820933050070, east: 125.49951288733658000, west: 125.42603734466896000 },
+      // Central GenSan column — L4 sub-tiles that stop before the poster chrome
+      { file: 'L4_0_2.jpg', north: 6.34089182941441900, south: 6.21227680465877620, east: 125.29742374519606000, west: 125.16881014572314000 },
+      { file: 'L4_1_2.jpg', north: 6.21227680465877620, south: 6.08366177990313430, east: 125.29742374519606000, west: 125.16881014572314000 },
+      { file: 'L4_2_2.jpg', north: 6.08366177990313430, south: 5.95504675514749150, east: 125.29742374519606000, west: 125.16881014572314000 },
+      { file: 'L4_3_2.jpg', north: 5.95504675514749150, south: 5.92502820933050070, east: 125.29742374519606000, west: 125.16881014572314000 },
     ],
   },
   {
@@ -204,12 +209,14 @@ const PHIVOLCS_LAYERS: PhivolcsLayerDef[] = [
       { color: '#0c4a6e', label: 'High' },
     ],
     tiles: [
+      // West quadrants — full L3 tiles, pure map content
       { file: 'L3_0_0.png', north: 6.34089182941441900, south: 6.08366177990313430, east: 125.16881014572314000, west: 124.91158294677734000 },
-      { file: 'L3_0_1.png', north: 6.34089182941441900, south: 6.08366177990313430, east: 125.42603734466896000, west: 125.16881014572314000 },
-      { file: 'L3_0_2.png', north: 6.34089182941441900, south: 6.08366177990313430, east: 125.49951288733658000, west: 125.42603734466896000 },
       { file: 'L3_1_0.png', north: 6.08366177990313430, south: 5.92502820933050070, east: 125.16881014572314000, west: 124.91158294677734000 },
-      { file: 'L3_1_1.png', north: 6.08366177990313430, south: 5.92502820933050070, east: 125.42603734466896000, west: 125.16881014572314000 },
-      { file: 'L3_1_2.png', north: 6.08366177990313430, south: 5.92502820933050070, east: 125.49951288733658000, west: 125.42603734466896000 },
+      // Central GenSan column — L4 sub-tiles that stop before the poster chrome
+      // (PHIVOLCS did not export an L4_3_2 tsunami tile — no inundation in that southern sliver)
+      { file: 'L4_0_2.png', north: 6.34089182941441900, south: 6.21227680465877620, east: 125.29742374519606000, west: 125.16881014572314000 },
+      { file: 'L4_1_2.png', north: 6.21227680465877620, south: 6.08366177990313430, east: 125.29742374519606000, west: 125.16881014572314000 },
+      { file: 'L4_2_2.png', north: 6.08366177990313430, south: 5.95504675514749150, east: 125.29742374519606000, west: 125.16881014572314000 },
     ],
   },
 ];
