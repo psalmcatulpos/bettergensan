@@ -233,6 +233,7 @@ const CORE_UNITS: CoreUnit[] = [
     name: 'Traffic Enforcement Unit',
     scope: 'City traffic enforcement, road incidents, and vehicular accidents.',
     phones: ['825-3894', '0975-749-0019'],
+    directoryPhones: ['0910-043-6910'],
   },
   {
     icon: AlertOctagon,
@@ -259,14 +260,15 @@ interface DirectoryHospital {
 const DIRECTORY_HOSPITALS: DirectoryHospital[] = [
   { name: 'Mindanao Medical Center', tels: ['553-8207', '554-9640'] },
   { name: 'Auguis Clinic & Hospital', tels: ['552-4911'] },
-  { name: "Gensan Doctor's Hospital", tels: ['553-3891'], mobiles: ['0933-821-7257'] },
-  { name: 'Diagan Hospital', mobiles: ['0923-809-4705'] },
-  { name: 'St. Elizabeth Hospital', tels: ['552-3162'] },
+  { name: "Gensan Doctor's Hospital", tels: ['553-3891', '250-2777'], mobiles: ['0933-821-7257'] },
+  { name: 'Diagan Hospital', tels: ['552-3942'], mobiles: ['0923-809-4705'] },
+  { name: 'St. Elizabeth Hospital', tels: ['552-3162'], mobiles: ['0919-071-9004'] },
   { name: 'Gensan Medical Center', tels: ['887-9898'] },
-  { name: 'Socsargen County Hospital', tels: ['553-8906'] },
+  { name: 'Socsargen County Hospital', tels: ['553-8906'], mobiles: ['0932-692-4708'] },
   { name: 'Sarangani Bay Specialist Medical Center', tels: ['887-8888'], mobiles: ['0919-067-8395'] },
   { name: 'Dr. Jorge P. Royeca City Hospital', type: 'City-run', tels: ['552-2811'], mobiles: ['0912-376-2331'] },
-  { name: 'Labella Hospital', tels: ['887-6409'], mobiles: ['0922-859-0044'] },
+  { name: 'Labella Hospital', tels: ['887-6409', '553-3509'], mobiles: ['0922-859-0044'] },
+  { name: 'Dadiangas Medical Center', mobiles: ['0917-190-2561'] },
 ];
 
 // ---------- Police station directory phones ----------
@@ -287,7 +289,7 @@ const STATION_DIRECTORY: Record<
   4: { tel: '552-5646', mobiles: ['0998-598-7214', '0946-340-3678', '0921-724-5745'] },
   5: { tel: '554-0046', mobiles: ['0907-313-4517'] },
   6: { tel: '552-8434', mobiles: ['0998-598-7218', '0917-310-5151'] },
-  7: { mobiles: ['0921-558-4056', '0916-272-6009'] },
+  7: { mobiles: ['0921-558-4056', '0916-272-6009', '0998-598-7220'] },
   8: { mobiles: ['0998-598-7223', '0955-200-1366'] },
 };
 
@@ -445,7 +447,7 @@ const PublicSafety: React.FC = () => {
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
               <ShieldAlert className="h-6 w-6" />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-600">
                 Emergencies & Disasters
               </div>
@@ -458,52 +460,63 @@ const PublicSafety: React.FC = () => {
                 station directory and a live map of all 10 stations are on
                 this page.
               </p>
-              <div className="mt-4 -mx-4 sm:mx-0">
-                <div className="px-4 sm:px-0 mb-1.5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">
-                    Jump to contacts
-                  </p>
-                </div>
-                <div className="overflow-x-auto px-4 sm:px-0 [scrollbar-width:thin]">
-                  <div className="flex gap-2 pb-2 min-w-max">
-                    <a
-                      href="tel:911"
-                      className="inline-flex items-center gap-1.5 rounded-full bg-error-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-error-700 whitespace-nowrap shadow-sm"
-                    >
-                      <Phone className="h-3.5 w-3.5" />
-                      Call 911
-                    </a>
-                    {[
-                      { href: '#emergency-units', label: 'CDRRMO · BFP · Delta 9', icon: Siren },
-                      { href: '#hospitals', label: 'Hospitals', icon: Stethoscope, isNew: true },
-                      { href: '#police-stations', label: 'Police Stations', icon: Shield },
-                      { href: '#crisis-hotlines', label: 'Crisis Hotlines', icon: HeartHandshake },
-                    ].map(({ href, label, icon: Icon, isNew }) => (
-                      <a
-                        key={href}
-                        href={href}
-                        onClick={e => {
-                          e.preventDefault();
-                          const id = href.replace('#', '');
-                          const target = document.getElementById(id);
-                          if (target) {
-                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            history.replaceState(null, '', href);
-                          }
-                        }}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-white border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-800 transition hover:bg-gray-50 hover:border-primary-300 whitespace-nowrap shadow-sm"
-                      >
-                        <Icon className="h-3.5 w-3.5 text-primary-600" />
-                        {label}
-                        {isNew && (
-                          <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
-                            NEW
-                          </span>
-                        )}
-                      </a>
-                    ))}
-                  </div>
-                </div>
+            </div>
+          </div>
+
+          {/* Horizontal jump-to-section nav. Lives outside the flex row so
+              it gets the full container width to scroll, and is robust on
+              all viewports (320px → desktop). */}
+          <div className="mt-5 -mx-4 sm:mx-0">
+            <div className="px-4 sm:px-0 mb-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">
+                Jump to contacts
+              </p>
+            </div>
+            <div className="overflow-x-auto px-4 sm:px-0 [scrollbar-width:thin] [-webkit-overflow-scrolling:touch]">
+              <div className="flex gap-2 pb-2 min-w-max snap-x snap-mandatory">
+                <a
+                  href="tel:911"
+                  className="snap-start inline-flex items-center gap-1.5 rounded-full bg-error-600 px-3 py-2 sm:px-4 text-[11px] sm:text-xs font-semibold text-white transition hover:bg-error-700 whitespace-nowrap shadow-sm"
+                >
+                  <Phone className="h-3.5 w-3.5" />
+                  Call 911
+                </a>
+                {[
+                  { href: '#emergency-units', label: 'CDRRMO · BFP · Delta 9', shortLabel: 'Emergency Units', icon: Siren },
+                  { href: '#hospitals', label: 'Hospitals', icon: Stethoscope, isNew: true },
+                  { href: '#police-stations', label: 'Police Stations', shortLabel: 'Police', icon: Shield },
+                  { href: '#crisis-hotlines', label: 'Crisis Hotlines', shortLabel: 'Hotlines', icon: HeartHandshake },
+                ].map(({ href, label, shortLabel, icon: Icon, isNew }) => (
+                  <a
+                    key={href}
+                    href={href}
+                    onClick={e => {
+                      e.preventDefault();
+                      const id = href.replace('#', '');
+                      const target = document.getElementById(id);
+                      if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        history.replaceState(null, '', href);
+                      }
+                    }}
+                    className="snap-start inline-flex items-center gap-1.5 rounded-full bg-white border border-gray-300 px-3 py-2 sm:px-4 text-[11px] sm:text-xs font-semibold text-gray-800 transition hover:bg-gray-50 hover:border-primary-300 whitespace-nowrap shadow-sm"
+                  >
+                    <Icon className="h-3.5 w-3.5 text-primary-600" />
+                    {shortLabel ? (
+                      <>
+                        <span className="sm:hidden">{shortLabel}</span>
+                        <span className="hidden sm:inline">{label}</span>
+                      </>
+                    ) : (
+                      <span>{label}</span>
+                    )}
+                    {isNew && (
+                      <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                        NEW
+                      </span>
+                    )}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
