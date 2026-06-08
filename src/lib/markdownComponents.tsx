@@ -3,28 +3,8 @@
  */
 
 import { type TypographyTheme } from './typographyThemes';
-import { type ReactNode, type HTMLAttributes, isValidElement } from 'react';
+import { type ReactNode, type HTMLAttributes } from 'react';
 import { TableWithToggle } from './TableWithToggle';
-
-// Slugify heading text for anchor IDs (lowercase, alnum + hyphens).
-// Recursively extracts text from React children so links inside headings
-// don't break the slug.
-function extractText(children: ReactNode): string {
-  if (typeof children === 'string' || typeof children === 'number') return String(children);
-  if (Array.isArray(children)) return children.map(extractText).join('');
-  if (isValidElement(children)) {
-    const props = (children as { props?: { children?: ReactNode } }).props;
-    return extractText(props?.children);
-  }
-  return '';
-}
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-');
-}
 
 // Extended theme type to include dynamic component keys
 type ExtendedTheme = TypographyTheme & {
@@ -50,25 +30,19 @@ export function createMarkdownComponents(theme: TypographyTheme) {
     h2: ({
       children,
       ...props
-    }: { children?: ReactNode } & HTMLAttributes<HTMLHeadingElement>) => {
-      const id = props.id ?? slugify(extractText(children));
-      return (
-        <h2 id={id} className={`scroll-mt-24 ${theme.components.h2}`} {...props}>
-          {children}
-        </h2>
-      );
-    },
+    }: { children?: ReactNode } & HTMLAttributes<HTMLHeadingElement>) => (
+      <h2 className={theme.components.h2} {...props}>
+        {children}
+      </h2>
+    ),
     h3: ({
       children,
       ...props
-    }: { children?: ReactNode } & HTMLAttributes<HTMLHeadingElement>) => {
-      const id = props.id ?? slugify(extractText(children));
-      return (
-        <h3 id={id} className={`scroll-mt-24 ${theme.components.h3}`} {...props}>
-          {children}
-        </h3>
-      );
-    },
+    }: { children?: ReactNode } & HTMLAttributes<HTMLHeadingElement>) => (
+      <h3 className={theme.components.h3} {...props}>
+        {children}
+      </h3>
+    ),
     h4: ({
       children,
       ...props

@@ -23,13 +23,6 @@ import {
   type CategoryIndex,
 } from '../data/yamlLoader';
 import SEO from '../components/SEO';
-import HotlineSectionNav from '../components/disaster/HotlineSectionNav';
-
-// Pages that should render a custom nav strip above the markdown body.
-const CUSTOM_NAVS: Record<string, () => React.ReactElement> = {
-  'disaster-preparedness/access-disaster-preparedness-information-and-early-warning-systems':
-    () => <HotlineSectionNav />,
-};
 
 interface DocumentProps {
   theme?: string;
@@ -226,11 +219,6 @@ export default function Document({
             {markdownContent.description && (
               <CardContent>{markdownContent.description}</CardContent>
             )}
-            {(() => {
-              const navKey = `${category}/${documentSlug}`;
-              const Nav = CUSTOM_NAVS[navKey];
-              return Nav ? <Nav /> : null;
-            })()}
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={markdownComponents}
