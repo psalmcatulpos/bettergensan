@@ -3805,9 +3805,6 @@ export default function BangonGensan() {
                             <span className="text-[8px] px-1 py-0 rounded font-medium bg-sky-50 text-sky-700">
                               SOCIAL MEDIA
                             </span>
-                            <span className="text-[8px] px-1 py-0 rounded font-medium bg-gray-100 text-gray-600 capitalize">
-                              {item.status}
-                            </span>
                             <span className="text-[9px] text-gray-400 ml-auto font-mono">{item.meta}</span>
                           </div>
                           <p className="text-[10px] text-gray-600 leading-snug line-clamp-1 pl-3">{item.subtitle}</p>
