@@ -219,6 +219,20 @@ function safeHttpUrl(s: unknown): string {
   return escapeHtml(raw);
 }
 
+// Privacy mask for submitter names on the PUBLIC BangonGensan surface.
+// Anon visitors only see the starting and ending initials — e.g.
+// "Juan Dela Cruz" → "J****z". Admins still see full names in the
+// separate BangonGensan admin panel (which reads the same rows with an
+// authenticated session). Fundraiser names are intentionally NOT masked:
+// the privacy policy states approved fundraisers display the name publicly.
+function maskName(name: unknown): string {
+  const s = String(name ?? '').trim();
+  if (!s) return 'Anonymous';
+  const chars = [...s];
+  if (chars.length === 1) return `${chars[0]}*`;
+  return `${chars[0]}****${chars[chars.length - 1]}`;
+}
+
 // ── BangonGensan: offer help tags ───────────────────────────────────
 const OFFER_TAGS = ['Food', 'Water', 'Medicine', 'Shelter', 'Transport', 'Skills'] as const;
 type OfferTag = (typeof OFFER_TAGS)[number];
@@ -1411,7 +1425,7 @@ export default function BangonGensan() {
       : 'Social Media';
     let body = '';
     if (kind === 'request') {
-      body = `<div style="font-size:11px;color:#374151">${escapeHtml(p.name)}</div>`;
+      body = `<div style="font-size:11px;color:#374151">${escapeHtml(maskName(p.name))}</div>`;
     } else if (kind === 'report') {
       const desc = String(p.description ?? '');
       body = `<div style="font-size:11px;color:#374151;line-height:1.35">${escapeHtml(desc.slice(0, 220))}${desc.length > 220 ? '…' : ''}</div>`;
@@ -4396,8 +4410,10 @@ export default function BangonGensan() {
 
           {/* ── RIGHT: Reports / Requests / Fundraisers (mobile-aware) ─── */}
           <aside className={`${mobileView === 'sidebar' ? 'fixed inset-0 z-30 flex w-full pb-20' : 'hidden lg:flex'} lg:relative lg:inset-auto lg:z-10 lg:flex flex-shrink-0 border-l flex-col cc-sidebar lg:w-80 ${darkMode ? 'bg-[#0d1117] border-[#1e2a3a]' : 'bg-gray-50 border-gray-200'}`}>
-            {/* Horizontal tab bar */}
-            <div className="flex items-stretch border-b border-[#1e2a3a] bg-[#0a0e14] flex-shrink-0">
+            {/* Horizontal tab bar — scrolls horizontally (no visible scrollbar)
+                when the four tabs can't fit the 320px sidebar; fills the width
+                when there's room (e.g. full-width mobile board view). */}
+            <div className="flex items-stretch border-b border-[#1e2a3a] bg-[#0a0e14] flex-shrink-0 overflow-x-auto scrollbar-hide">
               {([
                 { key: 'reports', label: 'Reports', icon: <FileText size={11} /> },
                 { key: 'requests', label: 'Requests', icon: <HandHelping size={11} /> },
@@ -4407,10 +4423,10 @@ export default function BangonGensan() {
                 <button
                   key={t.key}
                   onClick={() => setRightTab(t.key)}
-                  className={`flex-1 px-2 py-2 flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-widest border-r border-[#1e2a3a] last:border-r-0 transition-colors ${rightTab === t.key ? 'bg-primary-700 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                  className={`flex-1 min-w-[68px] whitespace-nowrap px-2 py-2 flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider border-r border-[#1e2a3a] last:border-r-0 transition-colors ${rightTab === t.key ? 'bg-primary-700 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                 >
                   {t.icon}
-                  <span className="truncate">{t.label}</span>
+                  <span>{t.label}</span>
                 </button>
               ))}
             </div>
@@ -4538,7 +4554,7 @@ export default function BangonGensan() {
                                   {created.toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
-                              <div className="text-[11px] font-bold text-gray-900 leading-snug truncate">{req.full_name}</div>
+                              <div className="text-[11px] font-bold text-gray-900 leading-snug truncate">{maskName(req.full_name)}</div>
                               <div className="text-[10px] text-gray-600 flex items-center gap-1">
                                 <MapPin size={9} className="flex-shrink-0 text-gray-400" />
                                 <span className="truncate">{req.barangay}{req.landmark ? ` — ${req.landmark}` : ''}</span>
@@ -4662,7 +4678,7 @@ export default function BangonGensan() {
                               <span className="truncate">{o.barangay}</span>
                             </div>
                             <div className="text-[10px] text-gray-700 mt-0.5">
-                              {o.contact_name} · <span className="font-mono">{o.contact_number}</span>
+                              {maskName(o.contact_name)} · <span className="font-mono">{o.contact_number}</span>
                             </div>
                           </div>
                         ))}
