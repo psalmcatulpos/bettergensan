@@ -21,7 +21,11 @@ const Navbar: React.FC = () => {
   const { t, i18n } = useTranslation('common');
   const location = useLocation();
   const navRef = useRef<HTMLDivElement>(null);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false });
+  const [indicator, setIndicator] = useState({
+    left: 0,
+    width: 0,
+    visible: false,
+  });
 
   /** Compute which top-level nav item is "active" based on the current path. */
   const isActive = useCallback(
@@ -31,14 +35,16 @@ const Navbar: React.FC = () => {
       if (item.href !== '/' && p.startsWith(item.href)) return true;
       return item.children?.some(c => p.startsWith(c.href)) ?? false;
     },
-    [location.pathname],
+    [location.pathname]
   );
 
   /** Position the sliding underline under the active nav item. */
   useEffect(() => {
     if (!navRef.current) return;
     const container = navRef.current;
-    const activeEl = container.querySelector<HTMLElement>('[data-nav-active="true"]');
+    const activeEl = container.querySelector<HTMLElement>(
+      '[data-nav-active="true"]'
+    );
     if (activeEl) {
       const cRect = container.getBoundingClientRect();
       const eRect = activeEl.getBoundingClientRect();
@@ -73,6 +79,10 @@ const Navbar: React.FC = () => {
   const navKey = (label: string) =>
     `navbar.${label.replace(/\s+/g, '').toLowerCase()}`;
 
+  // Fall back to the human label so a missing or not-yet-loaded translation
+  // never renders the raw "navbar.x" key (async i18n backend / stale cache).
+  const navLabel = (label: string) => t(navKey(label), { defaultValue: label });
+
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="mx-auto max-w-[1100px] px-4">
@@ -83,11 +93,7 @@ const Navbar: React.FC = () => {
             aria-label="BetterGensan home"
             className="flex shrink-0 items-center gap-2.5"
           >
-            <img
-              src="/logo.png"
-              alt=""
-              className="h-11 w-11 object-contain"
-            />
+            <img src="/logo.png" alt="" className="h-11 w-11 object-contain" />
             <div className="hidden leading-tight sm:block">
               <div className="text-base font-bold text-gray-900">
                 BetterGensan
@@ -99,7 +105,10 @@ const Navbar: React.FC = () => {
           </Link>
 
           {/* ---------- Center: primary nav ---------- */}
-          <div ref={navRef} className="relative hidden flex-1 items-center justify-center gap-6 lg:flex">
+          <div
+            ref={navRef}
+            className="relative hidden flex-1 items-center justify-center gap-6 lg:flex"
+          >
             {/* Sliding active indicator */}
             <span
               className="pointer-events-none absolute bottom-0 h-0.5 rounded-full bg-primary-600 transition-[left,width,opacity] duration-[var(--dur-base)] ease-[var(--ease-out-quart)]"
@@ -113,46 +122,50 @@ const Navbar: React.FC = () => {
               const active = isActive(item);
               const emergency = item.tone === 'emergency';
               return (
-              <div key={item.label} className="group relative">
-                <a
-                  href={item.href}
-                  data-nav-active={active || undefined}
-                  className={`flex items-center py-1 text-sm font-medium transition-colors duration-[120ms] ${
-                    emergency
-                      ? 'gap-1.5 rounded-full bg-red-600 px-3 py-1 text-white shadow-sm hover:bg-red-700'
-                      : `hover:text-primary-700 ${active ? 'text-primary-700' : 'text-gray-700'}`
-                  }`}
-                >
-                  {emergency && (
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                    </span>
-                  )}
-                  {t(navKey(item.label))}
+                <div key={item.label} className="group relative">
+                  <a
+                    href={item.href}
+                    data-nav-active={active || undefined}
+                    className={`flex items-center py-1 text-sm font-medium transition-colors duration-[120ms] ${
+                      emergency
+                        ? 'gap-1.5 rounded-full bg-red-600 px-3 py-1 text-white shadow-sm hover:bg-red-700'
+                        : `hover:text-primary-700 ${active ? 'text-primary-700' : 'text-gray-700'}`
+                    }`}
+                  >
+                    {emergency && (
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                      </span>
+                    )}
+                    {navLabel(item.label)}
+                    {item.children && (
+                      <ChevronDown className="ml-1 h-3.5 w-3.5 text-gray-500 transition-colors group-hover:text-primary-700" />
+                    )}
+                  </a>
                   {item.children && (
-                    <ChevronDown className="ml-1 h-3.5 w-3.5 text-gray-500 transition-colors group-hover:text-primary-700" />
-                  )}
-                </a>
-                {item.children && (
-                  <div className="invisible absolute left-1/2 z-50 w-56 -translate-x-1/2 translate-y-1 pt-2 opacity-0 transition-[opacity,transform] duration-[180ms] ease-[var(--ease-out-quart)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                  <div className="rounded-md bg-white shadow-lg ring-1 ring-black/5">
-                    <div className="py-1" role="menu" aria-orientation="vertical">
-                      {item.children.map(child => (
-                        <Link
-                          key={child.label}
-                          to={child.href}
-                          className="block px-4 py-2 text-left text-sm text-gray-700 transition-[background-color,color] duration-[120ms] hover:bg-primary-50 hover:text-primary-700"
-                          role="menuitem"
+                    <div className="invisible absolute left-1/2 z-50 w-56 -translate-x-1/2 translate-y-1 pt-2 opacity-0 transition-[opacity,transform] duration-[180ms] ease-[var(--ease-out-quart)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                      <div className="rounded-md bg-white shadow-lg ring-1 ring-black/5">
+                        <div
+                          className="py-1"
+                          role="menu"
+                          aria-orientation="vertical"
                         >
-                          {child.label}
-                        </Link>
-                      ))}
+                          {item.children.map(child => (
+                            <Link
+                              key={child.label}
+                              to={child.href}
+                              className="block px-4 py-2 text-left text-sm text-gray-700 transition-[background-color,color] duration-[120ms] hover:bg-primary-50 hover:text-primary-700"
+                              role="menuitem"
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -245,40 +258,40 @@ const Navbar: React.FC = () => {
                       <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
                     </span>
                   )}
-                  {t(navKey(item.label))}
+                  {navLabel(item.label)}
                 </Link>
               );
             }
             return (
-            <div key={item.label}>
-              <button
-                onClick={() => toggleSubmenu(item.label)}
-                className="flex w-full items-center justify-between px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-700"
-              >
-                {t(navKey(item.label))}
-                {item.children && (
-                  <ChevronDown
-                    className={`h-5 w-5 transition-transform ${
-                      activeMenu === item.label ? 'rotate-180 transform' : ''
-                    }`}
-                  />
+              <div key={item.label}>
+                <button
+                  onClick={() => toggleSubmenu(item.label)}
+                  className="flex w-full items-center justify-between px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-700"
+                >
+                  {navLabel(item.label)}
+                  {item.children && (
+                    <ChevronDown
+                      className={`h-5 w-5 transition-transform ${
+                        activeMenu === item.label ? 'rotate-180 transform' : ''
+                      }`}
+                    />
+                  )}
+                </button>
+                {item.children && activeMenu === item.label && (
+                  <div className="space-y-1 bg-gray-50 py-2 pl-6">
+                    {item.children.map(child => (
+                      <Link
+                        key={child.label}
+                        to={child.href}
+                        onClick={closeMenu}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-700"
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-              </button>
-              {item.children && activeMenu === item.label && (
-                <div className="space-y-1 bg-gray-50 py-2 pl-6">
-                  {item.children.map(child => (
-                    <Link
-                      key={child.label}
-                      to={child.href}
-                      onClick={closeMenu}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-700"
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+              </div>
             );
           })}
           <Link
