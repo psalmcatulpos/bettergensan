@@ -35,6 +35,7 @@ import {
   Home as HomeIcon,
   LifeBuoy,
   ArrowRight,
+  Heart,
 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { GENSAN_BOUNDARY, isInsideGensan } from '../data/gensanBoundary';
@@ -1204,7 +1205,7 @@ export default function BangonGensan() {
   const [timelineOpen] = useState(false);
   const darkMode = true;
   // BangonGensan tabbed panels ──────────────────────────────────────────
-  const [rightTab, setRightTab] = useState<'reports' | 'requests' | 'fundraisers'>('reports');
+  const [rightTab, setRightTab] = useState<'reports' | 'requests' | 'fundraisers' | 'offers'>('reports');
 
   // Approved fundraisers (RLS filters to status='approved' for anon)
   interface FundraiserRow {
@@ -1237,6 +1238,38 @@ export default function BangonGensan() {
     const i = setInterval(() => void loadFundraisers(), 30000);
     return () => clearInterval(i);
     // loadFundraisers is stable across renders; only the tab switch should trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rightTab]);
+
+  // Offers to help (bangon_offers) — public read, shown in the right panel.
+  interface OfferRow {
+    id: string;
+    offer_description: string;
+    offer_tags: string[] | null;
+    barangay: string;
+    contact_name: string;
+    contact_number: string;
+    created_at: string;
+  }
+  const [offers, setOffers] = useState<OfferRow[]>([]);
+  const [offersError, setOffersError] = useState<string | null>(null);
+  const loadOffers = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
+      .from('bangon_offers')
+      .select('id, offer_description, offer_tags, barangay, contact_name, contact_number, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (error) { setOffersError(error.message); return; }
+    setOffersError(null);
+    setOffers((data as OfferRow[]) ?? []);
+  };
+  useEffect(() => {
+    if (rightTab !== 'offers') return;
+    void loadOffers();
+    const i = setInterval(() => void loadOffers(), 30000);
+    return () => clearInterval(i);
+    // loadOffers is stable across renders; only the tab switch should trigger.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightTab]);
 
@@ -4368,6 +4401,7 @@ export default function BangonGensan() {
               {([
                 { key: 'reports', label: 'Reports', icon: <FileText size={11} /> },
                 { key: 'requests', label: 'Requests', icon: <HandHelping size={11} /> },
+                { key: 'offers', label: 'Offers', icon: <Heart size={11} /> },
                 { key: 'fundraisers', label: 'Fundraisers', icon: <BadgeAlert size={11} /> },
               ] as const).map(t => (
                 <button
@@ -4581,6 +4615,57 @@ export default function BangonGensan() {
                           </div>
                           );
                         })}
+                      </div>
+                    )}
+
+                    {/* ── OFFERS TAB ──────────────────────────────── */}
+                    {/* Community offers to help (bangon_offers). Public read. */}
+                    {rightTab === 'offers' && (
+                      <div className="p-2.5 space-y-1.5">
+                        <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+                          <Heart size={9} />
+                          Offers to Help
+                          <span className="ml-auto text-[9px] text-gray-500 font-normal normal-case tracking-normal">
+                            {offers.length} total
+                          </span>
+                        </div>
+                        {offersError && (
+                          <div className="p-2 bg-red-50 border border-red-200 rounded text-[10px] text-red-700">{offersError}</div>
+                        )}
+                        {offers.length === 0 && !offersError && (
+                          <div className="p-3 bg-gray-50 border border-gray-200 rounded text-[10px] text-gray-500 text-center">
+                            No offers yet. People offering food, water, shelter, transport, or skills will appear here.
+                          </div>
+                        )}
+                        {offers.map(o => (
+                          <div key={o.id} className="p-2.5 bg-white border border-gray-200 rounded bg-anim-fade-up">
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                Offer
+                              </span>
+                              <span className="text-[8px] text-gray-400 font-mono ml-auto">
+                                {new Date(o.created_at).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                            {o.offer_tags && o.offer_tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mb-1">
+                                {o.offer_tags.map(tag => (
+                                  <span key={tag} className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 border border-gray-200">
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <p className="text-[11px] text-gray-700 leading-snug">{o.offer_description}</p>
+                            <div className="mt-1 text-[10px] text-gray-600 flex items-center gap-1">
+                              <MapPin size={9} className="flex-shrink-0 text-gray-400" />
+                              <span className="truncate">{o.barangay}</span>
+                            </div>
+                            <div className="text-[10px] text-gray-700 mt-0.5">
+                              {o.contact_name} · <span className="font-mono">{o.contact_number}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
