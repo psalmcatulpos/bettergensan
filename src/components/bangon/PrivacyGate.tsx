@@ -27,7 +27,11 @@ export default function PrivacyGate() {
   if (accepted === null || accepted) return null;
 
   const onAccept = () => {
-    try { window.localStorage.setItem(STORAGE_KEY, '1'); } catch { /* noop */ }
+    try {
+      window.localStorage.setItem(STORAGE_KEY, '1');
+    } catch {
+      /* noop */
+    }
     setAccepted(true);
   };
   const onDecline = () => {
@@ -47,12 +51,15 @@ export default function PrivacyGate() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
           </span>
-          <h2 id="bg-privacy-title" className="text-white font-bold uppercase tracking-widest text-sm">
+          <h2
+            id="bg-privacy-title"
+            className="text-white font-bold uppercase tracking-widest text-sm"
+          >
             BangonGensan — Heads up
           </h2>
           <span className="ml-auto inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-600/15 border border-red-500/40 text-red-200 text-[10px] font-bold uppercase tracking-widest">
             <Heart size={10} />
-            1Tahanan
+            Community-led
           </span>
         </div>
 
@@ -60,21 +67,51 @@ export default function PrivacyGate() {
           <div className="flex items-start gap-2.5">
             <ShieldAlert size={18} className="text-red-300 shrink-0 mt-0.5" />
             <p className="m-0">
-              BangonGensan is a <strong className="text-white">temporary,
-              community-led emergency response</strong> organised by{' '}
-              <strong className="text-white">1Tahanan</strong>. It is not an
-              official government service.
+              BangonGensan is a{' '}
+              <strong className="text-white">
+                temporary, community-led emergency response
+              </strong>{' '}
+              run by volunteers. It is not an official government service.
             </p>
           </div>
 
           <ul className="text-[13px] space-y-1.5 pl-1 list-none">
-            <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">·</span><span>Everything you submit (relief requests, incident reports, fundraisers, offers, chat) is <strong className="text-white">public</strong> unless explicitly stated otherwise.</span></li>
-            <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">·</span><span>Approved fundraisers display your name, phone, payment details, and Facebook link publicly.</span></li>
-            <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">·</span><span>We can't guarantee that a request will be fulfilled, or that every fundraiser is genuine.</span></li>
-            <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">·</span><span>By continuing you agree to the{' '}
-              <Link to="/bangon-gensan/privacy" className="text-red-300 underline underline-offset-2 hover:text-red-200">
-                full privacy &amp; disclosure policy
-              </Link>.</span></li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 mt-0.5">·</span>
+              <span>
+                Everything you submit (relief requests, incident reports,
+                fundraisers, offers, chat) is{' '}
+                <strong className="text-white">public</strong> unless explicitly
+                stated otherwise.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 mt-0.5">·</span>
+              <span>
+                Approved fundraisers display your name, phone, payment details,
+                and Facebook link publicly.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 mt-0.5">·</span>
+              <span>
+                We can't guarantee that a request will be fulfilled, or that
+                every fundraiser is genuine.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-red-400 mt-0.5">·</span>
+              <span>
+                By continuing you agree to the{' '}
+                <Link
+                  to="/bangon-gensan/privacy"
+                  className="text-red-300 underline underline-offset-2 hover:text-red-200"
+                >
+                  full privacy &amp; disclosure policy
+                </Link>
+                .
+              </span>
+            </li>
           </ul>
         </div>
 
@@ -93,8 +130,7 @@ export default function PrivacyGate() {
             className="flex-1 px-4 py-2.5 rounded-md bg-red-600 hover:bg-red-500 text-white text-[12px] font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 transition-colors"
             autoFocus
           >
-            <Check size={14} />
-            I accept
+            <Check size={14} />I accept
           </button>
         </div>
       </div>

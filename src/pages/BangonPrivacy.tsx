@@ -15,7 +15,7 @@ export default function BangonPrivacy() {
         <title>Privacy & Disclosure — BangonGensan</title>
         <meta
           name="description"
-          content="BangonGensan is a temporary community-led emergency response effort organised by 1Tahanan. Read about how your data is handled."
+          content="BangonGensan is a temporary community-led emergency response effort run by volunteers. Read about how your data is handled."
         />
       </Helmet>
 
@@ -31,7 +31,7 @@ export default function BangonPrivacy() {
             </Link>
             <div className="ml-auto flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-600/15 border border-red-500/40 text-red-200 text-[10px] font-bold uppercase tracking-widest">
               <Heart size={10} />
-              1Tahanan-led
+              Community-led
             </div>
           </div>
         </header>
@@ -57,12 +57,12 @@ export default function BangonPrivacy() {
           <h2>What BangonGensan is</h2>
           <p>
             BangonGensan is a temporary community-led movement organised by
-            <strong> 1Tahanan</strong>, a volunteer civic-tech group, in
-            response to a specific emergency affecting General Santos City and
-            nearby barangays. It runs inside the BetterGensan platform but is
-            distinct from any local-government service. There is no contract,
-            paid relationship, or formal endorsement between BangonGensan and
-            the City of General Santos or any other LGU.
+            <strong> volunteers</strong>, in response to a specific emergency
+            affecting General Santos City and nearby barangays. It runs inside
+            the BetterGensan platform but is distinct from any local-government
+            service. There is no contract, paid relationship, or formal
+            endorsement between BangonGensan and the City of General Santos or
+            any other LGU.
           </p>
           <p>
             The surface is expected to be wound down once the active emergency
@@ -88,30 +88,30 @@ export default function BangonPrivacy() {
               identifier. We do not collect your name or email for chat.
             </li>
             <li>
-              <strong>Photos</strong> attached to incident reports are stored
-              in a public storage bucket. Don't attach anything you wouldn't
-              post publicly.
+              <strong>Photos</strong> attached to incident reports are stored in
+              a public storage bucket. Don't attach anything you wouldn't post
+              publicly.
             </li>
           </ul>
 
           <h2>What's public vs. private</h2>
           <p>
-            Everything you submit through BangonGensan is <strong>public by
-            default</strong>:
+            Everything you submit through BangonGensan is{' '}
+            <strong>public by default</strong>:
           </p>
           <ul>
             <li>
-              Relief requests, incident reports, and offers appear on the
-              public map and triage board for any visitor to see and act on.
+              Relief requests, incident reports, and offers appear on the public
+              map and triage board for any visitor to see and act on.
             </li>
             <li>
-              Approved fundraisers display the title, description, goal
-              amount, payment details, contact name, contact number, and
-              Facebook link to anyone viewing the page.
+              Approved fundraisers display the title, description, goal amount,
+              payment details, contact name, contact number, and Facebook link
+              to anyone viewing the page.
             </li>
             <li>
-              Pending fundraisers are visible only to BangonGensan admins
-              while under review.
+              Pending fundraisers are visible only to BangonGensan admins while
+              under review.
             </li>
             <li>
               Anonymous community chat messages are visible to anyone with the
@@ -119,10 +119,12 @@ export default function BangonPrivacy() {
             </li>
           </ul>
           <p>
-            <strong>Do not submit information you don't want strangers,
-            donors, or scrapers to see.</strong> If you need to reach
-            BangonGensan privately, message 1Tahanan directly through their
-            public channels.
+            <strong>
+              Do not submit information you don't want strangers, donors, or
+              scrapers to see.
+            </strong>{' '}
+            If you need to reach BangonGensan privately, message the
+            BangonGensan volunteers directly through their public channels.
           </p>
 
           <h2>How we use it</h2>
@@ -130,34 +132,33 @@ export default function BangonPrivacy() {
             Submissions are used solely to coordinate emergency response —
             triaging relief, verifying incidents, vetting fundraisers, and
             connecting offers with needs. We do not sell or share submissions
-            with marketers, political campaigns, or any commercial third
-            party.
+            with marketers, political campaigns, or any commercial third party.
           </p>
 
           <h2>Verification &amp; admin review</h2>
           <p>
             Fundraisers require admin review before they're publicly listed.
             Approval requires that the contact name, the GCash / bank account
-            name, and the Facebook identity all match. We reserve the right
-            to reject any fundraiser without explanation.
+            name, and the Facebook identity all match. We reserve the right to
+            reject any fundraiser without explanation.
           </p>
           <p>
-            All admin actions (approve, reject, status change) are written to
-            an immutable audit log retained for the lifetime of the
-            BangonGensan surface.
+            All admin actions (approve, reject, status change) are written to an
+            immutable audit log retained for the lifetime of the BangonGensan
+            surface.
           </p>
 
           <h2>Data retention</h2>
           <p>
-            Submissions persist while BangonGensan is live. When the surface
-            is wound down, 1Tahanan may export anonymised summaries (without
-            personal contact details) for post-incident reporting, and will
-            delete the raw submissions thereafter. Audit logs are retained as
-            evidence of admin actions.
+            Submissions persist while BangonGensan is live. When the surface is
+            wound down, the BangonGensan volunteers may export anonymised
+            summaries (without personal contact details) for post-incident
+            reporting, and will delete the raw submissions thereafter. Audit
+            logs are retained as evidence of admin actions.
           </p>
           <p>
-            To request deletion of a specific submission before then, reach
-            out to 1Tahanan through their public channels.
+            To request deletion of a specific submission before then, reach out
+            to the BangonGensan volunteers through their public channels.
           </p>
 
           <h2>What we can't promise</h2>
@@ -167,14 +168,12 @@ export default function BangonPrivacy() {
               BangonGensan is a coordination surface, not a resource pool.
             </li>
             <li>
-              We can't independently verify every photo, location, or
-              donation account beyond the matching checks described above.
-              Be skeptical and use the Facebook link as a sanity check before
-              donating.
+              We can't independently verify every photo, location, or donation
+              account beyond the matching checks described above. Be skeptical
+              and use the Facebook link as a sanity check before donating.
             </li>
             <li>
-              We can't guarantee uptime. BangonGensan runs on volunteer
-              effort.
+              We can't guarantee uptime. BangonGensan runs on volunteer effort.
             </li>
           </ul>
 
@@ -182,8 +181,9 @@ export default function BangonPrivacy() {
           <p className="flex items-center gap-2">
             <Users size={16} className="text-red-300" />
             <span>
-              <strong>1Tahanan</strong> — community-led emergency response
-              collective, working with the BetterGensan civic-tech project.
+              <strong>BangonGensan volunteers</strong> — a community-led
+              emergency response collective, working with the BetterGensan
+              civic-tech project.
             </span>
           </p>
 
