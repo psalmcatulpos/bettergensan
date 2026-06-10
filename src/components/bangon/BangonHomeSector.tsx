@@ -33,13 +33,15 @@ export default function BangonHomeSector() {
       try {
         const [req, inc, fund, offer] = await Promise.all([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any).from('bangon_requests')   .select('*', { count: 'exact', head: true }),
+          // base tables are now admin-only-read; count via the masked public
+          // views so anon visitors still get accurate totals (no names exposed).
+          (supabase as any).from('bangon_requests_public').select('*', { count: 'exact', head: true }),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (supabase as any).from('bangon_incidents')  .select('*', { count: 'exact', head: true }),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (supabase as any).from('bangon_fundraisers').select('*', { count: 'exact', head: true }),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any).from('bangon_offers')     .select('*', { count: 'exact', head: true }),
+          (supabase as any).from('bangon_offers_public').select('*', { count: 'exact', head: true }),
         ]);
         if (cancelled) return;
         setCounts({

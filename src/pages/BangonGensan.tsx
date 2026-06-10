@@ -1270,7 +1270,7 @@ export default function BangonGensan() {
   const loadOffers = async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
-      .from('bangon_offers')
+      .from('bangon_offers_public')
       .select('id, offer_description, offer_tags, barangay, contact_name, contact_number, created_at')
       .order('created_at', { ascending: false })
       .limit(100);
@@ -1365,7 +1365,7 @@ export default function BangonGensan() {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any)
-        .from('bangon_requests')
+        .from('bangon_requests_public')
         .select('id, need_type, barangay, landmark, full_name, contact_number, status, verified, created_at, updated_at')
         .eq('verified', true)
         .order('created_at', { ascending: false })
