@@ -5,12 +5,13 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { supabaseBangonAdmin as supabase } from '../lib/supabaseBangonAdmin';
 
 interface BangonProfile {
   id: string;
   email: string | null;
   is_bangon_admin: boolean;
+  is_bangon_super_admin: boolean;
   display_name: string | null;
   avatar_url: string | null;
 }
@@ -20,6 +21,7 @@ interface Ctx {
   session: Session | null;
   profile: BangonProfile | null;
   isBangonAdmin: boolean;
+  isBangonSuperAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -32,7 +34,7 @@ async function loadProfile(userId: string): Promise<BangonProfile | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
     .from('profiles')
-    .select('id, email, is_bangon_admin, display_name, avatar_url')
+    .select('id, email, is_bangon_admin, is_bangon_super_admin, display_name, avatar_url')
     .eq('id', userId)
     .maybeSingle();
   if (error) {
@@ -101,6 +103,7 @@ export function BangonAuthProvider({ children }: { children: React.ReactNode }) 
     session,
     profile,
     isBangonAdmin: !!profile?.is_bangon_admin,
+    isBangonSuperAdmin: !!profile?.is_bangon_super_admin,
     loading,
     signIn,
     signOut,

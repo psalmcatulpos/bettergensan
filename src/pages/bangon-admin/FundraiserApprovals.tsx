@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { BadgeAlert, Check, X, ExternalLink, RefreshCcw } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { supabaseBangonAdmin as supabase } from '../../lib/supabaseBangonAdmin';
 import { useBangonAuth } from '../../contexts/BangonAuthContext';
 import { logAuditEntry } from '../../lib/bangonAudit';
 

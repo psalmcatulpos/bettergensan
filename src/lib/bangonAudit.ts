@@ -3,7 +3,7 @@
 // All admin state-changing actions go through this so we never forget to
 // log. RLS enforces `admin_id = auth.uid()` and `is_bangon_admin()`.
 
-import { supabase } from './supabase';
+import { supabaseBangonAdmin as supabase } from './supabaseBangonAdmin';
 
 export interface AuditPayload {
   action: 'approved' | 'rejected' | 'status_changed' | string;

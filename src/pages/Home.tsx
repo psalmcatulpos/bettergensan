@@ -22,6 +22,7 @@ import PopulationSpotlight from '../components/dashboard/PopulationSpotlight';
 import CivicDecisions from '../components/dashboard/CivicDecisions';
 import GovOpportunities from '../components/dashboard/GovOpportunities';
 import JoinBetterGov from '../components/dashboard/JoinBetterGov';
+import BangonHomeSector from '../components/bangon/BangonHomeSector';
 
 function InfraAnnouncement() {
   return (
@@ -37,7 +38,7 @@ function InfraAnnouncement() {
 
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold text-white">
-            New: BangonGensan — Emergency Response Map
+            New: #BangonGensan — Emergency Response Map
           </p>
           <p className="mt-0.5 text-[12px] leading-relaxed text-white/80 sm:line-clamp-1">
             Report needs, request relief, and coordinate response in real
@@ -50,7 +51,7 @@ function InfraAnnouncement() {
           to="/bangon-gensan"
           className="hidden shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-red-700 transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80 sm:inline-flex"
         >
-          Open BangonGensan
+          Open #BangonGensan
         </Link>
       </div>
 
@@ -60,7 +61,7 @@ function InfraAnnouncement() {
           to="/bangon-gensan"
           className="inline-flex rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-red-700 transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80"
         >
-          Open BangonGensan
+          Open #BangonGensan
         </Link>
       </div>
     </div>
@@ -82,6 +83,10 @@ const Home: React.FC = () => {
 
         {/* ---------- Announcement strip ---------- */}
         <InfraAnnouncement />
+
+        {/* ---------- TEMPORARY: BangonGenSan active relief operation ----------
+            Remove this component + its import when the operation winds down. */}
+        <BangonHomeSector />
 
         {/* ---------- Featured: platform identity ---------- */}
         <PlatformValue />

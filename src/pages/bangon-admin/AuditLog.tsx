@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ScrollText, ChevronRight, ChevronDown } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { supabaseBangonAdmin as supabase } from '../../lib/supabaseBangonAdmin';
 
 interface AuditRow {
   id: string;

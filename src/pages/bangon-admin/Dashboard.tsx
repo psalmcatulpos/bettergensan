@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HandHelping, AlertTriangle, BadgeAlert, Shield, Clock } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { supabase } from '../../lib/supabase';
+import { supabaseBangonAdmin as supabase } from '../../lib/supabaseBangonAdmin';
 
 interface Kpis {
   requestsPending: number;

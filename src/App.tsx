@@ -46,10 +46,12 @@ import ProtectedBangonAdminRoute from './components/bangon-admin/ProtectedBangon
 import BangonAdminLayout from './components/bangon-admin/BangonAdminLayout';
 import BangonAdminLogin from './pages/bangon-admin/Login';
 import BangonAdminDashboard from './pages/bangon-admin/Dashboard';
+import BangonVerificationQueue from './pages/bangon-admin/VerificationQueue';
 import BangonFundraiserApprovals from './pages/bangon-admin/FundraiserApprovals';
 import BangonAuditLog from './pages/bangon-admin/AuditLog';
 import BangonAdminChat from './pages/bangon-admin/Chat';
 import BangonAdminProfile from './pages/bangon-admin/Profile';
+import BangonStaffManagement from './pages/bangon-admin/StaffManagement';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import Sources from './pages/admin/Sources';
@@ -88,7 +90,9 @@ function App() {
             >
               <Route path="/bangon-gensan/admin" element={<BangonAdminLayout />}>
                 <Route index element={<BangonAdminDashboard />} />
+                <Route path="verify" element={<BangonVerificationQueue />} />
                 <Route path="fundraisers" element={<BangonFundraiserApprovals />} />
+                <Route path="staff" element={<BangonStaffManagement />} />
                 <Route path="audit" element={<BangonAuditLog />} />
                 <Route path="chat" element={<BangonAdminChat />} />
                 <Route path="profile" element={<BangonAdminProfile />} />

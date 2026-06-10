@@ -1,20 +1,24 @@
 // BangonAdminLayout — shell with left sidebar + outlet for the admin pages.
 
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BadgeAlert, ScrollText, MessageSquare, UserCircle, LogOut, Heart } from 'lucide-react';
+import { LayoutDashboard, BadgeAlert, ScrollText, MessageSquare, UserCircle, LogOut, ShieldCheck, UserPlus } from 'lucide-react';
 import { useBangonAuth } from '../../contexts/BangonAuthContext';
 
-const NAV = [
+interface NavItem { to: string; label: string; icon: React.ReactNode; end?: boolean; superOnly?: boolean }
+const NAV: NavItem[] = [
   { to: '/bangon-gensan/admin',             label: 'Dashboard',   icon: <LayoutDashboard size={14} />, end: true },
+  { to: '/bangon-gensan/admin/verify',      label: 'Verify',      icon: <ShieldCheck size={14} /> },
   { to: '/bangon-gensan/admin/fundraisers', label: 'Fundraisers', icon: <BadgeAlert size={14} /> },
+  { to: '/bangon-gensan/admin/staff',       label: 'Staff',       icon: <UserPlus size={14} />, superOnly: true },
   { to: '/bangon-gensan/admin/audit',       label: 'Audit',       icon: <ScrollText size={14} /> },
   { to: '/bangon-gensan/admin/chat',        label: 'Chat',        icon: <MessageSquare size={14} /> },
   { to: '/bangon-gensan/admin/profile',     label: 'Profile',     icon: <UserCircle size={14} /> },
 ];
 
 export default function BangonAdminLayout() {
-  const { signOut, profile } = useBangonAuth();
+  const { signOut, profile, isBangonSuperAdmin } = useBangonAuth();
   const navigate = useNavigate();
+  const visibleNav = NAV.filter(n => !n.superOnly || isBangonSuperAdmin);
 
   const handleSignOut = async () => {
     await signOut();
@@ -30,12 +34,9 @@ export default function BangonAdminLayout() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
           </span>
           <div className="font-bold uppercase tracking-widest text-sm text-white">BangonGensan</div>
-          <span className="hidden lg:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-600/15 border border-red-500/40 text-red-200 text-[9px] font-bold uppercase tracking-widest ml-auto">
-            <Heart size={9} />Admin
-          </span>
         </div>
         <nav className="flex lg:flex-col flex-row overflow-x-auto lg:overflow-visible flex-1 lg:flex-none">
-          {NAV.map(item => (
+          {visibleNav.map(item => (
             <NavLink
               key={item.to}
               to={item.to}

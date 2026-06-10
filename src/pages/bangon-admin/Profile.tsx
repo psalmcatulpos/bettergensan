@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { UserCircle, Upload, Save, CheckCircle2 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { supabaseBangonAdmin as supabase } from '../../lib/supabaseBangonAdmin';
 import { useBangonAuth } from '../../contexts/BangonAuthContext';
 import { cleanText, validatePhoto } from '../../lib/bangonSanitize';
 
@@ -119,7 +119,7 @@ export default function AdminProfile() {
 
           <div className="text-[10px] text-gray-500 leading-relaxed pt-2 border-t border-[#1e2a3a]">
             Email: <span className="text-gray-300">{profile?.email || '—'}</span><br />
-            Admin promotion is managed by 1Tahanan via SQL. No role / user management UI.
+            Admin promotion is managed via SQL. No role / user management UI.
           </div>
         </div>
       </div>

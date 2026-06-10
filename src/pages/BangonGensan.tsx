@@ -199,6 +199,25 @@ function relativeTime(iso: string): string {
   return `${d}d`;
 }
 
+// HTML entity-encode for any user/Regiment/OpenAI string we drop into a
+// MapLibre popup via setHTML(). React's {} auto-escapes for normal JSX, but
+// the popup pathway uses innerHTML and would happily execute a <script> from
+// a crafted Facebook post or OpenAI-translated headline.
+function escapeHtml(s: unknown): string {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  } as Record<string, string>)[c] ?? c);
+}
+
+// Whitelist http(s) URLs only. Blocks javascript:, data:, vbscript: hrefs.
+// Returned string is also entity-encoded so the value is safe in a quoted
+// HTML attribute.
+function safeHttpUrl(s: unknown): string {
+  const raw = String(s ?? '').trim();
+  if (!/^https?:\/\//i.test(raw)) return '';
+  return escapeHtml(raw);
+}
+
 // ── BangonGensan: offer help tags ───────────────────────────────────
 const OFFER_TAGS = ['Food', 'Water', 'Medicine', 'Shelter', 'Transport', 'Skills'] as const;
 type OfferTag = (typeof OFFER_TAGS)[number];
@@ -210,6 +229,7 @@ interface ChatMessage {
   display_name: string;
   content: string;
   created_at: string;
+  is_staff: boolean;
 }
 
 // Chat identity:
@@ -1238,10 +1258,10 @@ export default function BangonGensan() {
   const [triageSort, setTriageSort] = useState<'time' | 'need' | 'barangay'>('time');
   const [triageError, setTriageError] = useState<string | null>(null);
 
-  // Right-panel row → map highlight. Set when the user clicks a Reports or
-  // Requests row; the map flies to that marker and a yellow ring highlights
-  // it for a few seconds, then clears.
-  const [highlightedMarkerId, setHighlightedMarkerId] = useState<string | null>(null);
+  // Right-panel row → map popup. Clicking a Reports or Requests row flies
+  // the map to that marker and opens the same popup a direct marker click
+  // would show. We hold a single shared maplibre popup instance here.
+  const bangonPopupRef = useRef<maplibregl.Popup | null>(null);
 
   const resetRequestForm = () => {
     setRequestStep(1);
@@ -1347,30 +1367,68 @@ export default function BangonGensan() {
     } catch { /* swallow */ }
   };
 
+  // Build the HTML for a marker popup. Used by both the direct map click
+  // handler and by flyToMarker (row click) so the popup is identical no
+  // matter how it's opened.
+  const buildMarkerPopupHtml = (feature: GeoJSON.Feature): string => {
+    const p = (feature.properties ?? {}) as Record<string, string>;
+    const kind = p.kind;
+    const titleLabel = kind === 'request' ? 'Relief Request'
+      : kind === 'report' ? 'Incident Report'
+      : 'Social Media';
+    let body = '';
+    if (kind === 'request') {
+      body = `<div style="font-size:11px;color:#374151">${escapeHtml(p.name)}</div>`;
+    } else if (kind === 'report') {
+      const desc = String(p.description ?? '');
+      body = `<div style="font-size:11px;color:#374151;line-height:1.35">${escapeHtml(desc.slice(0, 220))}${desc.length > 220 ? '…' : ''}</div>`;
+    } else {
+      const head = String(p.headline ?? '');
+      const sum = String(p.summary ?? '');
+      const url = safeHttpUrl(p.message_url);
+      body = `
+        ${head ? `<div style="font-size:11px;color:#111827;font-weight:600;line-height:1.35;margin-bottom:3px">${escapeHtml(head)}</div>` : ''}
+        ${sum ? `<div style="font-size:10px;color:#374151;line-height:1.35">${escapeHtml(sum.slice(0, 220))}${sum.length > 220 ? '…' : ''}</div>` : ''}
+        ${p.source_page_name ? `<div style="font-size:9px;color:#6b7280;margin-top:4px">via ${escapeHtml(p.source_page_name)}</div>` : ''}
+        ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:4px;font-size:10px;color:#0ea5e9;text-decoration:none;font-weight:600">View on Facebook ↗</a>` : ''}
+      `;
+    }
+    const loc = p.landmark && p.barangay
+      ? `${escapeHtml(p.barangay)} · ${escapeHtml(p.landmark)}`
+      : escapeHtml(p.barangay || p.landmark || 'GenSan');
+    const safeColor = escapeHtml(p.color);
+    return `
+      <div style="font-family:system-ui,-apple-system,sans-serif;min-width:200px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:9999px;background:${safeColor}"></span>
+          <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280">${titleLabel}</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px">${escapeHtml(p.label)}</div>
+        ${body}
+        <div style="font-size:10px;color:#9ca3af;margin-top:6px">📍 ${loc}</div>
+      </div>
+    `;
+  };
+
   // Click a Reports or Requests row → fly the map to the marker's location
-  // and ring-highlight it. Zoom 13 is wide enough to see the surrounding
-  // barangays for context (not pinned right on the dot).
+  // and open the same popup a direct marker click would. Zoom 13 keeps the
+  // surrounding barangays in frame.
   const flyToMarker = (markerId: string) => {
     const feature = bangonMarkersGeoJSON.features.find(f => (f.properties as { id?: string } | null)?.id === markerId);
     if (!feature) return;
     const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
     const map = mapRef.current;
-    if (map) {
-      map.flyTo({ center: coords, zoom: 13, speed: 1.2, curve: 1.4 });
+    if (!map) return;
+    map.flyTo({ center: coords, zoom: 13, speed: 1.2, curve: 1.4 });
+    if (!bangonPopupRef.current) {
+      bangonPopupRef.current = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: '280px' });
     }
-    setHighlightedMarkerId(markerId);
-    // On mobile, switch to the map view so the user can actually see the marker.
+    bangonPopupRef.current.setLngLat(coords).setHTML(buildMarkerPopupHtml(feature)).addTo(map);
+    // On mobile, switch to the map view so the user can see the popup.
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setMobileView('map');
     }
   };
-
-  // Auto-clear the highlight after a moment so the ring doesn't linger forever.
-  useEffect(() => {
-    if (!highlightedMarkerId) return;
-    const t = setTimeout(() => setHighlightedMarkerId(null), 4000);
-    return () => clearTimeout(t);
-  }, [highlightedMarkerId]);
 
   const advanceStatus = async (req: BangonRequest) => {
     const idx = STATUS_ORDER.indexOf(req.status);
@@ -1670,7 +1728,7 @@ export default function BangonGensan() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any)
         .from('bangon_chat_messages')
-        .select('id, session_id, display_name, content, created_at')
+        .select('id, session_id, display_name, content, created_at, is_staff')
         .order('created_at', { ascending: true })
         .limit(200);
       if (error) { setChatError(error.message); return; }
@@ -2048,7 +2106,10 @@ export default function BangonGensan() {
       features.push({
         type: 'Feature',
         properties: {
-          id: r.id,
+          // Marker id matches the row-side markerId built in the Reports/
+          // Requests right-panel tabs (`req-${r.id}`) so flyToMarker() and
+          // the bangon-marker-highlight layer filter resolve correctly.
+          id: `req-${r.id}`,
           kind: 'request',
           color: NEED_COLOR[r.need_type],
           label: NEED_SHORT[r.need_type],
@@ -2068,7 +2129,7 @@ export default function BangonGensan() {
       features.push({
         type: 'Feature',
         properties: {
-          id: i.id,
+          id: `rpt-${i.id}`,
           kind: 'report',
           color: INCIDENT_COLOR[i.incident_type],
           label: INCIDENT_SHORT[i.incident_type],
@@ -2088,7 +2149,7 @@ export default function BangonGensan() {
       features.push({
         type: 'Feature',
         properties: {
-          id: s.id,
+          id: `soc-${s.id}`,
           kind: 'social',
           color,
           label: s.category ?? 'Disaster',
@@ -2133,6 +2194,11 @@ export default function BangonGensan() {
       const loc = s.barangay
         ? (s.landmark ? `${s.barangay} · ${s.landmark}` : s.barangay)
         : (s.landmark ?? 'GenSan');
+      // Whitelist URL schemes — defense in depth against an upstream that
+      // somehow lets a `javascript:` URL leak into bangon_social_reports.
+      // React will render any string in href={} verbatim, so the gate has
+      // to live here.
+      const url = s.message_url && /^https?:\/\//i.test(s.message_url) ? s.message_url : undefined;
       items.push({
         id: `soc-${s.id}`,
         kind: 'social',
@@ -2143,7 +2209,7 @@ export default function BangonGensan() {
         dotColor: SOCIAL_COLOR[cat] ?? SOCIAL_COLOR_DEFAULT,
         status: s.verified ? 'verified' : (s.severity ?? 'unverified'),
         createdAt: s.posted_at,
-        url: s.message_url ?? undefined,
+        url,
       });
     });
     items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -2242,120 +2308,11 @@ export default function BangonGensan() {
         minzoom: 12,
       });
 
-      // Barangay hover interaction
-      let hoveredBarangay: string | null = null;
-      map.on('mousemove', 'barangay-fills', (e) => {
-        if (!e.features?.[0]) return;
-        const name = e.features[0].properties?.name;
-        if (name !== hoveredBarangay) {
-          hoveredBarangay = name;
-          map.getCanvas().style.cursor = 'pointer';
-          // Highlight hovered barangay
-          map.setPaintProperty('barangay-fills', 'fill-opacity', [
-            'case', ['==', ['get', 'name'], name], 0.12, 0,
-          ]);
-        }
-      });
-      map.on('mouseleave', 'barangay-fills', () => {
-        hoveredBarangay = null;
-        map.getCanvas().style.cursor = '';
-        map.setPaintProperty('barangay-fills', 'fill-opacity', 0);
-      });
-
-      // Click barangay to show rich dynamic popup
-      map.on('click', 'barangay-fills', (e) => {
-        if (!e.features?.[0]) return;
-        const name = e.features[0].properties?.name;
-        const center = e.lngLat;
-        if (popupRef.current) popupRef.current.remove();
-
-        // Read latest data from ref (closure-safe)
-        const d = dataRef.current;
-        const nameLower = (name || '').toLowerCase();
-
-        // Population
-        const pop = BARANGAY_POP[name] || null;
-
-        // Incidents
-        const incidents = d.filteredIncidents.filter(i => (i.barangay || '').toLowerCase() === nameLower);
-        const highSev = incidents.filter(i => i.severity === 'high').length;
-        const topCats: Record<string, number> = {};
-        incidents.forEach(i => { topCats[i.category] = (topCats[i.category] || 0) + 1; });
-        const topCat = Object.entries(topCats).sort((a, b) => b[1] - a[1])[0];
-
-        // Infrastructure projects
-        const infraProj = d.filteredInfraProjects.filter(p => (p.barangay || '').toLowerCase() === nameLower);
-        const onGoing = infraProj.filter(p => normalizeInfraStatus(p.status) === 'On-Going').length;
-
-        // Critical infra POIs
-        const pois = d.infraPOIData.filter(p => {
-          const addr = (p.tags['addr:street'] || p.tags.name || '').toLowerCase();
-          return addr.includes(nameLower);
-        });
-        const poiPolice = pois.filter(p => p.category === 'police').length;
-        const poiHospitals = pois.filter(p => p.category === 'hospitals').length;
-
-        // Police stations from bundled data
-        const policeInBrgy = POLICE_STATIONS.filter(s => s.address.toLowerCase().includes(nameLower));
-
-        // Build popup sections
-        let html = `<div style="font-size:11px;line-height:1.5;min-width:200px">`;
-        html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:14px">📍</span><strong style="font-size:14px">${name}</strong></div>`;
-
-        // Population
-        if (pop) {
-          const growthPositive = pop.growthPct.startsWith('+');
-          html += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px 8px;margin-bottom:6px;padding:6px;background:#f0f9ff;border-radius:4px;border:1px solid #bae6fd">`;
-          html += `<div><span style="color:#6b7280;font-size:9px">2024 est.</span><div style="font-weight:700;font-size:13px;color:#0c4a6e">${pop.pop2024est.toLocaleString()}</div></div>`;
-          html += `<div><span style="color:#6b7280;font-size:9px">2020 census</span><div style="font-weight:600;font-size:12px;color:#475569">${pop.pop2020.toLocaleString()}</div></div>`;
-          html += `<div><span style="color:#6b7280;font-size:9px">Growth/yr</span><div style="font-weight:700;font-size:12px;color:${growthPositive ? '#059669' : '#dc2626'}">${pop.growthPct}</div></div>`;
-          html += `</div>`;
-        }
-
-        // Incidents
-        if (incidents.length > 0) {
-          html += `<div style="margin-bottom:4px;padding:4px 6px;background:#fef2f2;border-radius:4px;border:1px solid #fecaca">`;
-          html += `<div style="font-weight:700;color:#991b1b;font-size:10px;margin-bottom:2px">INCIDENTS: ${incidents.length}</div>`;
-          if (highSev > 0) html += `<div style="color:#dc2626;font-size:10px">🔴 ${highSev} high severity</div>`;
-          if (topCat) html += `<div style="color:#6b7280;font-size:10px">Top: ${topCat[0]} (${topCat[1]})</div>`;
-          html += `</div>`;
-        }
-
-        // Infrastructure
-        if (infraProj.length > 0) {
-          html += `<div style="margin-bottom:4px;padding:4px 6px;background:#f0fdf4;border-radius:4px;border:1px solid #bbf7d0">`;
-          html += `<div style="font-weight:700;color:#166534;font-size:10px">INFRA PROJECTS: ${infraProj.length}</div>`;
-          if (onGoing > 0) html += `<div style="color:#6b7280;font-size:10px">${onGoing} on-going</div>`;
-          html += `</div>`;
-        }
-
-        // Facilities
-        const facilityLines: string[] = [];
-        if (policeInBrgy.length > 0) facilityLines.push(`🚓 ${policeInBrgy.length} police station${policeInBrgy.length > 1 ? 's' : ''}`);
-        if (poiHospitals > 0) facilityLines.push(`🏥 ${poiHospitals} hospital${poiHospitals > 1 ? 's' : ''}`);
-        const poiOther = pois.length - poiPolice - poiHospitals;
-        if (poiOther > 0) facilityLines.push(`🏛️ ${poiOther} other facilit${poiOther > 1 ? 'ies' : 'y'}`);
-
-        if (facilityLines.length > 0) {
-          html += `<div style="margin-bottom:4px;padding:4px 6px;background:#f5f3ff;border-radius:4px;border:1px solid #ddd6fe">`;
-          html += `<div style="font-weight:700;color:#4c1d95;font-size:10px;margin-bottom:2px">FACILITIES</div>`;
-          facilityLines.forEach(l => { html += `<div style="color:#6b7280;font-size:10px">${l}</div>`; });
-          html += `</div>`;
-        }
-
-        // Empty state
-        if (!pop && incidents.length === 0 && infraProj.length === 0 && facilityLines.length === 0) {
-          html += `<div style="color:#9ca3af;font-size:10px;text-align:center;padding:8px 0">No active layer data for this barangay</div>`;
-        }
-
-        html += `<div style="color:#d1d5db;font-size:9px;margin-top:4px">${center.lat.toFixed(4)}°N, ${center.lng.toFixed(4)}°E</div>`;
-        html += `</div>`;
-
-        popupRef.current = new maplibregl.Popup({ closeButton: true, maxWidth: '280px', className: 'cc-popup' })
-          .setLngLat(center)
-          .setHTML(html)
-          .addTo(map);
-      });
+      // (BangonGensan: barangay polygons are deliberately non-interactive.
+      // No click handler, no hover highlight, no pointer cursor. The fills
+      // exist only as a subtle outline so users can read where one
+      // barangay ends and the next begins; bangon markers handle all
+      // user interaction.)
 
       // Heatmap mask: covers everything OUTSIDE GenSan boundary with white
       // so the heatmap only shows within city limits
@@ -3119,66 +3076,16 @@ export default function BangonGensan() {
         'circle-opacity': 0.9,
       },
     });
-    // Highlight ring layer — only renders the feature whose properties.id
-    // matches the right-panel row the user just clicked. Filter starts empty
-    // (matches nothing); a separate effect updates the filter when
-    // highlightedMarkerId changes.
-    map.addLayer({
-      id: 'bangon-marker-highlight',
-      type: 'circle',
-      source: 'bangon-markers',
-      filter: ['==', ['get', 'id'], ''],
-      paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 16, 14, 26],
-        'circle-color': 'rgba(0,0,0,0)',
-        'circle-stroke-color': '#facc15',
-        'circle-stroke-width': 3,
-        'circle-opacity': 1,
-      },
-    });
-
-    const popupRef = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: '280px' });
-    const onClick = () => (e: maplibregl.MapMouseEvent) => {
+    // Shared popup instance — also used by flyToMarker (row clicks).
+    if (!bangonPopupRef.current) {
+      bangonPopupRef.current = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: '280px' });
+    }
+    const handler = (e: maplibregl.MapMouseEvent) => {
       const f = (e as unknown as { features?: GeoJSON.Feature[] }).features?.[0];
       if (!f) return;
-      const p = (f.properties ?? {}) as Record<string, string>;
-      const kind = p.kind;
-      const titleLabel = kind === 'request' ? 'Relief Request' : kind === 'report' ? 'Incident Report' : 'Social Media';
-      let body = '';
-      if (kind === 'request') {
-        body = `<div style="font-size:11px;color:#374151">${p.name ?? ''}</div>`;
-      } else if (kind === 'report') {
-        const desc = p.description ?? '';
-        body = `<div style="font-size:11px;color:#374151;line-height:1.35">${desc.slice(0, 220)}${desc.length > 220 ? '…' : ''}</div>`;
-      } else {
-        const head = p.headline ?? '';
-        const sum = p.summary ?? '';
-        body = `
-          ${head ? `<div style="font-size:11px;color:#111827;font-weight:600;line-height:1.35;margin-bottom:3px">${head}</div>` : ''}
-          ${sum ? `<div style="font-size:10px;color:#374151;line-height:1.35">${sum.slice(0, 220)}${sum.length > 220 ? '…' : ''}</div>` : ''}
-          ${p.source_page_name ? `<div style="font-size:9px;color:#6b7280;margin-top:4px">via ${p.source_page_name}</div>` : ''}
-          ${p.message_url ? `<a href="${p.message_url}" target="_blank" rel="noopener" style="display:inline-block;margin-top:4px;font-size:10px;color:#0ea5e9;text-decoration:none;font-weight:600">View on Facebook ↗</a>` : ''}
-        `;
-      }
-      const loc = p.landmark && p.barangay ? `${p.barangay} · ${p.landmark}` : (p.barangay || p.landmark || 'GenSan');
       const coords = (f.geometry as GeoJSON.Point).coordinates as [number, number];
-      popupRef
-        .setLngLat(coords)
-        .setHTML(`
-          <div style="font-family:system-ui,-apple-system,sans-serif;min-width:200px">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-              <span style="display:inline-block;width:8px;height:8px;border-radius:9999px;background:${p.color}"></span>
-              <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280">${titleLabel}</span>
-              <span style="margin-left:auto;font-size:9px;color:#9ca3af;text-transform:capitalize">${p.status ?? ''}</span>
-            </div>
-            <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px">${p.label}</div>
-            ${body}
-            <div style="font-size:10px;color:#9ca3af;margin-top:6px">📍 ${loc}</div>
-          </div>
-        `)
-        .addTo(map);
+      bangonPopupRef.current!.setLngLat(coords).setHTML(buildMarkerPopupHtml(f)).addTo(map);
     };
-    const handler = onClick();
     map.on('click', 'bangon-request-points', handler);
     map.on('click', 'bangon-report-points', handler);
     map.on('click', 'bangon-social-points', handler);
@@ -3198,14 +3105,6 @@ export default function BangonGensan() {
     const src = mapRef.current.getSource('bangon-markers') as maplibregl.GeoJSONSource | undefined;
     if (src) src.setData(bangonMarkersGeoJSON);
   }, [bangonMarkersGeoJSON, mapReady]);
-
-  // ── Highlight filter — rerun whenever the user clicks a Reports/Requests row ──
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !mapReady) return;
-    if (!map.getLayer('bangon-marker-highlight')) return;
-    map.setFilter('bangon-marker-highlight', ['==', ['get', 'id'], highlightedMarkerId ?? '']);
-  }, [highlightedMarkerId, mapReady]);
 
   // ── Toggle marker layer visibility (always on when any incident category is active) ──
   useEffect(() => {
@@ -3563,21 +3462,26 @@ export default function BangonGensan() {
           <div className="h-3 w-px bg-gray-700" />
           <div className="flex items-center gap-1.5 font-bold text-xs tracking-tight">
             <img src="/logo.png" alt="" className="h-5 w-5 object-contain" />
-            BANGONGENSAN
-            <span className="ml-1.5 px-1.5 py-px text-[9px] font-bold uppercase tracking-widest rounded bg-red-600 text-white">Emergency</span>
+            #BANGONGENSAN
+            <span className="ml-1.5 px-1.5 py-px text-[9px] font-bold uppercase tracking-widest rounded bg-red-600 text-white whitespace-nowrap">
+              June 8 Earthquake Relief Operations System
+            </span>
           </div>
           <div className="h-3 w-px bg-gray-700" />
           <div className="flex-1 flex items-center gap-2 min-w-0 overflow-hidden mx-3">
             <span className="flex-shrink-0 text-[10px] font-bold text-white uppercase tracking-wider">NEWS:</span>
             <div className="flex-1 overflow-hidden relative">
               <div className="whitespace-nowrap animate-[marquee_45s_linear_infinite] text-[11px] font-medium" style={{ color: '#f58900' }}>
-                {filteredIncidents.length > 0
-                  ? filteredIncidents
-                      .filter(i => i.summary)
+                {bangonSocialReports.length > 0
+                  ? bangonSocialReports
                       .slice(0, 15)
-                      .map(i => i.summary.length > 100 ? i.summary.slice(0, 100) + '…' : i.summary)
+                      .map(s => {
+                        const text = s.headline ?? s.summary ?? '';
+                        return text.length > 100 ? text.slice(0, 100) + '…' : text;
+                      })
+                      .filter(t => t.length > 0)
                       .join(' — ')
-                  : 'No active reports — monitoring General Santos City safety signals'
+                  : 'No active disaster reports in the last 5 days — bangon-social-sync is monitoring 30+ keywords across Facebook'
                 }
               </div>
             </div>
@@ -3634,10 +3538,16 @@ export default function BangonGensan() {
                         const mine = m.session_id === chatHandle?.sessionId;
                         return (
                           <div key={m.id} className={`flex flex-col bg-anim-slide-x ${mine ? 'items-end' : 'items-start'}`}>
-                            <div className="text-[8px] uppercase tracking-widest text-gray-500 mb-0.5">
-                              {mine ? 'you' : m.display_name} · {new Date(m.created_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}
+                            <div className="text-[8px] uppercase tracking-widest mb-0.5 flex items-center gap-1">
+                              {m.is_staff && (
+                                <span className="px-1 py-0 rounded bg-red-600 text-white text-[7px] font-bold tracking-widest">STAFF</span>
+                              )}
+                              <span className={m.is_staff ? 'text-white font-bold' : 'text-gray-500'}>
+                                {mine ? 'you' : m.display_name}
+                              </span>
+                              <span className="text-gray-500">· {new Date(m.created_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
-                            <div className={`max-w-[85%] px-2 py-1 rounded-md text-[11px] leading-snug ${mine ? 'bg-red-600 text-white' : 'bg-[#111720] text-gray-100 border border-gray-700'}`}>
+                            <div className={`max-w-[85%] px-2 py-1 rounded-md text-[11px] leading-snug ${mine ? 'bg-red-600 text-white' : m.is_staff ? 'bg-red-900/40 text-white border border-red-700/60' : 'bg-[#111720] text-gray-100 border border-gray-700'}`}>
                               {m.content}
                             </div>
                           </div>
@@ -4493,13 +4403,12 @@ export default function BangonGensan() {
                         {bangonIncidentRows.slice(0, 60).map(r => {
                           const meta = INCIDENT_TYPES.find(t => t.key === r.incident_type);
                           const markerId = `rpt-${r.id}`;
-                          const isHighlighted = highlightedMarkerId === markerId;
                           return (
                             <button
                               key={r.id}
                               type="button"
                               onClick={() => flyToMarker(markerId)}
-                              className={`block w-full text-left p-2 bg-white border rounded transition-colors cursor-pointer ${isHighlighted ? 'border-yellow-400 ring-2 ring-yellow-300 bg-yellow-50/60' : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/40'}`}
+                              className="block w-full text-left p-2 bg-white border border-gray-200 rounded transition-colors cursor-pointer hover:border-orange-300 hover:bg-orange-50/40"
                             >
                               <div className="flex items-center gap-1.5 mb-1">
                                 <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">
@@ -4507,9 +4416,6 @@ export default function BangonGensan() {
                                 </span>
                                 <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">
                                   {meta?.label ?? r.incident_type}
-                                </span>
-                                <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 capitalize">
-                                  {r.status}
                                 </span>
                                 <span className="ml-auto text-[8px] text-gray-400 font-mono">
                                   {new Date(r.created_at).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -4578,10 +4484,8 @@ export default function BangonGensan() {
                         )}
                         {sortedTriage.map(req => {
                           const need = NEED_META[req.need_type];
-                          const status = STATUS_META[req.status];
                           const created = new Date(req.created_at);
                           const markerId = `req-${req.id}`;
-                          const isHighlighted = highlightedMarkerId === markerId;
                           return (
                             <div
                               key={req.id}
@@ -4589,7 +4493,7 @@ export default function BangonGensan() {
                               role="button"
                               tabIndex={0}
                               onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') flyToMarker(markerId); }}
-                              className={`p-2 bg-white border rounded cursor-pointer transition-colors ${isHighlighted ? 'border-yellow-400 ring-2 ring-yellow-300 bg-yellow-50/60' : req.status === 'pending' ? 'border-amber-300 hover:border-amber-400 hover:bg-amber-50/40' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
+                              className="p-2 bg-white border border-gray-200 rounded cursor-pointer transition-colors hover:border-gray-300 hover:bg-gray-50"
                             >
                               <div className="flex items-center gap-1.5 mb-1">
                                 <span className={`flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${need.color}`}>
@@ -4606,13 +4510,6 @@ export default function BangonGensan() {
                                 <span className="truncate">{req.barangay}{req.landmark ? ` — ${req.landmark}` : ''}</span>
                               </div>
                               <div className="text-[10px] text-gray-500 font-mono">{req.contact_number}</div>
-                              <button
-                                onClick={e => { e.stopPropagation(); void advanceStatus(req); }}
-                                className={`mt-1.5 w-full px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1 ${status.color}`}
-                              >
-                                {req.status === 'fulfilled' ? <CheckCircle2 size={11} /> : <ArrowRight size={11} />}
-                                {status.label}
-                              </button>
                             </div>
                           );
                         })}
