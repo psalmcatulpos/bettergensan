@@ -65,6 +65,11 @@ export const mainNavigation: NavigationItem[] = [
       { label: 'Smart Map', href: '/command-center' },
     ],
   },
+  {
+    label: 'BangonGensan',
+    href: '/bangon-gensan',
+    tone: 'emergency',
+  },
 ];
 
 export const footerNavigation = {

@@ -38,6 +38,18 @@ import Accessibility from './pages/Accessibility';
 import FAQ from './pages/FAQ';
 import Placeholder from './pages/Placeholder';
 import CommandCenter from './pages/CommandCenter';
+import BangonGensan from './pages/BangonGensan';
+import BangonPrivacy from './pages/BangonPrivacy';
+import BangonForm from './pages/BangonForm';
+import { BangonAuthProvider } from './contexts/BangonAuthContext';
+import ProtectedBangonAdminRoute from './components/bangon-admin/ProtectedBangonAdminRoute';
+import BangonAdminLayout from './components/bangon-admin/BangonAdminLayout';
+import BangonAdminLogin from './pages/bangon-admin/Login';
+import BangonAdminDashboard from './pages/bangon-admin/Dashboard';
+import BangonFundraiserApprovals from './pages/bangon-admin/FundraiserApprovals';
+import BangonAuditLog from './pages/bangon-admin/AuditLog';
+import BangonAdminChat from './pages/bangon-admin/Chat';
+import BangonAdminProfile from './pages/bangon-admin/Profile';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import Sources from './pages/admin/Sources';
@@ -60,6 +72,34 @@ function App() {
           <Routes>
             {/* Command Center — standalone full-page, no navbar/footer */}
             <Route path="/command-center" element={<CommandCenter />} />
+
+            {/* BangonGensan — emergency response surface, same layout shell */}
+            <Route path="/bangon-gensan" element={<BangonGensan />} />
+            <Route path="/bangon-gensan/privacy" element={<BangonPrivacy />} />
+            <Route path="/bangon-gensan/form" element={<BangonForm />} />
+            {/* BangonGensan admin — separate auth context, no PublicLayout */}
+            <Route path="/bangon-gensan/login" element={<BangonAuthProvider><BangonAdminLogin /></BangonAuthProvider>} />
+            <Route
+              element={(
+                <BangonAuthProvider>
+                  <ProtectedBangonAdminRoute />
+                </BangonAuthProvider>
+              )}
+            >
+              <Route path="/bangon-gensan/admin" element={<BangonAdminLayout />}>
+                <Route index element={<BangonAdminDashboard />} />
+                <Route path="fundraisers" element={<BangonFundraiserApprovals />} />
+                <Route path="audit" element={<BangonAuditLog />} />
+                <Route path="chat" element={<BangonAdminChat />} />
+                <Route path="profile" element={<BangonAdminProfile />} />
+              </Route>
+            </Route>
+            {/* No-hyphen alias — shorter URL, redirects to the canonical hyphenated path */}
+            <Route path="/bangongensan" element={<Navigate to="/bangon-gensan" replace />} />
+            <Route path="/bangongensan/privacy" element={<Navigate to="/bangon-gensan/privacy" replace />} />
+            <Route path="/bangongensan/form" element={<Navigate to="/bangon-gensan/form" replace />} />
+            <Route path="/bangongensan/login" element={<Navigate to="/bangon-gensan/login" replace />} />
+            <Route path="/bangongensan/admin" element={<Navigate to="/bangon-gensan/admin" replace />} />
 
             {/* Admin login — bare layout, no sidebar */}
             <Route path="/admin/login" element={<Login />} />

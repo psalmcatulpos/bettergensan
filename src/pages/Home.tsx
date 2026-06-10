@@ -12,7 +12,7 @@
 // hierarchy instead of equal-weight stacked widgets.
 
 import { Link } from 'react-router-dom';
-import { MapPin } from 'lucide-react';
+import { Siren } from 'lucide-react';
 import SEO from '../components/SEO';
 import SearchHero from '../components/home/SearchHero';
 import PlatformValue from '../components/home/PlatformValue';
@@ -26,38 +26,41 @@ import JoinBetterGov from '../components/dashboard/JoinBetterGov';
 function InfraAnnouncement() {
   return (
     <div
-      className="announcement-shimmer relative overflow-hidden border-b border-[#f58900]/20"
-      style={{ backgroundColor: '#f58900' }}
+      className="announcement-shimmer relative overflow-hidden border-b border-red-700/30"
+      style={{ backgroundColor: '#dc2626' }}
     >
       <div className="mx-auto flex max-w-[1100px] items-start gap-3 px-4 py-3 sm:items-center">
-        <MapPin className="h-5 w-5 shrink-0 text-white" />
+        <span className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/60" />
+          <Siren className="relative h-5 w-5 text-white" />
+        </span>
 
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold text-white">
-            New: PHIVOLCS Tsunami Layer on the Smart Map
+            New: BangonGensan — Emergency Response Map
           </p>
           <p className="mt-0.5 text-[12px] leading-relaxed text-white/80 sm:line-clamp-1">
-            Tsunami inundation modeling for the General Santos coastline,
-            now overlaid on the 3D Smart Map alongside flood, landslide,
-            storm surge, infrastructure, and live incident feeds.
+            Report needs, request relief, and coordinate response in real
+            time. A live operational map for the people of General Santos
+            during disasters and recovery.
           </p>
         </div>
 
         <Link
-          to="/command-center"
-          className="hidden shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80 sm:inline-flex"
+          to="/bangon-gensan"
+          className="hidden shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-red-700 transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80 sm:inline-flex"
         >
-          Open Smart Map
+          Open BangonGensan
         </Link>
       </div>
 
       {/* Mobile CTA — below text */}
       <div className="mx-auto max-w-[1100px] px-4 pb-3 sm:hidden">
         <Link
-          to="/command-center"
-          className="inline-flex rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-[#f58900] transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80"
+          to="/bangon-gensan"
+          className="inline-flex rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-red-700 transition-[background-color] duration-[var(--dur-fast)] hover:bg-white/80"
         >
-          Open Smart Map
+          Open BangonGensan
         </Link>
       </div>
     </div>

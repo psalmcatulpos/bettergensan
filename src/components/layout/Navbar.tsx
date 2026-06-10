@@ -111,13 +111,24 @@ const Navbar: React.FC = () => {
             />
             {mainNavigation.map(item => {
               const active = isActive(item);
+              const emergency = item.tone === 'emergency';
               return (
               <div key={item.label} className="group relative">
                 <a
                   href={item.href}
                   data-nav-active={active || undefined}
-                  className={`flex items-center py-1 text-sm font-medium transition-colors duration-[120ms] hover:text-primary-700 ${active ? 'text-primary-700' : 'text-gray-700'}`}
+                  className={`flex items-center py-1 text-sm font-medium transition-colors duration-[120ms] ${
+                    emergency
+                      ? 'gap-1.5 rounded-full bg-red-600 px-3 py-1 text-white shadow-sm hover:bg-red-700'
+                      : `hover:text-primary-700 ${active ? 'text-primary-700' : 'text-gray-700'}`
+                  }`}
                 >
+                  {emergency && (
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                    </span>
+                  )}
                   {t(navKey(item.label))}
                   {item.children && (
                     <ChevronDown className="ml-1 h-3.5 w-3.5 text-gray-500 transition-colors group-hover:text-primary-700" />
@@ -214,7 +225,31 @@ const Navbar: React.FC = () => {
           </button>
         </div>
         <div className="space-y-1 px-2 pb-4 pt-2">
-          {mainNavigation.map(item => (
+          {mainNavigation.map(item => {
+            const emergency = item.tone === 'emergency';
+            if (emergency || !item.children) {
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  onClick={closeMenu}
+                  className={`flex items-center gap-2 px-4 py-2 text-base font-medium ${
+                    emergency
+                      ? 'rounded-md bg-red-600 text-white hover:bg-red-700'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-primary-700'
+                  }`}
+                >
+                  {emergency && (
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                    </span>
+                  )}
+                  {t(navKey(item.label))}
+                </Link>
+              );
+            }
+            return (
             <div key={item.label}>
               <button
                 onClick={() => toggleSubmenu(item.label)}
@@ -244,7 +279,8 @@ const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
           <Link
             to="/about"
             onClick={closeMenu}

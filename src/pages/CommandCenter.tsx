@@ -28,8 +28,6 @@ import {
   CircleDot,
   Thermometer,
   Calendar,
-  Moon,
-  Sun,
   Crosshair,
   Zap,
   BarChart3,
@@ -972,7 +970,7 @@ export default function CommandCenter() {
   const [timelineWindow, setTimelineWindow] = useState<'24h' | '7d' | '30d' | '90d'>('30d');
   const [timelineRange, setTimelineRange] = useState<[number, number]>([0, 1]);
   const [timelineOpen, setTimelineOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const darkMode = true;
   const [hazardLayers, setHazardLayers] = useState<Record<HazardLayerKey, boolean>>(
     () => Object.fromEntries(HAZARD_LAYERS.map(l => [l.key, false])) as Record<HazardLayerKey, boolean>,
   );
@@ -3498,17 +3496,10 @@ export default function CommandCenter() {
 
               {/* Control buttons stack — bottom right */}
               <div className="hidden lg:flex absolute bottom-10 right-14 z-[10] flex-col gap-1.5">
-                {/* Dark mode toggle */}
-                <button
-                  onClick={() => setDarkMode(p => !p)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-lg border transition-all ${darkMode ? 'bg-gray-800 border-gray-700 text-amber-400' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-                >
-                  {darkMode ? <Sun size={15} /> : <Moon size={15} />}
-                </button>
                 {/* Calendar/timeline toggle */}
                 <button
                   onClick={() => setTimelineOpen(p => !p)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-lg border transition-all ${timelineOpen ? 'bg-primary-600 border-primary-500 text-white' : darkMode ? 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-lg border transition-all ${timelineOpen ? 'bg-primary-600 border-primary-500 text-white' : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200'}`}
                 >
                   <Calendar size={15} />
                 </button>
@@ -3721,12 +3712,6 @@ export default function CommandCenter() {
                   <div className="h-3 w-px bg-gray-300" />
                   <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest"><Layers size={12} />Layers</div>
                   <span className="ml-auto text-[10px] text-gray-400">{activeLayerCount} active</span>
-                  <button
-                    onClick={() => setDarkMode(p => !p)}
-                    className={`w-7 h-7 flex items-center justify-center rounded-lg border transition-all ${darkMode ? 'bg-gray-800 border-gray-700 text-amber-400' : 'bg-white border-gray-200 text-gray-600'}`}
-                  >
-                    {darkMode ? <Sun size={13} /> : <Moon size={13} />}
-                  </button>
                 </div>
                 <div className="text-[11px]">
                   {/* Map controls */}

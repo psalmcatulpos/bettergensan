@@ -322,3 +322,39 @@
   );
   background-size: 22px 22px;
 }
+
+/* ---------------------------------------------------------------------------
+ * BangonGensan motion layer
+ *
+ * Custom keyframes + utility classes used by /bangon-gensan and
+ * /bangon-gensan/form. Matches the project's existing voice (CSS-only,
+ * 150–600 ms range, prefers-reduced-motion-aware).
+ * --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes bg-slide-in-x {
+    from { transform: translateX(-12px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+  }
+  @keyframes bg-step-slide {
+    from { transform: translateX(8px); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+  }
+  @keyframes bg-success-pop {
+    0%   { transform: scale(0.4); opacity: 0; }
+    60%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1);    opacity: 1; }
+  }
+  @keyframes bg-fade-up {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+
+  .bg-anim-step    { animation: bg-step-slide   var(--dur-base, 240ms)   var(--ease-out-quart, ease-out) both; }
+  .bg-anim-slide-x { animation: bg-slide-in-x   var(--dur-base, 240ms)   var(--ease-out-quart, ease-out) both; }
+  .bg-anim-pop     { animation: bg-success-pop  var(--dur-slow, 400ms)   var(--ease-out-quart, ease-out) both; }
+  .bg-anim-fade-up { animation: bg-fade-up      var(--dur-reveal, 600ms) var(--ease-out-quart, ease-out) both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Downgrade everything to instant. */
+  .bg-anim-step, .bg-anim-slide-x, .bg-anim-pop, .bg-anim-fade-up { animation: none; }
+}

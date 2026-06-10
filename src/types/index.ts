@@ -16,6 +16,8 @@ export interface NavigationItem {
   label: string;
   href: string;
   children?: NavigationItem[];
+  /** Visual tone for the nav item. 'emergency' renders in red as a CTA. */
+  tone?: 'default' | 'emergency';
 }
 
 export interface GovJob {
