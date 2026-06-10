@@ -343,12 +343,12 @@ export default function ControlsForm({ fullScreen = false }: Props) {
               {requestStep === 1 && (
                 <div className="space-y-2">
                   <StepHeading text="Step 1 / 3 · Need Type" />
-                  <div className="grid grid-cols-5 gap-1.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-1.5">
                     {NEED_TYPES.map(t => (
                       <button key={t.key} type="button"
                         onClick={() => { setFormNeedType(t.key); setRequestStep(2); }}
-                        className={`px-1 py-2 rounded-md border flex flex-col items-center justify-center gap-1 transition-transform hover:-translate-y-0.5 active:scale-[0.98] ${formNeedType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}>
-                        {t.icon}<span className="font-bold uppercase tracking-wider text-[9px]">{t.label}</span>
+                        className={`px-3 py-4 sm:px-1 sm:py-2 rounded-md border flex flex-col items-center justify-center gap-1.5 sm:gap-1 min-h-[72px] sm:min-h-0 transition-transform hover:-translate-y-0.5 active:scale-[0.98] ${formNeedType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}>
+                        {t.icon}<span className="font-bold uppercase tracking-wider text-xs sm:text-[9px]">{t.label}</span>
                       </button>
                     ))}
                   </div>
@@ -402,12 +402,12 @@ export default function ControlsForm({ fullScreen = false }: Props) {
               {incidentStep === 1 && (
                 <div className="space-y-2">
                   <StepHeading text="Step 1 / 3 · Incident Type" />
-                  <div className="grid grid-cols-3 gap-1.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-1.5">
                     {INCIDENT_TYPES.map(t => (
                       <button key={t.key} type="button"
                         onClick={() => { setIncidentType(t.key); setIncidentStep(2); }}
-                        className={`px-1 py-2 rounded-md border flex items-center justify-center gap-1 transition-transform hover:-translate-y-0.5 active:scale-[0.98] ${incidentType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}>
-                        <span className="font-bold uppercase tracking-wider text-[10px]">{t.label}</span>
+                        className={`px-3 py-4 sm:px-1 sm:py-2 rounded-md border flex items-center justify-center gap-1 min-h-[56px] sm:min-h-0 transition-transform hover:-translate-y-0.5 active:scale-[0.98] ${incidentType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}>
+                        <span className="font-bold uppercase tracking-wider text-sm sm:text-[10px]">{t.label}</span>
                       </button>
                     ))}
                   </div>
@@ -530,7 +530,7 @@ export default function ControlsForm({ fullScreen = false }: Props) {
                       const active = offerTags.includes(tag);
                       return (
                         <button key={tag} type="button" onClick={() => toggleOfferTag(tag)}
-                          className={`px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider transition-colors ${active ? 'bg-red-600 text-white border-red-500' : 'bg-[#111720] text-gray-300 border-gray-700 hover:border-gray-500'}`}>
+                          className={`px-4 py-2.5 sm:px-2.5 sm:py-1 rounded-full border text-sm sm:text-[10px] font-bold uppercase tracking-wider transition-colors min-h-[44px] sm:min-h-0 ${active ? 'bg-red-600 text-white border-red-500' : 'bg-[#111720] text-gray-300 border-gray-700 hover:border-gray-500'}`}>
                           {tag}
                         </button>
                       );
@@ -601,7 +601,7 @@ function StepHeading({ text }: { text: string }) {
 function ErrorBanner({ msg }: { msg: string | null }) {
   if (!msg) return null;
   return (
-    <div className="p-2 rounded-md bg-red-900/40 border border-red-700/60 text-[11px] text-red-200 flex items-start gap-1.5">
+    <div className="p-3 sm:p-2 rounded-md bg-red-900/40 border border-red-700/60 text-sm sm:text-[11px] text-red-100 sm:text-red-200 flex items-start gap-2 sm:gap-1.5 shadow-lg sm:shadow-none">
       <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" /><span>{msg}</span>
     </div>
   );
@@ -610,24 +610,26 @@ function ErrorBanner({ msg }: { msg: string | null }) {
 function StepNav({ step, onBack, onContinue, onSubmit, submitting, submitLabel }: {
   step: 1 | 2 | 3; onBack: () => void; onContinue: () => void; onSubmit: () => void; submitting: boolean; submitLabel: string;
 }) {
+  // Mobile-first sizing — bigger tap targets + larger label. sm: collapses
+  // back to the compact inline look used by the bottom-deck Controls panel.
   return (
-    <div className="flex items-center gap-1.5 mt-2">
+    <div className="flex items-center gap-2 mt-3">
       {step > 1 && (
         <button type="button" onClick={onBack}
-          className="px-3 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase tracking-widest min-h-[40px]">
+          className="px-4 py-3 sm:px-3 sm:py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-sm sm:text-[10px] font-bold uppercase tracking-widest min-h-[48px] sm:min-h-[40px]">
           Back
         </button>
       )}
       {step < 3 && (
         <button type="button" onClick={onContinue}
-          className="ml-auto px-3 py-2 rounded-md bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 min-h-[40px]">
-          Continue <ArrowRight size={12} />
+          className="ml-auto px-5 py-3 sm:px-3 sm:py-2 rounded-md bg-red-600 hover:bg-red-500 text-white text-sm sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 min-h-[48px] sm:min-h-[40px]">
+          Continue <ArrowRight size={14} className="sm:hidden" /><ArrowRight size={12} className="hidden sm:inline" />
         </button>
       )}
       {step === 3 && (
         <button type="button" disabled={submitting} onClick={onSubmit}
-          className="ml-auto px-3 py-2 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 min-h-[40px]">
-          {submitting ? 'Submitting…' : submitLabel} {!submitting && <Send size={12} />}
+          className="ml-auto px-5 py-3 sm:px-3 sm:py-2 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-sm sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 min-h-[48px] sm:min-h-[40px]">
+          {submitting ? 'Submitting…' : submitLabel} {!submitting && <Send size={14} className="sm:hidden" />} {!submitting && <Send size={12} className="hidden sm:inline" />}
         </button>
       )}
     </div>
@@ -659,7 +661,7 @@ function LabelInput({ label, value, onChange, placeholder, type = 'text', maxLen
         {label}{optional && <span className="text-gray-500 font-normal normal-case ml-1">(optional)</span>}
       </span>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} maxLength={maxLength}
-        className="w-full px-2 py-2 rounded-md bg-[#111720] border border-gray-700 text-white text-[13px] placeholder:text-gray-500 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500" />
+        className="w-full px-3 py-3 sm:px-2 sm:py-2 rounded-md bg-[#111720] border border-gray-700 text-white text-base sm:text-[13px] placeholder:text-gray-500 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500" />
     </label>
   );
 }
@@ -669,7 +671,7 @@ function LabelSelect({ label, value, onChange, options }: { label: string; value
     <label className="block">
       <span className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">{label}</span>
       <select value={value} onChange={e => onChange(e.target.value)}
-        className="w-full px-2 py-2 rounded-md bg-[#111720] border border-gray-700 text-white text-[13px] focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
+        className="w-full px-3 py-3 sm:px-2 sm:py-2 rounded-md bg-[#111720] border border-gray-700 text-white text-base sm:text-[13px] min-h-[48px] sm:min-h-0 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
         <option value="">— Select —</option>
         {options.map(o => <option key={o} value={o}>{o}</option>)}
       </select>

@@ -1238,6 +1238,11 @@ export default function BangonGensan() {
   const [triageSort, setTriageSort] = useState<'time' | 'need' | 'barangay'>('time');
   const [triageError, setTriageError] = useState<string | null>(null);
 
+  // Right-panel row → map highlight. Set when the user clicks a Reports or
+  // Requests row; the map flies to that marker and a yellow ring highlights
+  // it for a few seconds, then clears.
+  const [highlightedMarkerId, setHighlightedMarkerId] = useState<string | null>(null);
+
   const resetRequestForm = () => {
     setRequestStep(1);
     setFormNeedType(null);
@@ -1341,6 +1346,31 @@ export default function BangonGensan() {
       setBangonSocialReports((data as BangonSocialRow[]) ?? []);
     } catch { /* swallow */ }
   };
+
+  // Click a Reports or Requests row → fly the map to the marker's location
+  // and ring-highlight it. Zoom 13 is wide enough to see the surrounding
+  // barangays for context (not pinned right on the dot).
+  const flyToMarker = (markerId: string) => {
+    const feature = bangonMarkersGeoJSON.features.find(f => (f.properties as { id?: string } | null)?.id === markerId);
+    if (!feature) return;
+    const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
+    const map = mapRef.current;
+    if (map) {
+      map.flyTo({ center: coords, zoom: 13, speed: 1.2, curve: 1.4 });
+    }
+    setHighlightedMarkerId(markerId);
+    // On mobile, switch to the map view so the user can actually see the marker.
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setMobileView('map');
+    }
+  };
+
+  // Auto-clear the highlight after a moment so the ring doesn't linger forever.
+  useEffect(() => {
+    if (!highlightedMarkerId) return;
+    const t = setTimeout(() => setHighlightedMarkerId(null), 4000);
+    return () => clearTimeout(t);
+  }, [highlightedMarkerId]);
 
   const advanceStatus = async (req: BangonRequest) => {
     const idx = STATUS_ORDER.indexOf(req.status);
@@ -3089,6 +3119,23 @@ export default function BangonGensan() {
         'circle-opacity': 0.9,
       },
     });
+    // Highlight ring layer — only renders the feature whose properties.id
+    // matches the right-panel row the user just clicked. Filter starts empty
+    // (matches nothing); a separate effect updates the filter when
+    // highlightedMarkerId changes.
+    map.addLayer({
+      id: 'bangon-marker-highlight',
+      type: 'circle',
+      source: 'bangon-markers',
+      filter: ['==', ['get', 'id'], ''],
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 16, 14, 26],
+        'circle-color': 'rgba(0,0,0,0)',
+        'circle-stroke-color': '#facc15',
+        'circle-stroke-width': 3,
+        'circle-opacity': 1,
+      },
+    });
 
     const popupRef = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: '280px' });
     const onClick = () => (e: maplibregl.MapMouseEvent) => {
@@ -3151,6 +3198,14 @@ export default function BangonGensan() {
     const src = mapRef.current.getSource('bangon-markers') as maplibregl.GeoJSONSource | undefined;
     if (src) src.setData(bangonMarkersGeoJSON);
   }, [bangonMarkersGeoJSON, mapReady]);
+
+  // ── Highlight filter — rerun whenever the user clicks a Reports/Requests row ──
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+    if (!map.getLayer('bangon-marker-highlight')) return;
+    map.setFilter('bangon-marker-highlight', ['==', ['get', 'id'], highlightedMarkerId ?? '']);
+  }, [highlightedMarkerId, mapReady]);
 
   // ── Toggle marker layer visibility (always on when any incident category is active) ──
   useEffect(() => {
@@ -3568,7 +3623,7 @@ export default function BangonGensan() {
                     </div>
                     <div ref={chatScrollRef} className="flex-1 overflow-y-auto cc-scroll px-2 py-2 space-y-1.5">
                       {chatError && (
-                        <div className="p-2 rounded-md bg-red-900/40 border border-red-700/60 text-[10px] text-red-200">{chatError}</div>
+                        <div className="p-3 sm:p-2 rounded-md bg-red-900/40 border border-red-700/60 text-sm sm:text-[10px] text-red-100 sm:text-red-200 shadow-lg sm:shadow-none">{chatError}</div>
                       )}
                       {chatMessages.length === 0 && !chatError && (
                         <div className="text-[10px] text-gray-500 italic text-center py-4">
@@ -3605,18 +3660,20 @@ export default function BangonGensan() {
                       <button
                         type="submit"
                         disabled={chatSending || !chatHandle || !chatDraft.trim()}
-                        className="px-3 bg-primary-700 hover:bg-primary-600 disabled:bg-gray-700 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"
+                        className="px-3 bg-primary-700 hover:bg-primary-600 disabled:bg-gray-700 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1"
                       >
                         <Send size={11} />
                       </button>
                     </form>
 
-                    {/* ── LEGEND (bottom of Community sidebar) ─────── */}
+                    {/* ── LEGEND (bottom of Community sidebar, desktop only) ─────── */}
                     {/* Compact color key for the three map layers. Social Media
                         renders as a single chip — disaster sub-categories are
                         not enumerated here (the map markers still color per
-                        category; this strip just signals the layer exists). */}
-                    <div className="border-t border-[#1e2a3a] bg-[#0a0e14] flex-shrink-0">
+                        category; this strip just signals the layer exists).
+                        Hidden on mobile so the chat panel has full screen real
+                        estate when it's the active mobile view. */}
+                    <div className="hidden lg:flex flex-col border-t border-[#1e2a3a] bg-[#0a0e14] flex-shrink-0">
                       <div className="px-2.5 py-1 flex items-center gap-1.5 border-b border-[#1e2a3a]">
                         <Layers size={9} className="text-gray-400" />
                         <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">Legend</span>
@@ -3883,7 +3940,7 @@ export default function BangonGensan() {
                         {requestStep === 1 && (
                           <div>
                             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Step 1 / 3 · Need Type</div>
-                            <div className="grid grid-cols-5 gap-1.5">
+                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-1.5">
                               {NEED_TYPES.map(t => {
                                 const compactIcon = (() => {
                                   switch (t.key) {
@@ -3899,10 +3956,10 @@ export default function BangonGensan() {
                                     key={t.key}
                                     type="button"
                                     onClick={() => { setFormNeedType(t.key); setRequestStep(2); }}
-                                    className={`px-1 py-2 rounded-md border flex flex-col items-center justify-center gap-1 transition-colors ${formNeedType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}
+                                    className={`px-2 py-3 sm:px-1 sm:py-2 min-h-[64px] sm:min-h-0 rounded-md border flex flex-col items-center justify-center gap-1.5 sm:gap-1 transition-colors ${formNeedType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}
                                   >
                                     {compactIcon}
-                                    <span className="font-bold uppercase tracking-wider text-[9px]">{t.label}</span>
+                                    <span className="font-bold uppercase tracking-wider text-xs sm:text-[9px]">{t.label}</span>
                                   </button>
                                 );
                               })}
@@ -3977,7 +4034,7 @@ export default function BangonGensan() {
                         )}
 
                         {submitError && (
-                          <div className="mt-2 p-2 rounded-md bg-red-900/40 border border-red-700/60 text-[11px] text-red-200 flex items-start gap-1.5">
+                          <div className="mt-2 p-3 sm:p-2 rounded-md bg-red-900/40 border border-red-700/60 text-sm sm:text-[11px] text-red-100 sm:text-red-200 flex items-start gap-2 sm:gap-1.5 shadow-lg sm:shadow-none">
                             <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
                             <span>{submitError}</span>
                           </div>
@@ -3989,7 +4046,7 @@ export default function BangonGensan() {
                             <button
                               type="button"
                               onClick={() => { setSubmitError(null); setRequestStep((requestStep - 1) as 1 | 2 | 3); }}
-                              className="px-2.5 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase tracking-widest"
+                              className="px-4 py-2.5 sm:px-2.5 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest"
                             >
                               Back
                             </button>
@@ -4002,7 +4059,7 @@ export default function BangonGensan() {
                                 setSubmitError(null);
                                 setRequestStep(3);
                               }}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1"
                             >
                               Continue
                               <ArrowRight size={12} />
@@ -4013,7 +4070,7 @@ export default function BangonGensan() {
                               type="button"
                               disabled={submitting}
                               onClick={() => void submitBangonRequest()}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1"
                             >
                               {submitting ? 'Submitting…' : 'Submit Request'}
                               {!submitting && <Send size={14} />}
@@ -4052,12 +4109,12 @@ export default function BangonGensan() {
                         {incidentStep === 1 && (
                           <div>
                             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Step 1 / 3 · Incident Type</div>
-                            <div className="grid grid-cols-3 gap-1.5">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-1.5">
                               {INCIDENT_TYPES.map(t => (
                                 <button key={t.key} type="button"
                                   onClick={() => { setIncidentType(t.key); setIncidentStep(2); }}
-                                  className={`px-1 py-2 rounded-md border flex items-center justify-center gap-1 transition-colors ${incidentType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}>
-                                  <span className="font-bold uppercase tracking-wider text-[10px]">{t.label}</span>
+                                  className={`px-2 py-3 sm:px-1 sm:py-2 min-h-[56px] sm:min-h-0 rounded-md border flex items-center justify-center gap-1 transition-colors ${incidentType === t.key ? 'ring-1 ring-red-400 ' : ''}${t.tone}`}>
+                                  <span className="font-bold uppercase tracking-wider text-sm sm:text-[10px]">{t.label}</span>
                                 </button>
                               ))}
                             </div>
@@ -4112,14 +4169,14 @@ export default function BangonGensan() {
                           </div>
                         )}
                         {incidentError && (
-                          <div className="mt-2 p-2 rounded-md bg-red-900/40 border border-red-700/60 text-[11px] text-red-200 flex items-start gap-1.5">
+                          <div className="mt-2 p-3 sm:p-2 rounded-md bg-red-900/40 border border-red-700/60 text-sm sm:text-[11px] text-red-100 sm:text-red-200 flex items-start gap-2 sm:gap-1.5 shadow-lg sm:shadow-none">
                             <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" /><span>{incidentError}</span>
                           </div>
                         )}
                         <div className="mt-2.5 flex items-center gap-1.5">
                           {incidentStep > 1 && (
                             <button type="button" onClick={() => { setIncidentError(null); setIncidentStep((incidentStep - 1) as 1 | 2 | 3); }}
-                              className="px-2.5 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase tracking-widest">Back</button>
+                              className="px-4 py-2.5 sm:px-2.5 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest">Back</button>
                           )}
                           {incidentStep === 2 && (
                             <button type="button"
@@ -4128,13 +4185,13 @@ export default function BangonGensan() {
                                 if (!incidentDescription.trim()) { setIncidentError('Please describe what happened.'); return; }
                                 setIncidentError(null); setIncidentStep(3);
                               }}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               Continue <ArrowRight size={12} />
                             </button>
                           )}
                           {incidentStep === 3 && (
                             <button type="button" disabled={incidentSubmitting} onClick={() => void submitIncident()}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               {incidentSubmitting ? 'Submitting…' : 'Submit Report'} {!incidentSubmitting && <Send size={12} />}
                             </button>
                           )}
@@ -4229,14 +4286,14 @@ export default function BangonGensan() {
                           </div>
                         )}
                         {fundError && (
-                          <div className="p-2 rounded-md bg-red-900/40 border border-red-700/60 text-[11px] text-red-200 flex items-start gap-1.5">
+                          <div className="p-3 sm:p-2 rounded-md bg-red-900/40 border border-red-700/60 text-sm sm:text-[11px] text-red-100 sm:text-red-200 flex items-start gap-2 sm:gap-1.5 shadow-lg sm:shadow-none">
                             <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" /><span>{fundError}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-1.5">
                           {fundStep > 1 && (
                             <button type="button" onClick={() => { setFundError(null); setFundStep((fundStep - 1) as 1 | 2 | 3); }}
-                              className="px-2.5 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase tracking-widest">Back</button>
+                              className="px-4 py-2.5 sm:px-2.5 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest">Back</button>
                           )}
                           {fundStep === 1 && (
                             <button type="button"
@@ -4245,7 +4302,7 @@ export default function BangonGensan() {
                                 if (!fundDescription.trim()) { setFundError('Please describe the fundraiser.'); return; }
                                 setFundError(null); setFundStep(2);
                               }}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               Continue <ArrowRight size={12} />
                             </button>
                           )}
@@ -4257,13 +4314,13 @@ export default function BangonGensan() {
                                 if (!fundPayment.trim()) { setFundError('Please add payment details.'); return; }
                                 setFundError(null); setFundStep(3);
                               }}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               Continue <ArrowRight size={12} />
                             </button>
                           )}
                           {fundStep === 3 && (
                             <button type="button" disabled={fundSubmitting} onClick={() => void submitFundraiser()}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               {fundSubmitting ? 'Submitting…' : 'Submit for Review'} {!fundSubmitting && <Send size={12} />}
                             </button>
                           )}
@@ -4346,14 +4403,14 @@ export default function BangonGensan() {
                           </div>
                         )}
                         {offerError && (
-                          <div className="p-2 rounded-md bg-red-900/40 border border-red-700/60 text-[11px] text-red-200 flex items-start gap-1.5">
+                          <div className="p-3 sm:p-2 rounded-md bg-red-900/40 border border-red-700/60 text-sm sm:text-[11px] text-red-100 sm:text-red-200 flex items-start gap-2 sm:gap-1.5 shadow-lg sm:shadow-none">
                             <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" /><span>{offerError}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-1.5">
                           {offerStep > 1 && (
                             <button type="button" onClick={() => { setOfferError(null); setOfferStep((offerStep - 1) as 1 | 2 | 3); }}
-                              className="px-2.5 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase tracking-widest">Back</button>
+                              className="px-4 py-2.5 sm:px-2.5 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest">Back</button>
                           )}
                           {offerStep === 1 && (
                             <button type="button"
@@ -4364,7 +4421,7 @@ export default function BangonGensan() {
                                 }
                                 setOfferError(null); setOfferStep(2);
                               }}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               Continue <ArrowRight size={12} />
                             </button>
                           )}
@@ -4374,13 +4431,13 @@ export default function BangonGensan() {
                                 if (!offerBarangay) { setOfferError('Please select a barangay.'); return; }
                                 setOfferError(null); setOfferStep(3);
                               }}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               Continue <ArrowRight size={12} />
                             </button>
                           )}
                           {offerStep === 3 && (
                             <button type="button" disabled={offerSubmitting} onClick={() => void submitOffer()}
-                              className="ml-auto px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                              className="ml-auto px-4 py-2.5 sm:px-3 sm:py-1 min-h-[44px] sm:min-h-0 rounded-md bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:cursor-not-allowed text-white text-xs sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-1">
                               {offerSubmitting ? 'Submitting…' : 'Post Offer'} {!offerSubmitting && <Send size={12} />}
                             </button>
                           )}
@@ -4435,10 +4492,14 @@ export default function BangonGensan() {
                         )}
                         {bangonIncidentRows.slice(0, 60).map(r => {
                           const meta = INCIDENT_TYPES.find(t => t.key === r.incident_type);
+                          const markerId = `rpt-${r.id}`;
+                          const isHighlighted = highlightedMarkerId === markerId;
                           return (
-                            <div
+                            <button
                               key={r.id}
-                              className="block p-2 bg-white border border-gray-200 rounded hover:border-orange-300 hover:bg-orange-50/40 transition-colors"
+                              type="button"
+                              onClick={() => flyToMarker(markerId)}
+                              className={`block w-full text-left p-2 bg-white border rounded transition-colors cursor-pointer ${isHighlighted ? 'border-yellow-400 ring-2 ring-yellow-300 bg-yellow-50/60' : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/40'}`}
                             >
                               <div className="flex items-center gap-1.5 mb-1">
                                 <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">
@@ -4458,10 +4519,16 @@ export default function BangonGensan() {
                               <div className="mt-1 flex items-center gap-2 text-[9px] text-gray-400">
                                 <span className="flex items-center gap-0.5"><MapPin size={8} />{r.barangay}{r.landmark ? ` · ${r.landmark}` : ''}</span>
                                 {r.photo_url && (
-                                  <a href={r.photo_url} target="_blank" rel="noopener noreferrer" className="ml-auto text-primary-500 hover:underline">photo ↗</a>
+                                  <a
+                                    href={r.photo_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={e => e.stopPropagation()}
+                                    className="ml-auto text-primary-500 hover:underline"
+                                  >photo ↗</a>
                                 )}
                               </div>
-                            </div>
+                            </button>
                           );
                         })}
                         <div className="p-2 bg-emerald-50 border border-emerald-200 rounded text-[9px] text-emerald-700 flex items-start gap-1 mt-2">
@@ -4513,10 +4580,16 @@ export default function BangonGensan() {
                           const need = NEED_META[req.need_type];
                           const status = STATUS_META[req.status];
                           const created = new Date(req.created_at);
+                          const markerId = `req-${req.id}`;
+                          const isHighlighted = highlightedMarkerId === markerId;
                           return (
                             <div
                               key={req.id}
-                              className={`p-2 bg-white border rounded ${req.status === 'pending' ? 'border-amber-300' : 'border-gray-200'}`}
+                              onClick={() => flyToMarker(markerId)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') flyToMarker(markerId); }}
+                              className={`p-2 bg-white border rounded cursor-pointer transition-colors ${isHighlighted ? 'border-yellow-400 ring-2 ring-yellow-300 bg-yellow-50/60' : req.status === 'pending' ? 'border-amber-300 hover:border-amber-400 hover:bg-amber-50/40' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
                             >
                               <div className="flex items-center gap-1.5 mb-1">
                                 <span className={`flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${need.color}`}>
@@ -4534,7 +4607,7 @@ export default function BangonGensan() {
                               </div>
                               <div className="text-[10px] text-gray-500 font-mono">{req.contact_number}</div>
                               <button
-                                onClick={() => void advanceStatus(req)}
+                                onClick={e => { e.stopPropagation(); void advanceStatus(req); }}
                                 className={`mt-1.5 w-full px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1 ${status.color}`}
                               >
                                 {req.status === 'fulfilled' ? <CheckCircle2 size={11} /> : <ArrowRight size={11} />}
