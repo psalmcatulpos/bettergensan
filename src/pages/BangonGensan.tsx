@@ -1423,21 +1423,24 @@ export default function BangonGensan() {
     const titleLabel = kind === 'request' ? 'Relief Request'
       : kind === 'report' ? 'Incident Report'
       : 'Social Media';
+    // BangonGensan renders on a dark popup background (#111720), so use a
+    // light text palette — the old #111827/#374151 values were near-black and
+    // invisible on the dark popup.
     let body = '';
     if (kind === 'request') {
-      body = `<div style="font-size:11px;color:#374151">${escapeHtml(maskName(p.name))}</div>`;
+      body = `<div style="font-size:11px;color:#c5cdd8">${escapeHtml(maskName(p.name))}</div>`;
     } else if (kind === 'report') {
       const desc = String(p.description ?? '');
-      body = `<div style="font-size:11px;color:#374151;line-height:1.35">${escapeHtml(desc.slice(0, 220))}${desc.length > 220 ? '…' : ''}</div>`;
+      body = `<div style="font-size:11px;color:#c5cdd8;line-height:1.35">${escapeHtml(desc.slice(0, 220))}${desc.length > 220 ? '…' : ''}</div>`;
     } else {
       const head = String(p.headline ?? '');
       const sum = String(p.summary ?? '');
       const url = safeHttpUrl(p.message_url);
       body = `
-        ${head ? `<div style="font-size:11px;color:#111827;font-weight:600;line-height:1.35;margin-bottom:3px">${escapeHtml(head)}</div>` : ''}
-        ${sum ? `<div style="font-size:10px;color:#374151;line-height:1.35">${escapeHtml(sum.slice(0, 220))}${sum.length > 220 ? '…' : ''}</div>` : ''}
-        ${p.source_page_name ? `<div style="font-size:9px;color:#6b7280;margin-top:4px">via ${escapeHtml(p.source_page_name)}</div>` : ''}
-        ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:4px;font-size:10px;color:#0ea5e9;text-decoration:none;font-weight:600">View on Facebook ↗</a>` : ''}
+        ${head ? `<div style="font-size:11px;color:#f3f4f6;font-weight:600;line-height:1.35;margin-bottom:3px">${escapeHtml(head)}</div>` : ''}
+        ${sum ? `<div style="font-size:10px;color:#c5cdd8;line-height:1.35">${escapeHtml(sum.slice(0, 220))}${sum.length > 220 ? '…' : ''}</div>` : ''}
+        ${p.source_page_name ? `<div style="font-size:9px;color:#9ca3af;margin-top:4px">via ${escapeHtml(p.source_page_name)}</div>` : ''}
+        ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:4px;font-size:10px;color:#38bdf8;text-decoration:none;font-weight:600">View on Facebook ↗</a>` : ''}
       `;
     }
     const loc = p.landmark && p.barangay
@@ -1448,9 +1451,9 @@ export default function BangonGensan() {
       <div style="font-family:system-ui,-apple-system,sans-serif;min-width:200px">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
           <span style="display:inline-block;width:8px;height:8px;border-radius:9999px;background:${safeColor}"></span>
-          <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280">${titleLabel}</span>
+          <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9ca3af">${titleLabel}</span>
         </div>
-        <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px">${escapeHtml(p.label)}</div>
+        <div style="font-size:13px;font-weight:700;color:#f3f4f6;margin-bottom:2px">${escapeHtml(p.label)}</div>
         ${body}
         <div style="font-size:10px;color:#9ca3af;margin-top:6px">📍 ${loc}</div>
       </div>
