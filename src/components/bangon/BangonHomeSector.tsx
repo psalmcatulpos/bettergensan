@@ -6,8 +6,7 @@
 //   2. Remove the import + the single <BangonHomeSector /> mount in
 //      src/pages/Home.tsx.
 //
-// Live pulls from prod via the public RLS policies:
-//   - bangon_fundraisers     (anon SELECT WHERE status='approved' — RLS filtered)
+// Live pull from prod via the public RLS policy:
 //   - bangon_social_reports  (anon SELECT — scraped Facebook disaster posts,
 //                             same source that powers the /bangon-gensan Live Feed)
 
@@ -60,7 +59,6 @@ function relativeTime(iso: string): string {
 }
 
 export default function BangonHomeSector() {
-  const [fundraisers, setFundraisers] = useState<number | null>(null);
   const [feed, setFeed] = useState<SocialRow[] | null>(null);
   const cancelledRef = useRef(false);
 
@@ -72,23 +70,16 @@ export default function BangonHomeSector() {
         const cutoff = new Date(
           Date.now() - 5 * 24 * 60 * 60 * 1000
         ).toISOString();
-        const [fund, soc] = await Promise.all([
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any)
-            .from('bangon_fundraisers')
-            .select('*', { count: 'exact', head: true }),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any)
-            .from('bangon_social_reports')
-            .select(
-              'id, category, headline, summary, message, message_url, barangay, landmark, posted_at'
-            )
-            .gte('posted_at', cutoff)
-            .order('posted_at', { ascending: false })
-            .limit(12),
-        ]);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const soc = await (supabase as any)
+          .from('bangon_social_reports')
+          .select(
+            'id, category, headline, summary, message, message_url, barangay, landmark, posted_at'
+          )
+          .gte('posted_at', cutoff)
+          .order('posted_at', { ascending: false })
+          .limit(12);
         if (cancelledRef.current) return;
-        setFundraisers(fund.count ?? 0);
         setFeed((soc.data as SocialRow[]) ?? []);
       } catch {
         // Failed-to-fetch (e.g. table not deployed) → leave state null so the
@@ -109,6 +100,32 @@ export default function BangonHomeSector() {
       aria-label="BangonGenSan active relief operation"
       className="relative overflow-hidden border-b border-red-900/50 bg-gradient-to-br from-[#1a0606] via-[#2a0a0a] to-[#0a0202]"
     >
+      {/* Themed Live Feed scrollbar — red-on-dark to match the sector, so we
+          never fall back to the OS-native bar. Scoped to .bangon-feed-scroll
+          so it only affects this feed. Removed with the file. */}
+      <style>{`
+        .bangon-feed-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(239, 68, 68, 0.55) transparent;
+        }
+        .bangon-feed-scroll::-webkit-scrollbar {
+          width: 8px;
+        }
+        .bangon-feed-scroll::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.25);
+        }
+        .bangon-feed-scroll::-webkit-scrollbar-thumb {
+          background: linear-gradient(180deg, rgba(248, 113, 113, 0.7), rgba(185, 28, 28, 0.7));
+          border-radius: 9999px;
+          border: 2px solid transparent;
+          background-clip: padding-box;
+        }
+        .bangon-feed-scroll::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(180deg, rgba(252, 165, 165, 0.9), rgba(220, 38, 38, 0.9));
+          background-clip: padding-box;
+        }
+      `}</style>
+
       {/* faint dotted noise pattern */}
       <div
         className="absolute inset-0 opacity-[0.06] pointer-events-none"
@@ -137,10 +154,9 @@ export default function BangonHomeSector() {
           <span className="text-red-300">— June 8 Earthquake Response</span>
         </h2>
 
-        {/* Body: Live Feed + Active Fundraisers stat */}
-        <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-3">
-          {/* Live Feed (scraped social-media disaster reports) */}
-          <div className="lg:col-span-2 rounded-lg border border-red-900/50 bg-black/30 overflow-hidden">
+        {/* Body: Live Feed (scraped social-media disaster reports) */}
+        <div className="mt-5">
+          <div className="rounded-lg border border-red-900/50 bg-black/30 overflow-hidden">
             <div className="flex items-center gap-1.5 px-3 py-2 border-b border-red-900/40 bg-red-950/40">
               <Activity size={12} className="text-red-300" />
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-200">
@@ -151,7 +167,7 @@ export default function BangonHomeSector() {
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-400" />
               </span>
             </div>
-            <div className="max-h-[260px] overflow-y-auto divide-y divide-white/5">
+            <div className="bangon-feed-scroll max-h-[260px] overflow-y-auto divide-y divide-white/5">
               {feed === null && (
                 <div className="px-3 py-6 text-center text-[10px] text-red-300/60">
                   Loading reports…
@@ -223,19 +239,6 @@ export default function BangonHomeSector() {
                 );
               })}
             </div>
-          </div>
-
-          {/* Active Fundraisers stat */}
-          <div className="rounded-lg border border-amber-500/40 bg-amber-700/25 px-4 py-4 flex flex-col justify-center">
-            <div className="text-4xl font-bold text-white tabular-nums leading-none">
-              {fundraisers === null ? '—' : fundraisers.toLocaleString('en-PH')}
-            </div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-amber-200 mt-2">
-              Active Fundraisers
-            </div>
-            <p className="mt-2 text-[10px] text-amber-100/60 leading-relaxed">
-              Community-run relief fundraisers, verified before they appear.
-            </p>
           </div>
         </div>
 
