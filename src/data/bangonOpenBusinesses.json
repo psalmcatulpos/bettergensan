@@ -1,0 +1,4396 @@
+{
+  "meta": {
+    "source": "Community-sourced one-shot extraction from a viral Facebook \"who's open today?\" post in GenSan after the June 2026 earthquake, merged with OSM-verified pharmacy listings.",
+    "scraped_at": "2026-06-11",
+    "post_comments_total": 391,
+    "businesses_extracted": 335,
+    "osm_pharmacies_added": 1,
+    "brigada_pharmacy_branches": 8,
+    "categories": [
+      "Grocery",
+      "Pharmacy",
+      "Medical",
+      "Food",
+      "Bakery",
+      "Coffee",
+      "Hardware",
+      "Electrical",
+      "Laundry",
+      "Services",
+      "Auto / Rental",
+      "Pet",
+      "Beauty / Cosmetic",
+      "Clothing",
+      "Florist",
+      "Other"
+    ],
+    "extraction_model": "openai/gpt-4o-mini",
+    "multi_tag_entries": 9
+  },
+  "businesses": [
+    {
+      "id": "fb:1221 cafe",
+      "name": "1221 Cafe",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Food and drinks, with wifi",
+      "address": "Yumang Street, in front St. Michael Church, Brgy. San Isidro",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:24 brewspot",
+      "name": "24 BrewSpot",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "BBQ and Coffee",
+      "address": "Naranjita Street, beside Nikolai",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:a & g coco lumber and construction supply",
+      "name": "A & G Coco Lumber and Construction Supply",
+      "categories": [
+        "Hardware"
+      ],
+      "sells": null,
+      "address": "Mabuhay Road, beside the Welcome to Mabuhay signage",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:a&j transient house",
+      "name": "A&J Transient House",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Available for booking",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:acharon gacal & espinosa law offices",
+      "name": "Acharon Gacal & Espinosa Law Offices",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Legal consultation and notarial services",
+      "address": "Salvani St, City Heights, beside Hope Christian School",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:acqua tech marketing",
+      "name": "Acqua-tech Marketing",
+      "categories": [
+        "Electrical"
+      ],
+      "sells": "Electrical supply",
+      "address": "Santiago Boulevard, Dadiangas South",
+      "opens": null,
+      "closes": null,
+      "contact": "0933-550-7201",
+      "source": "fb"
+    },
+    {
+      "id": "fb:afa paddle & events place",
+      "name": "AFA Paddle & Events Place",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Pickleball court",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:agrocare agrivet supply",
+      "name": "AgroCare Agrivet Supply",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": "Pet food, poultry, and hog feeds",
+      "address": "Nuñez St Ext, fronting Isabella Homes entrance, Prk Matatag, Brgy San Isidro",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:aja hardware",
+      "name": "AJA Hardware",
+      "categories": [
+        "Hardware"
+      ],
+      "sells": null,
+      "address": "Brgy. City Heights, across Riavin gasoline station",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:alya caf",
+      "name": "Aláya Café",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:alberto's pizza gensan",
+      "name": "Alberto's Pizza Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Malakas and Santiago Branch",
+      "opens": "8 AM",
+      "closes": "12 AM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:alejandre's bakery and bistro",
+      "name": "Alejandre's Bakery and Bistro",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ally's food park",
+      "name": "Ally's Food Park",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:almusal atbp",
+      "name": "Almusal atbp",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:althea native products",
+      "name": "Althea Native Products",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "E.B Amoguis Bldg, Cagampang Street, Brgy. Dadiangas South",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:alyannas cafe",
+      "name": "Alyanna's Cafe",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:alyzias steak and crabs gensan",
+      "name": "Alyzias Steak and Crabs Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Mabuhay Road, Dacera Street near traffic light, corner Salvani Street",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:analyns agri trading",
+      "name": "Analyn's Agri Trading",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Available on FOODPANDA app",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:andros streetfood asia",
+      "name": "Andro's StreetFood Asia",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ang hinahanap mong shawarma",
+      "name": "Ang Hinahanap Mong Shawarma",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:angelita & efren flowers and plants",
+      "name": "Angelita & Efren Flowers and Plants",
+      "categories": [
+        "Florist"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:angler's brew",
+      "name": "ANGLER'S BREW",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": "Along Bula Road, in front of 7-Eleven",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:aqua ice",
+      "name": "AQUA ICE",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Purified ice cube and water",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:aquaniks",
+      "name": "AquaNiks",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "4 PM",
+      "closes": "8 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:arraboo gensan",
+      "name": "Arraboo Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Pendatun Ave",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:atlas cafe",
+      "name": "Atlas Cafe",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": "T. Ramirez St (formerly Champaca St) corner Laurel Ave, Dadiangas East",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:aunt ludi bakeshoppe cafe",
+      "name": "Aunt Ludi Bakeshoppe - Cafe",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:aztech computer store gensan",
+      "name": "Aztech Computer Store Gensan",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:aztech polomolok sales",
+      "name": "Aztech Polomolok Sales",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:b & a dressed chicken trading",
+      "name": "B & A Dressed Chicken Trading",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "In front of Hall of Justice, Lagao",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:b&d food co",
+      "name": "B&D Food Co.",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:b&d store",
+      "name": "B&D Store",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": "Household needs, meat, chicken, ready-to-eat meals, water, rice",
+      "address": "Conel Road, beside Alzona Processing Plant",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:babera bookbinding gensan",
+      "name": "Babera Bookbinding-Gensan",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Bookbinding services",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:balay pahulay gensan",
+      "name": "Balay Pahulay Gensan",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Available for booking",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bam bacua",
+      "name": "Bam_bacua",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Agan Crossing Polomolok (Ondeng's Food Park)",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:banayad massage clinic",
+      "name": "Banayad Massage Clinic",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:barber republic",
+      "name": "Barber Republic",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": "Catalunan Grande",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bct gensan",
+      "name": "Bct Gensan",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bean and corner prime",
+      "name": "Bean and Corner PRIME",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:beau salon gensan branch",
+      "name": "Beau Salon - Gensan Branch",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:beef pares ni dhong",
+      "name": "BEEF PARES NI DHONG",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:beko's kakanin",
+      "name": "Beko's Kakanin",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Capareda Street, Lagao",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:berbros marketing",
+      "name": "Berbros Marketing",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": "Motorcycle needs and services",
+      "address": "Back of Brigada Pharma, NLSA Lagao crossing Conel",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bf film ceramic tint",
+      "name": "Bf Film Ceramic Tint",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "General Santos City, by Ikokano Hub",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bingopets pet supplies",
+      "name": "Bingopets Pet Supplies",
+      "categories": [
+        "Pet"
+      ],
+      "sells": "Pet supplies",
+      "address": "Yumang Branch and Alabel Branch",
+      "opens": "8 AM",
+      "closes": "8 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bornales rustic wood crafts",
+      "name": "Bornales Rustic Wood Crafts",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Roundball Apopong (Diversion Road)",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:botika de yeshua",
+      "name": "Botika de Yeshua",
+      "categories": [
+        "Pharmacy"
+      ],
+      "sells": null,
+      "address": "Alabel, Sarangani",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:breve",
+      "name": "breve",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Coffee & pastries with free wifi and charging ports",
+      "address": "MJ M Pambahay Bldg., Pres. Sergio Osmeña Avenue (Daprosa Ave.), Brgy. Dadiangas West",
+      "opens": "10:00 AM",
+      "closes": "9:00 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "osm:brigada-pharmacy-nunez",
+      "name": "Brigada Pharmacy — Nuñez",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Nuñez Street, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "osm"
+    },
+    {
+      "id": "bp:lagao",
+      "name": "Brigada Pharmacy — Lagao",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Brgy. Lagao, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "bp:sunrise",
+      "name": "Brigada Pharmacy — Sunrise",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Sunrise, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "bp:bula",
+      "name": "Brigada Pharmacy — Bula",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Brgy. Bula, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "bp:new-mabuhay",
+      "name": "Brigada Pharmacy — New Mabuhay",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "New Mabuhay, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "bp:makar",
+      "name": "Brigada Pharmacy — Makar",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Makar, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "bp:sogod",
+      "name": "Brigada Pharmacy — Sogod",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Sogod, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "bp:uhaw",
+      "name": "Brigada Pharmacy — Uhaw",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Uhaw, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "bp:apopong",
+      "name": "Brigada Pharmacy — Apopong",
+      "categories": [
+        "Pharmacy",
+        "Grocery"
+      ],
+      "sells": "Medicines, prescriptions",
+      "address": "Brgy. Apopong, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "community"
+    },
+    {
+      "id": "fb:brothers car rental gensan",
+      "name": "Brothers Car Rental Gensan",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:brutal white tattoo",
+      "name": "Brutal White Tattoo",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bts",
+      "name": "BTS",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Open for walk-in",
+      "address": null,
+      "opens": "12:00 PM",
+      "closes": "7:00 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bubble spin laundromat",
+      "name": "Bubble Spin Laundromat",
+      "categories": [
+        "Laundry"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:bubbles & brew",
+      "name": "Bubbles & Brew",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:byd gensan",
+      "name": "BYD GENSAN",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "8 AM",
+      "closes": "5 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:caf paprika",
+      "name": "Café Paprika",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": "Jovinaj branch",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:caffe firenzo gensan",
+      "name": "Caffe Firenzo GenSan",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": "Sun City Suites",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cakes n style",
+      "name": "Cakes n style",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cakes n styles gensan",
+      "name": "Cakes N Styles Gensan",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:captain boun",
+      "name": "Captain Boun",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Ramos Street, beside Inasal de Cebu",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:carwash",
+      "name": "CARWASH",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:casa lourdes",
+      "name": "Casa Lourdes",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cathy beauty salon&spa",
+      "name": "Cathy Beauty Salon & Spa",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:celeste arts and crafts",
+      "name": "Celeste Arts and Crafts",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Home-based only",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cellphone repair",
+      "name": "Cellphone Repair",
+      "categories": [
+        "Services"
+      ],
+      "sells": "High quality LCD & battery",
+      "address": "Gensan area",
+      "opens": null,
+      "closes": null,
+      "contact": "0927-928-7817",
+      "source": "fb"
+    },
+    {
+      "id": "fb:cess foods fatima",
+      "name": "Cess Foods Fatima",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Food products trading",
+      "address": "Fatima Branch",
+      "opens": "8 AM",
+      "closes": "6 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cess frozen foods",
+      "name": "Cess Frozen Foods",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Aparente Street, Brgy. City Heights, near traffic light Block 8, across Lydias Liempo",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:chacha onli shoppee",
+      "name": "ChaCha Onli Shoppee",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:chamgelo beauty salon and spa",
+      "name": "Chamógelo Beauty Salon and Spa",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": "T. Ramirez St., Dadiangas East (former Champaca St, in front of ZKB Twins Hotel)",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cherith water refilling station",
+      "name": "Cherith Water Refilling Station",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Prk. Malipayon, Brgy. San Isidro",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ching store",
+      "name": "Ching Store",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": "Rice",
+      "address": "Brgy. Ilaya, Glan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cityart gensan",
+      "name": "CityArt Gensan",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Tarpaulin printing",
+      "address": null,
+      "opens": "8 AM",
+      "closes": "6 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cj's home made foodies",
+      "name": "CJ's Home-Made Foodies",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cjd  the glass man",
+      "name": "CJD \"The Glass Man\"",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "8 AM",
+      "closes": "5 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:classy mink beauty lounge",
+      "name": "Classy Mink Beauty Lounge",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": "Mateo Road, in front of Gaisano Mall",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:clevergies gensan",
+      "name": "Clevergies GenSan",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "9 AM",
+      "closes": "6 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:coco gadgethub",
+      "name": "Coco Gadgethub",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:convill residences",
+      "name": "ConVill Residences",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cotton bowl grill & steak house",
+      "name": "Cotton Bowl Grill & Steak House",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:crabshack gensan",
+      "name": "CrabShack Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Seafood",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cravea caf",
+      "name": "Cravea Café",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": "Beside INC Lagao, near Brigada Media headquarters",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:crisel",
+      "name": "Crisel",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:cyv merchandise",
+      "name": "CYV Merchandise",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": "Plasticwares, school supplies, accessories",
+      "address": "Near Savemore-Malakas, Brgy. San Isidro",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:da kapehan",
+      "name": "DA Kapehan",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Coffee drinks and combo meals, food package and pack lunch",
+      "address": "Front of Lagao Gym, Bean Street Coffee",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dadiangas auto vault car rentals",
+      "name": "Dadiangas Auto Vault Car Rentals",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:daily yogo",
+      "name": "Daily Yogo",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Healthy bites, yogurt, salad",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:daisuki japanese resto",
+      "name": "Daisuki Japanese Resto",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dan erics ice cream",
+      "name": "Dan Eric's Ice Cream",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dee n bee staycation & event place",
+      "name": "Dee N Bee Staycation & Event Place",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Transient house / Airbnb",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:delasuertes suites delasuertes mktg",
+      "name": "Delasuertes Suites / Delasuertes Mktg",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:descom hardware calumpang gsc",
+      "name": "DESCOM HARDWARE CALUMPANG GSC",
+      "categories": [
+        "Hardware"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dgprints photo booth",
+      "name": "DGPrints PHOTO BOOTH",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dgprints photo booth gensan",
+      "name": "DGPrints PHOTO BOOTH - Gensan",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:domijo",
+      "name": "DomiJo",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dos bro's motorparts & accesories",
+      "name": "Dos Bro's Motorparts & Accessories",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": "Motor parts and accessories",
+      "address": "Osmena St, fronting Labs Batchoy, Dadiangas South",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dragonhotpot",
+      "name": "Dragonhotpot",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ds ystudio",
+      "name": "DS Ystudio",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Family pictures, photoshoots and family portraits",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dts steel",
+      "name": "Dts Steel",
+      "categories": [
+        "Hardware"
+      ],
+      "sells": "Construction materials",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:dyeversion prints",
+      "name": "Dyeversion Prints",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Brgy. Fatima, GenSan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:eapple gensan",
+      "name": "Eapple Gensan",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Cellphone repair (iPhone/Android/MacBook/laptop)",
+      "address": "Quirino Street",
+      "opens": null,
+      "closes": null,
+      "contact": "0948-588-6746",
+      "source": "fb"
+    },
+    {
+      "id": "fb:early grind coffee house",
+      "name": "Early Grind Coffee House",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Small cafe with charging ports, wifi, food, and drinks",
+      "address": "Mabuhay Rd.",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:editha's sunrise suites",
+      "name": "Editha's Sunrise Suites",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:egay de guia beauty salon",
+      "name": "Egay de Guia Beauty Salon",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": "Salazar Street",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:el lucky pica pica gensan",
+      "name": "El Lucky Pica Pica Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:el pampanguena bulaloan & lechon hauz",
+      "name": "El Pampanguena Bulaloan & Lechon Hauz",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Cabel St, Lagao",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:el lucky salon&spa",
+      "name": "El-Lucky Salon & Spa",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:electrical services",
+      "name": "Electrical Services",
+      "categories": [
+        "Electrical"
+      ],
+      "sells": "Generator supply",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:emcor gensan pendatun branch",
+      "name": "EMCOR Gensan Pendatun Branch",
+      "categories": [
+        "Electrical"
+      ],
+      "sells": "Appliances",
+      "address": "Pendatun",
+      "opens": "9 AM",
+      "closes": "5:30 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:emva engineering services and parts",
+      "name": "EMVA Engineering Services and Parts",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Air conditioning services",
+      "address": "Gensan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:enchongs lutong bahay gensan",
+      "name": "Enchongs Lutong Bahay Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:f5 food package gensan",
+      "name": "F5 Food Package Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:fab you lash by palang gensan",
+      "name": "Fab You Lash by Palang Gensan",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:fandelatte's",
+      "name": "Fandelatte's",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Free coffee for essential and frontline workers",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:fat boy",
+      "name": "FAT BOY",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "GenSan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:fatchoihotel gensan",
+      "name": "fatchoihotel gensan",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Hotel",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:fishcaught restaurant and events place",
+      "name": "Fishcaught Restaurant and Events Place",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:flaming ribs by happy tummy gensan",
+      "name": "Flaming Ribs by Happy Tummy Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:florise scents",
+      "name": "Florise Scents",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Baluan, GSC",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:for your dental needs",
+      "name": "FOR YOUR DENTAL NEEDS",
+      "categories": [
+        "Medical"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:frank lyn enterprises",
+      "name": "Frank-Lyn Enterprises",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Authorized dealer and service center of multi-brand air-conditioning units",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:fresh freeze",
+      "name": "FRESH Freeze",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Purified ice cube",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:funtazyia photobooth & events",
+      "name": "FUNTAZYIA PHOTOBOOTH & events",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:fyang's",
+      "name": "FYANG'S",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Tuna pastil and fried chicken / sisig",
+      "address": "Brgy. Fatima Uhaw, near airport road",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:g nerix pharmacy",
+      "name": "G-nerix Pharmacy",
+      "categories": [
+        "Pharmacy"
+      ],
+      "sells": null,
+      "address": "Brgy. Conel, GenSan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gabe's diner",
+      "name": "Gabe's Diner",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gabriel sari sari store",
+      "name": "Gabriel Sari-sari Store",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": "Pryce Gas",
+      "address": "Zone 2 B Extension, Bula",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gallerio architects  designers",
+      "name": "Gallerio Architects + Designers",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Design, renovation and build needs",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gamay eatery",
+      "name": "GAMAY EATERY",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Lanoy, Calumpang",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gamers guild",
+      "name": "Gamers Guild",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gensan asian republic dimsum house",
+      "name": "Gensan Asian Republic Dimsum House",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "De Arce Bldg., CM Recto St",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gensan bakers & kitchen commercial inc",
+      "name": "Gensan Bakers & Kitchen Commercial Inc.",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gensan car rental",
+      "name": "GenSan CAR Rental",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gensan cart",
+      "name": "Gensan Cart",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Pasabuy",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gensan electrician & electrical works",
+      "name": "Gensan Electrician & Electrical Works",
+      "categories": [
+        "Electrical"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gensan super o enterprises",
+      "name": "Gensan Super O Enterprises",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "CM Recto national highway, beside Security Bank",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gensan trapal",
+      "name": "Gensan Trapal",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Tents for sale",
+      "address": "Highway",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gig marketing & electronic services",
+      "name": "GIG Marketing & Electronic Services",
+      "categories": [
+        "Services"
+      ],
+      "sells": "CCTV / IT needs",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gogi gwada unlimited korean bbq",
+      "name": "Gogi Gwada Unlimited Korean BBQ",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Korean BBQ and coffee",
+      "address": "Meliza Homes, Leon Llido St., Lagao GSC near fruitstand",
+      "opens": "11:30 AM",
+      "closes": "10:30 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:golden rich meatshop",
+      "name": "Golden Rich Meatshop",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Calumpang and Mabuhay branch",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:gossip gowns gensan",
+      "name": "Gossip Gowns Gensan",
+      "categories": [
+        "Clothing"
+      ],
+      "sells": "Gowns for photoshoots",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:grandma's kitchen",
+      "name": "Grandma's Kitchen",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hamsters and accessories little hammy gensan",
+      "name": "Hamsters and Accessories Little Hammy Gensan",
+      "categories": [
+        "Pet"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hautea law",
+      "name": "Hautea Law",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "T. Ramirez Sr. St., Laurel East, Brgy. Dadiangas East",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hdsign clothing line accessories wholesaling",
+      "name": "HDsign Clothing line Accessories Wholesaling",
+      "categories": [
+        "Clothing"
+      ],
+      "sells": "Clothing and accessories wholesaling",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:heneral taqueria",
+      "name": "Heneral Taqueria",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hill vi",
+      "name": "HILL VI",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Restaurant and cafe",
+      "address": "Leyson Park, Brgy. Mabuhay",
+      "opens": "Mon-Fri 11 AM, Sat/Sun/Hol 1 PM",
+      "closes": "10 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hjs appliance service center",
+      "name": "HJS Appliance Service Center",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hjs bistro",
+      "name": "HJS Bistro",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hot and fast devour",
+      "name": "Hot and Fast Devour",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Silway Highway",
+      "opens": "3 PM",
+      "closes": "7 AM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:house of pages book caf",
+      "name": "House of Pages: Book Café",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:huckleberry garden",
+      "name": "Huckleberry Garden",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:husay fit&fight camp",
+      "name": "Husay Fit & Fight Camp",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:hux korean bun",
+      "name": "Hux Korean Bun",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "10:00 AM",
+      "closes": "6:00 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:i zon engineering services",
+      "name": "I-ZON Engineering Services",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Aircon services, electrical, welding, ducting works",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": "0926-446-4228",
+      "source": "fb"
+    },
+    {
+      "id": "fb:icekin delights",
+      "name": "ICEKIN DELIGHTS",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Ice cream for ₱25",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ihaw juan",
+      "name": "Ihaw-juan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "At Sisigan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:imahenacion scents",
+      "name": "Imahenacion Scents",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:inasal de cebu",
+      "name": "Inasal De Cebu",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Lapu-Lapu Street, GSC",
+      "opens": "9 AM",
+      "closes": "7 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:iv silverco jewelry and accessories shop",
+      "name": "IV-Silverco Jewelry and Accessories Shop",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Premium silver jewelry",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:j&n car rental",
+      "name": "J&N Car Rental",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "24/7",
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jancel paint center",
+      "name": "Jancel Paint Center",
+      "categories": [
+        "Hardware"
+      ],
+      "sells": null,
+      "address": "J. Catolico Ave., Barangay Lagao",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:japino's foods house",
+      "name": "Japino's Foods House",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Open everyday 4 PM – 10 PM",
+      "address": null,
+      "opens": "4 PM",
+      "closes": "10 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:javy seafood and grill",
+      "name": "Javy Seafood and Grill",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jb glass and aluminum services",
+      "name": "JB Glass and Aluminum Services",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jc matchabarley",
+      "name": "JC MatchaBarley",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jcv electrical services",
+      "name": "JCV Electrical Services",
+      "categories": [
+        "Electrical"
+      ],
+      "sells": "Electrical wiring services",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jk car and motor rental",
+      "name": "JK Car and Motor Rental",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": "Gensan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jl car rentals",
+      "name": "JL Car Rentals",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": "Gensan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jo's food hub",
+      "name": "JO'S FOOD HUB",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Rice meals to meryenda meals",
+      "address": "Sta. Teresita, Yumang Street",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jomuns kamayan",
+      "name": "JOMUNS KAMAYAN",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Aparente St., Brgy. City Heights",
+      "opens": "5 PM",
+      "closes": "10 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:just baked by kristina noel",
+      "name": "Just Baked by Kristina Noel",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jvs audio system general santos",
+      "name": "JVS Audio System General Santos",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jyb glass and aluminum supply",
+      "name": "Jyb Glass and Aluminum Supply",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Glass repair",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:jyt gen merchandise",
+      "name": "JYT Gen. Merchandise",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Authentic Japan products",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:k m food products",
+      "name": "K M Food Products",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": "Fresh and quality products delivered",
+      "address": "Aradaza Street, Lagao",
+      "opens": null,
+      "closes": null,
+      "contact": "0935-089-0406",
+      "source": "fb"
+    },
+    {
+      "id": "fb:kl powder coating & sandblasting services",
+      "name": "K.L. Powder-coating & Sandblasting Services",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kanto car care",
+      "name": "KANTO CAR CARE",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kape musika",
+      "name": "Kape Musika",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "4 PM",
+      "closes": "12 MN",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:karancho gensan",
+      "name": "Karancho Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Falgui Subdivision Block 2, along Neighborhood Coffee Shop",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kd agrivet",
+      "name": "KD Agrivet",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Purok 4A, Highway Rajah Muda, Bula",
+      "opens": "5:30 AM",
+      "closes": "7 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kian & kaye car rental",
+      "name": "Kian & Kaye Car Rental",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kimores construction and home services",
+      "name": "KIMORE's Construction and Home Services",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": "0991-366-9238",
+      "source": "fb"
+    },
+    {
+      "id": "fb:king bong",
+      "name": "KING BONG",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "11:30 AM",
+      "closes": "10:00 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kmaj ads prints & crafts",
+      "name": "KMaj Ads Prints & Crafts",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Printing needs",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kool briz",
+      "name": "Kool Briz",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Basic needs, fresh juice, frappes and hot drinks",
+      "address": "Salavani Street, across Wizard",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kopi house",
+      "name": "Kopi House",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kuako's",
+      "name": "Kuako's",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "San Pedro St., Lagao, beside NBI Lagao",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kusina singko gensan",
+      "name": "Kusina Singko Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kuya j's mobile carwash and detailing",
+      "name": "Kuya J's Mobile Carwash and Detailing",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Home service, no need to go to carwash",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:kweng's baked sushi",
+      "name": "Kweng's Baked Sushi",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:la'greta scents",
+      "name": "La'Greta Scents",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Healthy signature blend",
+      "address": "Roxas Street",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:labhanon laundry shop",
+      "name": "LABHANON LAUNDRY SHOP",
+      "categories": [
+        "Laundry"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "7 AM",
+      "closes": "6 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:laundrelax lounge",
+      "name": "Laundrelax Lounge",
+      "categories": [
+        "Laundry"
+      ],
+      "sells": "Wash and dry clothes with free charging",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:laundry basket",
+      "name": "Laundry Basket",
+      "categories": [
+        "Laundry"
+      ],
+      "sells": null,
+      "address": "Prk. Malipayon, Brgy. San Isidro",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:lemon on the go",
+      "name": "Lemon on the Go",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "NLSA Road, Brgy. Lagao",
+      "opens": "3 PM",
+      "closes": "1 AM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:lets drink",
+      "name": "Let's Drink",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:levie's trading",
+      "name": "LEVIE'S TRADING",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "6 AM",
+      "closes": "7 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:little tin tin laundry hub",
+      "name": "Little Tin-tin Laundry Hub",
+      "categories": [
+        "Laundry"
+      ],
+      "sells": "Free soap and fabcon. ₱100 per load",
+      "address": "Silway Highway",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:louis scooter garage",
+      "name": "Louis Scooter Garage",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": "Lagao, San Pedro Street corner Ventilacion",
+      "opens": "Mon",
+      "closes": "Sat",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:lucky four glass and aluminum services",
+      "name": "Lucky Four Glass and Aluminum Services",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:lumpiangina",
+      "name": "LumpiangINA",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:luxxe caf",
+      "name": "LUXXE CAFÉ",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "4 PM",
+      "closes": "11 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mr water refilling station",
+      "name": "M.R Water Refilling Station",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:m3l car rental gensan",
+      "name": "M3L Car Rental Gensan",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:make up by ricky sumarez",
+      "name": "Make-up by Ricky Sumarez",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": "Make-up services",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mama yndhay's kitchen",
+      "name": "Mama Yndhay's Kitchen",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mario d sunico enterprises",
+      "name": "Mario D. Sunico Enterprises",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Fire and safety needs",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mary foods",
+      "name": "Mary Foods",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:masaje de david",
+      "name": "Masaje de David",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": "NLSA Road, San Isidro",
+      "opens": null,
+      "closes": null,
+      "contact": "0998-221-1817",
+      "source": "fb"
+    },
+    {
+      "id": "fb:materyales 5g textile trading",
+      "name": "Materyales 5G Textile Trading",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:matutum view garden resort",
+      "name": "Matutum View Garden Resort",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Resort & Hotel",
+      "address": "Purok 1 Klinan 5, Brgy. Mabuhay",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:matutum view garden resort new page",
+      "name": "Matutum View Garden Resort - New Page",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Purok 1 Klinan 5, Brgy. Mabuhay",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:meatraw gensan",
+      "name": "Meatraw Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:medzone diagnostic center",
+      "name": "Medzone Diagnostic Center",
+      "categories": [
+        "Medical"
+      ],
+      "sells": null,
+      "address": "Deling's Bldg., beside STI College, J. Catolico Avenue",
+      "opens": null,
+      "closes": null,
+      "contact": "0917-311-6385",
+      "source": "fb"
+    },
+    {
+      "id": "fb:memia's noodle house",
+      "name": "Memia's Noodle House",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:meraki salon and spa city heights branch",
+      "name": "Meraki Salon and Spa City Heights Branch",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:meraki salon and spa mabuhay branch",
+      "name": "Meraki Salon and Spa Mabuhay Branch",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mercury drug santiago blvd branch",
+      "name": "Mercury Drug — Santiago Blvd. Branch",
+      "categories": [
+        "Pharmacy"
+      ],
+      "sells": null,
+      "address": "Beside BPI and St. Elizabeth Hospital",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:metro ace packaging corp",
+      "name": "Metro Ace Packaging Corp",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Door A1-2 ECA Bldg., National Highway",
+      "opens": "8 AM",
+      "closes": "5 PM",
+      "contact": "0933-858-6442",
+      "source": "fb"
+    },
+    {
+      "id": "fb:mg refrigeration and airconditioning services",
+      "name": "MG Refrigeration and Airconditioning Services",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Aircon supply, installation, cleaning & repair",
+      "address": "Gensan & nearby areas",
+      "opens": null,
+      "closes": null,
+      "contact": "0965-943-3959",
+      "source": "fb"
+    },
+    {
+      "id": "fb:micropets petshop",
+      "name": "MicroPets Petshop",
+      "categories": [
+        "Pet"
+      ],
+      "sells": "Pet food and supplies",
+      "address": "Pioneer Avenue Branch and Heights Branch",
+      "opens": "7 AM",
+      "closes": "11 PM",
+      "contact": "0907-236-8216",
+      "source": "fb"
+    },
+    {
+      "id": "fb:milkyway gensan cafe",
+      "name": "Milkyway Gensan Cafe",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Cafe services, free charging",
+      "address": "Upper Puting Bato Highway, Calumpang",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:miro's gensan car & motor rentals",
+      "name": "Miro's Gensan Car & Motor Rentals",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": "Baluan, GSC",
+      "opens": null,
+      "closes": "12 MN",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mj am trading",
+      "name": "MJ-AM Trading",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mokie arcade",
+      "name": "Mokie Arcade",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "J. Catolico Ave. corner Mateo Road",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:monica midtown suites",
+      "name": "Monica Midtown Suites",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mrm ict aircon solar solutions",
+      "name": "MRM ICT-Aircon-Solar Solutions",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": "Brgy. Bula, GSC",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mrs homes",
+      "name": "Mrs Homes",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:mwb mwap cycle parts",
+      "name": "MWB-MWAP Cycle Parts",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": "Near Bulaong terminal",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:nail studio naileditbytrisha",
+      "name": "Nail Studio (Naileditbytrisha)",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": "Doña Soledad, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:nailnnovation nails x lash",
+      "name": "Nailnnovation Nails x Lash",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:neeah reginio ace del penido",
+      "name": "Neeah Reginio Ace Del Penido",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:new beginnings",
+      "name": "New Beginnings",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:nio dental digital imaging center",
+      "name": "Nio Dental Digital Imaging Center",
+      "categories": [
+        "Medical"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:nishi playpix",
+      "name": "Nishi Playpix",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ob delights",
+      "name": "OB Delights",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Food package and bento meals",
+      "address": "Doña Soledad Subdivision, Labangal",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:pair",
+      "name": "PAIR",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Coffee, matcha, bakery & cocktails",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:palsons autoparts",
+      "name": "Palsons Autoparts",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "8 AM",
+      "closes": "5 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:pastilan ni eye eye",
+      "name": "Pastilan NI EYE EYE",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:persian vibe",
+      "name": "Persian Vibe",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:petmalu petshop",
+      "name": "PETmalu Petshop",
+      "categories": [
+        "Pet"
+      ],
+      "sells": null,
+      "address": "Gensan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:photo stories studio",
+      "name": "Photo Stories Studio",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:pica pica",
+      "name": "Pica pica",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "San Vicente, Labangal",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:play with hue",
+      "name": "Play With Hue",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Inflatable slides and kids play for parties",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:pogs van rental gensan",
+      "name": "Pogs Van Rental Gensan",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:pola dental clinic",
+      "name": "POLA Dental Clinic",
+      "categories": [
+        "Medical"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:poloys balbacuahan",
+      "name": "Poloys Balbacuahan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Purok 16, Barangay Fatima",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:princess mini mart",
+      "name": "Princess Mini Mart",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:printphotocopy",
+      "name": "PRINT/PHOTOCOPY",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": "Silway Highway, Rapod",
+      "opens": "6 AM",
+      "closes": "12 MN",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ptl rentals gensan",
+      "name": "PTL Rentals GenSan",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:purple yam gensan",
+      "name": "Purple Yam Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:r & j chocolate hub",
+      "name": "R & J Chocolate Hub",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:rachel tunagrill",
+      "name": "Rachel Tunagrill",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:rafalex food house",
+      "name": "Rafalex Food House",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Breakfast, Lunch, Meryenda, La Paz Batchoy, Halo-halo",
+      "address": "Tiongson St., Lagao, in front of DepEd Lagao",
+      "opens": "Mon",
+      "closes": "Sat",
+      "contact": "Maxim / Grab / FoodPanda",
+      "source": "fb"
+    },
+    {
+      "id": "fb:rech car rental services",
+      "name": "Rech Car Rental Services",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:rech car rental services and carwash",
+      "name": "Rech Car Rental Services and Carwash",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:reyes law office",
+      "name": "Reyes Law Office",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Legal consultation and notarial services",
+      "address": "J. Catolico Sr., beside Petron Gasul before Robinson's Mall",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:rjzt glass and aluminum services",
+      "name": "RJZT Glass and Aluminum Services",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Phase 3A, Lot 15-16, Block 7, Doña Soledad Labangal",
+      "opens": null,
+      "closes": null,
+      "contact": "0995-845-7552",
+      "source": "fb"
+    },
+    {
+      "id": "fb:roeders al fresco",
+      "name": "Roeder's Al Fresco",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Takeout only",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:rok sashimi corner",
+      "name": "Rok Sashimi Corner",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Fresh tuna, chicken, beef and more",
+      "address": "Purok 4A, Diversion Road, Brgy. Katangawan",
+      "opens": "10 AM",
+      "closes": "10 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:rowca transient house",
+      "name": "Rowca Transient House",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:royal clean",
+      "name": "Royal Clean",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Cleaning supplies",
+      "address": "Bula, Gensan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:rui buko halo halo",
+      "name": "Rui Buko Halo-halo",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:s&ar aqualine water refilling station",
+      "name": "S&Ar Aqualine Water Refilling Station",
+      "categories": [
+        "Other"
+      ],
+      "sells": "Water refilling services",
+      "address": "Brgy. Labangal",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:s&r general santos online and delivery",
+      "name": "S&R — General Santos Online and Delivery",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sabawan ni pipoy",
+      "name": "Sabawan ni Pipoy",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:seakatuna gensan",
+      "name": "Seakatuna Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:seves foods by seves event catering services",
+      "name": "Seves Foods by Seves Event Catering Services",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:shadrach's bake & brew",
+      "name": "Shadrach's Bake & Brew",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:shalom aesthetics & beauty hub",
+      "name": "Shalom Aesthetics & Beauty Hub",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": "Tupi",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:shazzie's cakes and delicacies",
+      "name": "Shazzie's Cakes and Delicacies",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:shellshack gensan seafoods tuna & resto grill",
+      "name": "ShellShack Gensan Seafoods Tuna & Resto Grill",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Seafood and grill",
+      "address": null,
+      "opens": "11:00 AM",
+      "closes": "10:30 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sideout pickleball court",
+      "name": "SideOut Pickleball Court",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "GenSan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:simply sips espresso bar",
+      "name": "Simply Sips Espresso Bar",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": "Meliza Homes, Leon Llido St., Lagao GSC",
+      "opens": "11:30 AM",
+      "closes": "10:30 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sion's laundry hub",
+      "name": "Sion's Laundry Hub",
+      "categories": [
+        "Laundry"
+      ],
+      "sells": null,
+      "address": "Tupi",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sj consumer goods trading",
+      "name": "SJ Consumer Goods Trading",
+      "categories": [
+        "Pet"
+      ],
+      "sells": "Pet shop for furbabies",
+      "address": "Nuñez Street, Ansal Building",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:skinfluence cosmetic surgicenter",
+      "name": "Skinfluence Cosmetic Surgicenter",
+      "categories": [
+        "Medical"
+      ],
+      "sells": null,
+      "address": "Gensan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:skinfluence cosmetic surgicenter gensan",
+      "name": "Skinfluence Cosmetic Surgicenter Gensan",
+      "categories": [
+        "Beauty / Cosmetic"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:skiptech solutions",
+      "name": "SkipTech Solutions",
+      "categories": [
+        "Services"
+      ],
+      "sells": "Desktop and laptop needs & services",
+      "address": "Alunan St., Bula",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:southside coffee",
+      "name": "Southside Coffee",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:speedlane gensan",
+      "name": "SpeedLane Gensan",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": "Car detailing",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:starblack cafe by masaje de david",
+      "name": "Starblack Cafe by Masaje de David",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": "NLSA Road, San Isidro",
+      "opens": null,
+      "closes": null,
+      "contact": "0998-221-1817",
+      "source": "fb"
+    },
+    {
+      "id": "fb:sun city suites room accommodations venue and caf",
+      "name": "Sun City Suites — Room Accommodations, Venue, and Café",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Near Gaisano Mall",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sunpower solar energy",
+      "name": "SunPower Solar Energy",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sweets unlmtd baking depot",
+      "name": "Sweets Unlmtd Baking Depot",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sweets unlmtd lagao branch",
+      "name": "Sweets Unlmtd Lagao Branch",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": "Lagao",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:sweets unlmtd mabuhay branch",
+      "name": "Sweets Unlmtd Mabuhay Branch",
+      "categories": [
+        "Bakery"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:swerve 20",
+      "name": "Swerve 2.0",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Paparon Compound, Brgy. City Heights",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:synergist auto services",
+      "name": "Synergist Auto Services",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:tcj consumer goods trading fiesta gas dealer",
+      "name": "TCJ Consumer Goods Trading (Fiesta Gas Dealer)",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the cloudy family ktv",
+      "name": "The Cloudy Family KTV",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the house of sweets",
+      "name": "The House of Sweets",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the print cornerph",
+      "name": "The Print Corner.ph",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": "Doña Soledad, Labangal",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the smile avenue dental clinic",
+      "name": "The Smile Avenue Dental Clinic",
+      "categories": [
+        "Medical"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the sonly suites",
+      "name": "The Sonly Suites",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the third space",
+      "name": "The Third Space",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the traveldesk",
+      "name": "The Traveldesk",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:the white house cafe",
+      "name": "The White House Cafe",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:thomas bistro",
+      "name": "Thomas Bistro",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:tipsy coffee and tea",
+      "name": "Tipsy Coffee and Tea",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Events and direct orders",
+      "address": "Front of Davao City National High School",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:tita ming's suman atbp",
+      "name": "Tita Ming's Suman Atbp.",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:tita's kitchen",
+      "name": "Tita's Kitchen",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Calumpang area",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:toledomed gensan",
+      "name": "Toledomed Gensan",
+      "categories": [
+        "Medical"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:tomas auto services",
+      "name": "Tomas Auto Services",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": "Prk 19, Zone 6, Lagao",
+      "opens": "8 AM",
+      "closes": "5 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:tons of eggs gensan",
+      "name": "Tons of Eggs Gensan",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": "Eggs",
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:toto alex bake n dine",
+      "name": "Toto Alex Bake N' Dine",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:traveler's car rental services",
+      "name": "Traveler's Car Rental Services",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:traveler's car rental services gensan",
+      "name": "Traveler's Car Rental Services Gensan",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:trends by aye",
+      "name": "Trends by Aye",
+      "categories": [
+        "Clothing"
+      ],
+      "sells": "SHEIN clothes, bags, Montessori toys, kids clothes",
+      "address": "AVON Shop front of KCC Mall Gensan; Bria Homes, Conel Road",
+      "opens": null,
+      "closes": null,
+      "contact": "Maxim delivery anywhere in Gensan",
+      "source": "fb"
+    },
+    {
+      "id": "fb:triple z zip & shakes",
+      "name": "Triple Z Zip & Shakes",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:uma matcha",
+      "name": "UMA MATCHA",
+      "categories": [
+        "Coffee"
+      ],
+      "sells": "Matcha drinks",
+      "address": "Nuñez St., Prk. Malakas, Brgy. San Isidro (in front of MR. DIY)",
+      "opens": "7:30 PM",
+      "closes": "1:00 AM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:uma matcha gensan",
+      "name": "UMA MATCHA - Gensan",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Matcha drinks",
+      "address": "Nuñez St., Malakas, San Isidro (in front of Mr DIY)",
+      "opens": "7:00 PM",
+      "closes": "1:00 AM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:vivian's refreshment uhaw",
+      "name": "Vivian's Refreshment Uhaw",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": "9 AM",
+      "closes": "8:30 PM",
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:vl food products",
+      "name": "VL Food Products",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": "Main Bula Branch",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:vulcanizing shop",
+      "name": "Vulcanizing Shop",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:water solutions",
+      "name": "Water Solutions",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:waymart gensan",
+      "name": "Waymart Gensan",
+      "categories": [
+        "Grocery"
+      ],
+      "sells": null,
+      "address": "National Highway, in front of NDDU",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:yale migration and education consultants philippines",
+      "name": "Yale Migration and Education Consultants - Philippines",
+      "categories": [
+        "Services"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:yannie's kitchen",
+      "name": "Yannie's Kitchen",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:yannokz grill",
+      "name": "Yannokz Grill",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:yeshua med pharmacy",
+      "name": "Yeshua Med Pharmacy",
+      "categories": [
+        "Pharmacy"
+      ],
+      "sells": null,
+      "address": "Conel Road, GenSan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:yeshua pharmacy",
+      "name": "Yeshua Pharmacy",
+      "categories": [
+        "Pharmacy"
+      ],
+      "sells": null,
+      "address": "Nursery Road, GenSan",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:zek kitchen",
+      "name": "ZEK Kitchen",
+      "categories": [
+        "Food"
+      ],
+      "sells": "Catering services",
+      "address": "Aparente St., Brgy. City Heights",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:zeus glass & aluminum installation",
+      "name": "Zeus Glass & Aluminum Installation",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:ziah lechon manok",
+      "name": "ZIAH Lechon Manok",
+      "categories": [
+        "Food"
+      ],
+      "sells": null,
+      "address": null,
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:zkd car trading",
+      "name": "zkd car trading",
+      "categories": [
+        "Auto / Rental"
+      ],
+      "sells": null,
+      "address": "Apopong, General Santos City",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    },
+    {
+      "id": "fb:zynergia",
+      "name": "Zynergia",
+      "categories": [
+        "Other"
+      ],
+      "sells": null,
+      "address": "Polomolok",
+      "opens": null,
+      "closes": null,
+      "contact": null,
+      "source": "fb"
+    }
+  ]
+}

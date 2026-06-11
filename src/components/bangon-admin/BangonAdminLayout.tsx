@@ -1,7 +1,7 @@
 // BangonAdminLayout — shell with left sidebar + outlet for the admin pages.
 
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BadgeAlert, ScrollText, MessageSquare, UserCircle, LogOut, ShieldCheck, UserPlus } from 'lucide-react';
+import { LayoutDashboard, BadgeAlert, ScrollText, MessageSquare, UserCircle, LogOut, ShieldCheck, UserPlus, Store } from 'lucide-react';
 import { useBangonAuth } from '../../contexts/BangonAuthContext';
 
 interface NavItem { to: string; label: string; icon: React.ReactNode; end?: boolean; superOnly?: boolean }
@@ -9,6 +9,7 @@ const NAV: NavItem[] = [
   { to: '/bangon-gensan/admin',             label: 'Dashboard',   icon: <LayoutDashboard size={14} />, end: true },
   { to: '/bangon-gensan/admin/verify',      label: 'Verify',      icon: <ShieldCheck size={14} /> },
   { to: '/bangon-gensan/admin/fundraisers', label: 'Fundraisers', icon: <BadgeAlert size={14} /> },
+  { to: '/bangon-gensan/admin/businesses',  label: 'Businesses',  icon: <Store size={14} /> },
   { to: '/bangon-gensan/admin/staff',       label: 'Staff',       icon: <UserPlus size={14} />, superOnly: true },
   { to: '/bangon-gensan/admin/audit',       label: 'Audit',       icon: <ScrollText size={14} /> },
   { to: '/bangon-gensan/admin/chat',        label: 'Chat',        icon: <MessageSquare size={14} /> },

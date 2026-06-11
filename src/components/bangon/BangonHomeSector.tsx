@@ -98,7 +98,7 @@ export default function BangonHomeSector() {
   return (
     <section
       aria-label="BangonGenSan active relief operation"
-      className="relative overflow-hidden border-b border-red-900/50 bg-gradient-to-br from-[#1a0606] via-[#2a0a0a] to-[#0a0202]"
+      className="relative overflow-hidden bg-[#1a0606]"
     >
       {/* Themed Live Feed scrollbar — red-on-dark to match the sector, so we
           never fall back to the OS-native bar. Scoped to .bangon-feed-scroll

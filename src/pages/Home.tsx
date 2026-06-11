@@ -23,6 +23,7 @@ import CivicDecisions from '../components/dashboard/CivicDecisions';
 import GovOpportunities from '../components/dashboard/GovOpportunities';
 import JoinBetterGov from '../components/dashboard/JoinBetterGov';
 import BangonHomeSector from '../components/bangon/BangonHomeSector';
+import BangonOpenBusinessesSector from '../components/bangon/BangonOpenBusinessesSector';
 
 function InfraAnnouncement() {
   return (
@@ -87,6 +88,11 @@ const Home: React.FC = () => {
         {/* ---------- TEMPORARY: BangonGenSan active relief operation ----------
             Remove this component + its import when the operation winds down. */}
         <BangonHomeSector />
+
+        {/* ---------- TEMPORARY: Open businesses (community-sourced) ----------
+            Same removal model as BangonHomeSector — delete this mount + import
+            + the component file + src/data/bangonOpenBusinesses.json. */}
+        <BangonOpenBusinessesSector />
 
         {/* ---------- Featured: platform identity ---------- */}
         <PlatformValue />

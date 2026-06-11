@@ -41,6 +41,7 @@ import CommandCenter from './pages/CommandCenter';
 import BangonGensan from './pages/BangonGensan';
 import BangonPrivacy from './pages/BangonPrivacy';
 import BangonForm from './pages/BangonForm';
+import BangonBusinessForm from './pages/BangonBusinessForm';
 import { BangonAuthProvider } from './contexts/BangonAuthContext';
 import ProtectedBangonAdminRoute from './components/bangon-admin/ProtectedBangonAdminRoute';
 import BangonAdminLayout from './components/bangon-admin/BangonAdminLayout';
@@ -52,6 +53,7 @@ import BangonAuditLog from './pages/bangon-admin/AuditLog';
 import BangonAdminChat from './pages/bangon-admin/Chat';
 import BangonAdminProfile from './pages/bangon-admin/Profile';
 import BangonStaffManagement from './pages/bangon-admin/StaffManagement';
+import BangonBusinessApprovals from './pages/bangon-admin/BusinessApprovals';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import Sources from './pages/admin/Sources';
@@ -79,6 +81,7 @@ function App() {
             <Route path="/bangon-gensan" element={<BangonGensan />} />
             <Route path="/bangon-gensan/privacy" element={<BangonPrivacy />} />
             <Route path="/bangon-gensan/form" element={<BangonForm />} />
+            <Route path="/bangon-gensan/business-form" element={<BangonBusinessForm />} />
             {/* BangonGensan admin — separate auth context, no PublicLayout */}
             <Route path="/bangon-gensan/login" element={<BangonAuthProvider><BangonAdminLogin /></BangonAuthProvider>} />
             <Route
@@ -92,6 +95,7 @@ function App() {
                 <Route index element={<BangonAdminDashboard />} />
                 <Route path="verify" element={<BangonVerificationQueue />} />
                 <Route path="fundraisers" element={<BangonFundraiserApprovals />} />
+                <Route path="businesses" element={<BangonBusinessApprovals />} />
                 <Route path="staff" element={<BangonStaffManagement />} />
                 <Route path="audit" element={<BangonAuditLog />} />
                 <Route path="chat" element={<BangonAdminChat />} />
