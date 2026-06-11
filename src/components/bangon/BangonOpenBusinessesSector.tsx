@@ -48,6 +48,22 @@ interface SubmissionRow {
 const STATIC_BUSINESSES = data.businesses as Business[];
 const CATEGORIES = data.meta.categories as string[];
 
+// Priority map derived from the JSON's category order — first listed = highest
+// priority. Used to sort the list essentials-first (Grocery → Pharmacy →
+// Medical → Food → …) when no specific filter is active. A business with
+// multiple categories is bucketed by its highest-priority tag.
+const PRIORITY: Record<string, number> = Object.fromEntries(
+  CATEGORIES.map((c, i) => [c, i]),
+);
+function priorityOf(b: Business): number {
+  let min = Number.POSITIVE_INFINITY;
+  for (const c of b.categories) {
+    const p = PRIORITY[c] ?? 999;
+    if (p < min) min = p;
+  }
+  return min === Number.POSITIVE_INFINITY ? 999 : min;
+}
+
 function googleMapsUrl(b: Business): string {
   const query = [b.name, b.address, 'General Santos City']
     .filter(Boolean)
@@ -108,7 +124,7 @@ export default function BangonOpenBusinessesSector() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return all.filter((b) => {
+    const rows = all.filter((b) => {
       if (activeCategory !== 'All' && !b.categories.includes(activeCategory))
         return false;
       if (!q) return true;
@@ -118,6 +134,12 @@ export default function BangonOpenBusinessesSector() {
         (b.address ?? '').toLowerCase().includes(q) ||
         b.categories.some((c) => c.toLowerCase().includes(q))
       );
+    });
+    return rows.sort((a, b) => {
+      const pa = priorityOf(a);
+      const pb = priorityOf(b);
+      if (pa !== pb) return pa - pb;
+      return a.name.localeCompare(b.name);
     });
   }, [all, query, activeCategory]);
 
