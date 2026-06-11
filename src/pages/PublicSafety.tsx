@@ -21,6 +21,7 @@
 import {
   AlertOctagon,
   AlertTriangle,
+  ArrowRight,
   Building2,
   CheckCircle2,
   CloudRain,
@@ -48,6 +49,8 @@ import PageSection from '../components/ui/PageSection';
 import useReveal from '../hooks/useReveal';
 import PoliceStationsMap from '../components/safety/PoliceStationsMap';
 import { POLICE_STATIONS } from '../components/safety/policeStations';
+import HospitalsMap from '../components/health/HospitalsMap';
+import { HOSPITALS } from '../components/health/hospitals';
 
 // ---------- 5-step access path ----------
 
@@ -81,7 +84,7 @@ const STEPS: Step[] = [
     number: '04',
     icon: ShieldCheck,
     title: 'Stay on the line unless told to hang up',
-    body: 'Follow the dispatcher\'s instructions. Do not hang up unless they explicitly tell you to. Keep your phone unlocked for callbacks.',
+    body: "Follow the dispatcher's instructions. Do not hang up unless they explicitly tell you to. Keep your phone unlocked for callbacks.",
   },
   {
     number: '05',
@@ -192,7 +195,8 @@ const CORE_UNITS: CoreUnit[] = [
   {
     icon: Shield,
     name: 'GSC Police Office',
-    scope: 'Headquarters of the Philippine National Police in General Santos City.',
+    scope:
+      'Headquarters of the Philippine National Police in General Santos City.',
     phones: ['552-5573', '0998-598-7207'],
     directoryPhones: ['552-5773'],
   },
@@ -205,26 +209,30 @@ const CORE_UNITS: CoreUnit[] = [
   {
     icon: Siren,
     name: 'City Disaster Risk Reduction & Management Office',
-    scope: 'Local CDRRMO. Disaster preparedness, emergency response, evacuation, and rescue.',
+    scope:
+      'Local CDRRMO. Disaster preparedness, emergency response, evacuation, and rescue.',
     phones: ['552-3939', '552-8861', '0943-461-4548'],
   },
   {
     icon: Flame,
     name: 'Bureau of Fire Protection',
-    scope: 'Fire suppression, fire safety inspection, and rescue operations. Hotline 160.',
+    scope:
+      'Fire suppression, fire safety inspection, and rescue operations. Hotline 160.',
     phones: ['552-1160', '0943-341-5561'],
     hotline: '160',
   },
   {
     icon: Radio,
     name: 'City Radio Communication Services (Delta 9)',
-    scope: 'City-wide emergency radio coordination. Critical when mobile networks fail during typhoons, earthquakes, or wide-area power outages.',
+    scope:
+      'City-wide emergency radio coordination. Critical when mobile networks fail during typhoons, earthquakes, or wide-area power outages.',
     phones: ['554-0474', '0998-848-1093'],
   },
   {
     icon: ShieldAlert,
     name: 'Philippine Coast Guard (PCG)',
-    scope: 'Sea rescue, port emergencies, maritime incidents, and oil spill response. Critical for General Santos City as a coastal port city.',
+    scope:
+      'Sea rescue, port emergencies, maritime incidents, and oil spill response. Critical for General Santos City as a coastal port city.',
     phones: ['(02) 8527-3877', '143'],
     hotline: '143',
   },
@@ -260,14 +268,38 @@ interface DirectoryHospital {
 const DIRECTORY_HOSPITALS: DirectoryHospital[] = [
   { name: 'Mindanao Medical Center', tels: ['553-8207', '554-9640'] },
   { name: 'Auguis Clinic & Hospital', tels: ['552-4911'] },
-  { name: "Gensan Doctor's Hospital", tels: ['553-3891', '250-2777'], mobiles: ['0933-821-7257'] },
+  {
+    name: "Gensan Doctor's Hospital",
+    tels: ['553-3891', '250-2777'],
+    mobiles: ['0933-821-7257'],
+  },
   { name: 'Diagan Hospital', tels: ['552-3942'], mobiles: ['0923-809-4705'] },
-  { name: 'St. Elizabeth Hospital', tels: ['552-3162'], mobiles: ['0919-071-9004'] },
+  {
+    name: 'St. Elizabeth Hospital',
+    tels: ['552-3162'],
+    mobiles: ['0919-071-9004'],
+  },
   { name: 'Gensan Medical Center', tels: ['887-9898'] },
-  { name: 'Socsargen County Hospital', tels: ['553-8906'], mobiles: ['0932-692-4708'] },
-  { name: 'Sarangani Bay Specialist Medical Center', tels: ['887-8888'], mobiles: ['0919-067-8395'] },
-  { name: 'Dr. Jorge P. Royeca City Hospital', tels: ['552-2811'], mobiles: ['0912-376-2331'] },
-  { name: 'Labella Hospital', tels: ['887-6409', '553-3509'], mobiles: ['0922-859-0044'] },
+  {
+    name: 'Socsargen County Hospital',
+    tels: ['553-8906'],
+    mobiles: ['0932-692-4708'],
+  },
+  {
+    name: 'Sarangani Bay Specialist Medical Center',
+    tels: ['887-8888'],
+    mobiles: ['0919-067-8395'],
+  },
+  {
+    name: 'Dr. Jorge P. Royeca City Hospital',
+    tels: ['552-2811'],
+    mobiles: ['0912-376-2331'],
+  },
+  {
+    name: 'Labella Hospital',
+    tels: ['887-6409', '553-3509'],
+    mobiles: ['0922-859-0044'],
+  },
   { name: 'Dadiangas Medical Center', mobiles: ['0917-190-2561'] },
 ];
 
@@ -279,19 +311,20 @@ const DIRECTORY_HOSPITALS: DirectoryHospital[] = [
 // Never overwrites POLICE_STATIONS.phone — those are the verified
 // numbers tied to OSM positions.
 
-const STATION_DIRECTORY: Record<
-  number,
-  { tel?: string; mobiles?: string[] }
-> = {
-  1: { tel: '825-3801', mobiles: ['0998-598-7208'] },
-  2: { tel: '552-7410', mobiles: ['0909-748-3878'] },
-  3: { tel: '878-4296', mobiles: ['0998-598-7212', '0907-760-3271'] },
-  4: { tel: '552-5646', mobiles: ['0998-598-7214', '0946-340-3678', '0921-724-5745'] },
-  5: { tel: '554-0046', mobiles: ['0907-313-4517'] },
-  6: { tel: '552-8434', mobiles: ['0998-598-7218', '0917-310-5151'] },
-  7: { mobiles: ['0921-558-4056', '0916-272-6009', '0998-598-7220'] },
-  8: { mobiles: ['0998-598-7223', '0955-200-1366'] },
-};
+const STATION_DIRECTORY: Record<number, { tel?: string; mobiles?: string[] }> =
+  {
+    1: { tel: '825-3801', mobiles: ['0998-598-7208'] },
+    2: { tel: '552-7410', mobiles: ['0909-748-3878'] },
+    3: { tel: '878-4296', mobiles: ['0998-598-7212', '0907-760-3271'] },
+    4: {
+      tel: '552-5646',
+      mobiles: ['0998-598-7214', '0946-340-3678', '0921-724-5745'],
+    },
+    5: { tel: '554-0046', mobiles: ['0907-313-4517'] },
+    6: { tel: '552-8434', mobiles: ['0998-598-7218', '0917-310-5151'] },
+    7: { mobiles: ['0921-558-4056', '0916-272-6009', '0998-598-7220'] },
+    8: { mobiles: ['0998-598-7223', '0955-200-1366'] },
+  };
 
 // ---------- Crisis hotlines ----------
 
@@ -355,14 +388,16 @@ const OFFICES: Office[] = [
   {
     icon: Siren,
     name: 'CDRRMO General Santos',
-    scope: 'Local disaster preparedness, response, recovery, and rescue coordination.',
+    scope:
+      'Local disaster preparedness, response, recovery, and rescue coordination.',
     href: 'https://gensantos.gov.ph/',
     domain: 'gensantos.gov.ph',
   },
   {
     icon: Shield,
     name: 'Philippine National Police',
-    scope: 'Crime prevention, police clearance, and public order. Operates 10 police stations citywide.',
+    scope:
+      'Crime prevention, police clearance, and public order. Operates 10 police stations citywide.',
     href: 'https://www.pnp.gov.ph/',
     domain: 'pnp.gov.ph',
   },
@@ -401,7 +436,7 @@ const OFFICES: Office[] = [
 const TIPS = [
   'Save emergency contacts offline — write 911, BFP, CDRRMO, Coast Guard, and your nearest PNP station on paper. Internet and cell service can drop during disasters.',
   'Keep an emergency go-bag with water, food, IDs, medication, and a flashlight.',
-  'Know your barangay\'s designated evacuation center.',
+  "Know your barangay's designated evacuation center.",
   'Sign up for local CDRRMO text alerts when offered.',
   'In an earthquake: Drop, Cover, and Hold On until shaking stops.',
   'After heavy rain: avoid flooded streets, flowing water can hide hazards.',
@@ -434,7 +469,15 @@ const PublicSafety: React.FC = () => {
 
       {/* ---------- Hero ---------- */}
       <div className="bg-gray-50 py-10">
-        <div ref={heroRef} className="reveal mx-auto max-w-[1100px] px-4" style={{ animation: 'fade-up var(--dur-slow) var(--ease-out-quart) both' } as React.CSSProperties}>
+        <div
+          ref={heroRef}
+          className="reveal mx-auto max-w-[1100px] px-4"
+          style={
+            {
+              animation: 'fade-up var(--dur-slow) var(--ease-out-quart) both',
+            } as React.CSSProperties
+          }
+        >
           <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
@@ -456,10 +499,20 @@ const PublicSafety: React.FC = () => {
               </h1>
               <p className="mt-2 max-w-2xl text-sm text-gray-900">
                 Emergency response, disaster preparedness, fire safety, and
-                police services for General Santos City. The full PNP
-                station directory and a live map of all 10 stations are on
-                this page.
+                police services for General Santos City. The full PNP station
+                directory and a live map of all 10 stations are on this page.
               </p>
+
+              {/* TEMPORARY: BangonGenSan active relief operation CTA. Remove
+                  when the operation winds down (see BangonHomeSector.tsx). */}
+              <a
+                href="/bangon-gensan"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-red-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-red-500"
+              >
+                <Siren className="h-3.5 w-3.5" />
+                #BangonGensan — Earthquake Relief
+                <ArrowRight className="h-3.5 w-3.5" />
+              </a>
             </div>
           </div>
 
@@ -482,10 +535,30 @@ const PublicSafety: React.FC = () => {
                   Call 911
                 </a>
                 {[
-                  { href: '#emergency-units', label: 'CDRRMO · BFP · Delta 9', shortLabel: 'Emergency Units', icon: Siren },
-                  { href: '#hospitals', label: 'Hospitals', icon: Stethoscope, isNew: true },
-                  { href: '#police-stations', label: 'Police Stations', shortLabel: 'Police', icon: Shield },
-                  { href: '#crisis-hotlines', label: 'Crisis Hotlines', shortLabel: 'Hotlines', icon: HeartHandshake },
+                  {
+                    href: '#emergency-units',
+                    label: 'CDRRMO · BFP · Delta 9',
+                    shortLabel: 'Emergency Units',
+                    icon: Siren,
+                  },
+                  {
+                    href: '#hospitals',
+                    label: 'Hospitals',
+                    icon: Stethoscope,
+                    isNew: true,
+                  },
+                  {
+                    href: '#police-stations',
+                    label: 'Police Stations',
+                    shortLabel: 'Police',
+                    icon: Shield,
+                  },
+                  {
+                    href: '#crisis-hotlines',
+                    label: 'Crisis Hotlines',
+                    shortLabel: 'Hotlines',
+                    icon: HeartHandshake,
+                  },
                 ].map(({ href, label, shortLabel, icon: Icon, isNew }) => (
                   <a
                     key={href}
@@ -495,7 +568,10 @@ const PublicSafety: React.FC = () => {
                       const id = href.replace('#', '');
                       const target = document.getElementById(id);
                       if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        target.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start',
+                        });
                         history.replaceState(null, '', href);
                       }
                     }}
@@ -526,16 +602,20 @@ const PublicSafety: React.FC = () => {
       {/* ---------- 5-step path ---------- */}
       <PageSection background="white" tier="secondary">
         <div ref={stepsHeadRef} className="reveal">
-        <SectionHeading
-          tier="secondary"
-          icon={Hash}
-          eyebrow="In an emergency"
-          title="What to do in 5 steps"
-          helper="The standard sequence for any emergency call in General Santos City."
-        />
+          <SectionHeading
+            tier="secondary"
+            icon={Hash}
+            eyebrow="In an emergency"
+            title="What to do in 5 steps"
+            helper="The standard sequence for any emergency call in General Santos City."
+          />
         </div>
 
-        <ol ref={stepsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+        <ol
+          ref={stepsGridRef}
+          className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5"
+          style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+        >
           {STEPS.map(step => (
             <li
               key={step.number}
@@ -563,16 +643,20 @@ const PublicSafety: React.FC = () => {
       {/* ---------- 6 main services ---------- */}
       <PageSection background="gray" tier="secondary">
         <div ref={servicesHeadRef} className="reveal">
-        <SectionHeading
-          tier="secondary"
-          icon={Shield}
-          eyebrow="Core services"
-          title="Public safety services"
-          helper="Six core safety services available to General Santos City residents at the local and national levels."
-        />
+          <SectionHeading
+            tier="secondary"
+            icon={Shield}
+            eyebrow="Core services"
+            title="Public safety services"
+            helper="Six core safety services available to General Santos City residents at the local and national levels."
+          />
         </div>
 
-        <div ref={servicesGridRef} className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+        <div
+          ref={servicesGridRef}
+          className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+        >
           {SERVICES.map(s => (
             <article
               key={s.title}
@@ -634,78 +718,84 @@ const PublicSafety: React.FC = () => {
       <div id="emergency-units" />
       <PageSection background="white" tier="secondary">
         <div ref={unitsHeadRef} className="reveal">
-        <SectionHeading
-          tier="secondary"
-          icon={Siren}
-          eyebrow="Save these first"
-          title="Core emergency units"
-          helper="The six core public safety units of General Santos City. Tap any number to dial directly."
-        />
+          <SectionHeading
+            tier="secondary"
+            icon={Siren}
+            eyebrow="Save these first"
+            title="Core emergency units"
+            helper="The six core public safety units of General Santos City. Tap any number to dial directly."
+          />
         </div>
 
-        <div ref={unitsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+        <div
+          ref={unitsGridRef}
+          className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+          style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+        >
           {CORE_UNITS.map(u => {
-            const isNewUnit = u.name.startsWith('City Radio Communication Services');
+            const isNewUnit = u.name.startsWith(
+              'City Radio Communication Services'
+            );
             return (
-            <article
-              key={u.name}
-              className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04]"
-            >
-              <div className="mb-3 flex items-start gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
-                  <u.icon className="h-5 w-5" />
+              <article
+                key={u.name}
+                className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm shadow-gray-900/[0.04]"
+              >
+                <div className="mb-3 flex items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
+                    <u.icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-grow">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <h3 className="text-sm font-semibold leading-snug text-gray-900">
+                        {u.name}
+                      </h3>
+                      {isNewUnit && (
+                        <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
+                          NEW
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-600">
+                      {u.scope}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-grow">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <h3 className="text-sm font-semibold leading-snug text-gray-900">
-                      {u.name}
-                    </h3>
-                    {isNewUnit && (
-                      <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
+
+                <div className="flex flex-wrap gap-x-3 gap-y-1 border-t border-gray-100 pt-3">
+                  {u.phones.map(p => (
+                    <a
+                      key={p}
+                      href={`tel:${p.replace(/\D/g, '')}`}
+                      className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {p}
+                    </a>
+                  ))}
+                  {u.directoryPhones?.map(p => (
+                    <a
+                      key={p}
+                      href={`tel:${p.replace(/\D/g, '')}`}
+                      className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {p}
+                      <span className="ml-0.5 rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
                         NEW
                       </span>
-                    )}
-                  </div>
-                  <p className="mt-1 text-xs leading-relaxed text-gray-600">
-                    {u.scope}
-                  </p>
+                    </a>
+                  ))}
+                  {u.hotline && (
+                    <a
+                      href={`tel:${u.hotline}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-error-600 px-2 py-0.5 text-[11px] font-bold text-white hover:bg-error-700"
+                    >
+                      Hotline {u.hotline}
+                    </a>
+                  )}
                 </div>
-              </div>
-
-              <div className="flex flex-wrap gap-x-3 gap-y-1 border-t border-gray-100 pt-3">
-                {u.phones.map(p => (
-                  <a
-                    key={p}
-                    href={`tel:${p.replace(/\D/g, '')}`}
-                    className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
-                  >
-                    <Phone className="h-3 w-3" />
-                    {p}
-                  </a>
-                ))}
-                {u.directoryPhones?.map(p => (
-                  <a
-                    key={p}
-                    href={`tel:${p.replace(/\D/g, '')}`}
-                    className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
-                  >
-                    <Phone className="h-3 w-3" />
-                    {p}
-                    <span className="ml-0.5 rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
-                      NEW
-                    </span>
-                  </a>
-                ))}
-                {u.hotline && (
-                  <a
-                    href={`tel:${u.hotline}`}
-                    className="inline-flex items-center gap-1 rounded-full bg-error-600 px-2 py-0.5 text-[11px] font-bold text-white hover:bg-error-700"
-                  >
-                    Hotline {u.hotline}
-                  </a>
-                )}
-              </div>
-            </article>
+              </article>
             );
           })}
         </div>
@@ -715,89 +805,92 @@ const PublicSafety: React.FC = () => {
       <div id="police-stations" />
       <PageSection background="gray" tier="secondary">
         <div ref={stationsHeadRef} className="reveal">
-        <SectionHeading
-          tier="secondary"
-          icon={MapIcon}
-          eyebrow="PNP General Santos City"
-          title="PNP stations directory"
-          helper="The 10 official PNP stations of General Santos City. Stations 1, 2, and 3 are pinned to verified OpenStreetMap locations. Stations 4 to 10 use the centroid of their barangay as an approximation."
-        />
+          <SectionHeading
+            tier="secondary"
+            icon={MapIcon}
+            eyebrow="PNP General Santos City"
+            title="PNP stations directory"
+            helper="The 10 official PNP stations of General Santos City. Stations 1, 2, and 3 are pinned to verified OpenStreetMap locations. Stations 4 to 10 use the centroid of their barangay as an approximation."
+          />
         </div>
 
         <div className="mb-5">
           <PoliceStationsMap />
           <p className="mt-2 text-[11px] text-gray-500">
-            Map data &copy; OpenStreetMap contributors. For emergencies,
-            dial <strong>911</strong> first. Markers tagged{' '}
-            <strong>approx</strong> show the barangay center, not the exact
-            station building.
+            Map data &copy; OpenStreetMap contributors. For emergencies, dial{' '}
+            <strong>911</strong> first. Markers tagged <strong>approx</strong>{' '}
+            show the barangay center, not the exact station building.
           </p>
         </div>
 
-        <div ref={stationsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+        <div
+          ref={stationsGridRef}
+          className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+          style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+        >
           {POLICE_STATIONS.map(s => {
             const directory = STATION_DIRECTORY[s.number];
             const directoryMobiles = (directory?.mobiles ?? []).filter(
-              m => m.replace(/\D/g, '') !== s.phone.replace(/\D/g, ''),
+              m => m.replace(/\D/g, '') !== s.phone.replace(/\D/g, '')
             );
             return (
-            <article
-              key={s.number}
-              className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04]"
-            >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="min-w-0 flex-grow">
-                <div className="flex items-start justify-between gap-2">
-                  <h4 className="text-sm font-semibold text-gray-900">
-                    {s.name}
-                  </h4>
-                  {s.approximate && (
-                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-700">
-                      approx
-                    </span>
-                  )}
+              <article
+                key={s.number}
+                className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm shadow-gray-900/[0.04]"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white ring-1 ring-primary-700 shadow-sm shadow-primary-900/20">
+                  <Shield className="h-5 w-5" />
                 </div>
-                <p className="mt-1 text-xs leading-snug text-gray-600">
-                  {s.address}
-                </p>
-                <div className="mt-1.5 flex flex-col gap-1">
-                  <a
-                    href={`tel:${s.phone.replace(/\D/g, '')}`}
-                    className="inline-flex items-center gap-1 text-sm font-bold text-primary-700 hover:text-primary-800"
-                  >
-                    <Phone className="h-3 w-3" />
-                    {s.phone}
-                  </a>
-                  {directory?.tel && (
+                <div className="min-w-0 flex-grow">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="text-sm font-semibold text-gray-900">
+                      {s.name}
+                    </h4>
+                    {s.approximate && (
+                      <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-700">
+                        approx
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs leading-snug text-gray-600">
+                    {s.address}
+                  </p>
+                  <div className="mt-1.5 flex flex-col gap-1">
                     <a
-                      href={`tel:${directory.tel.replace(/\D/g, '')}`}
-                      className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                      href={`tel:${s.phone.replace(/\D/g, '')}`}
+                      className="inline-flex items-center gap-1 text-sm font-bold text-primary-700 hover:text-primary-800"
                     >
                       <Phone className="h-3 w-3" />
-                      {directory.tel}
-                      <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
-                        NEW
-                      </span>
+                      {s.phone}
                     </a>
-                  )}
-                  {directoryMobiles.map(m => (
-                    <a
-                      key={m}
-                      href={`tel:${m.replace(/\D/g, '')}`}
-                      className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
-                    >
-                      <Phone className="h-3 w-3" />
-                      {m}
-                      <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
-                        NEW
-                      </span>
-                    </a>
-                  ))}
+                    {directory?.tel && (
+                      <a
+                        href={`tel:${directory.tel.replace(/\D/g, '')}`}
+                        className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                      >
+                        <Phone className="h-3 w-3" />
+                        {directory.tel}
+                        <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                          NEW
+                        </span>
+                      </a>
+                    )}
+                    {directoryMobiles.map(m => (
+                      <a
+                        key={m}
+                        href={`tel:${m.replace(/\D/g, '')}`}
+                        className="inline-flex items-center gap-1 text-[12px] font-bold text-primary-700 hover:text-primary-800"
+                      >
+                        <Phone className="h-3 w-3" />
+                        {m}
+                        <span className="rounded bg-emerald-100 px-1 py-0 text-[8px] font-bold uppercase tracking-wider text-emerald-700">
+                          NEW
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </article>
+              </article>
             );
           })}
         </div>
@@ -810,9 +903,9 @@ const PublicSafety: React.FC = () => {
           <SectionHeading
             tier="secondary"
             icon={Stethoscope}
-            eyebrow="Hospital hotlines"
-            title="Hospitals — emergency contacts"
-            helper="Hospital landlines and mobile numbers from the official City Emergency Directory. For verified positions, addresses, and the live hospital map, see /services/health-services."
+            eyebrow="Hospital directory"
+            title="Hospitals — map &amp; emergency contacts"
+            helper="Hospitals of General Santos City pinned to their verified OpenStreetMap locations, with landline and mobile numbers from the official City Emergency Directory. Markers land on the actual buildings — but for emergencies, dial 911 first."
           />
           <div className="-mt-3 mb-4 ml-1">
             <span className="inline-block rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
@@ -821,7 +914,21 @@ const PublicSafety: React.FC = () => {
           </div>
         </div>
 
-        <div ref={hospitalsGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+        <div className="mb-5">
+          <HospitalsMap />
+          <p className="mt-2 text-[11px] text-gray-500">
+            Map data &copy; OpenStreetMap contributors. {HOSPITALS.length}{' '}
+            hospitals pinned to verified OSM locations. For emergencies, dial{' '}
+            <strong>911</strong> first. A few hospitals without an OSM pin are
+            listed below the map.
+          </p>
+        </div>
+
+        <div
+          ref={hospitalsGridRef}
+          className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+          style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+        >
           {DIRECTORY_HOSPITALS.map(h => (
             <article
               key={h.name}
@@ -876,8 +983,8 @@ const PublicSafety: React.FC = () => {
 
         <p className="mt-4 text-[11px] text-gray-500">
           Source: City Emergency Directory. Always confirm a hospital is
-          accepting patients before you head out, especially during
-          disasters or pandemics.
+          accepting patients before you head out, especially during disasters or
+          pandemics.
         </p>
       </PageSection>
 
@@ -949,16 +1056,20 @@ const PublicSafety: React.FC = () => {
       {/* ---------- Responsible offices ---------- */}
       <PageSection background="white" tier="secondary">
         <div ref={officesHeadRef} className="reveal">
-        <SectionHeading
-          tier="secondary"
-          icon={Building2}
-          eyebrow="Where to go"
-          title="Responsible Offices"
-          helper="Government offices and official portals that handle public safety for General Santos City."
-        />
+          <SectionHeading
+            tier="secondary"
+            icon={Building2}
+            eyebrow="Where to go"
+            title="Responsible Offices"
+            helper="Government offices and official portals that handle public safety for General Santos City."
+          />
         </div>
 
-        <div ref={officesGridRef} className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2" style={{ '--reveal-delay': '100ms' } as React.CSSProperties}>
+        <div
+          ref={officesGridRef}
+          className="reveal grid grid-cols-1 gap-3 sm:grid-cols-2"
+          style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+        >
           {OFFICES.map(office => (
             <a
               key={office.name}
@@ -993,16 +1104,15 @@ const PublicSafety: React.FC = () => {
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
             <div>
               <strong>In a real emergency, dial 911 first.</strong> Direct
-              station numbers are fastest for non-urgent reports and
-              follow-ups.
+              station numbers are fastest for non-urgent reports and follow-ups.
             </div>
           </div>
           <div className="flex items-start gap-2 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
             <div>
-              <strong>Heads up:</strong> Phone numbers and station
-              assignments can change. Always confirm with the official PNP
-              GenSan office before relying on a specific number.
+              <strong>Heads up:</strong> Phone numbers and station assignments
+              can change. Always confirm with the official PNP GenSan office
+              before relying on a specific number.
             </div>
           </div>
         </div>

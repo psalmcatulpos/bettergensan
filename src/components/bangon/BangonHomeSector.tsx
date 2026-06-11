@@ -6,59 +6,102 @@
 //   2. Remove the import + the single <BangonHomeSector /> mount in
 //      src/pages/Home.tsx.
 //
-// All four counts are live pulls from prod via the public RLS policies:
-//   - bangon_requests   (anon SELECT all rows)
-//   - bangon_incidents  (anon SELECT all rows)
-//   - bangon_fundraisers (anon SELECT WHERE status='approved' — RLS filtered)
-//   - bangon_offers     (anon SELECT all rows)
+// Live pulls from prod via the public RLS policies:
+//   - bangon_fundraisers     (anon SELECT WHERE status='approved' — RLS filtered)
+//   - bangon_social_reports  (anon SELECT — scraped Facebook disaster posts,
+//                             same source that powers the /bangon-gensan Live Feed)
 
-import { useEffect, useState } from 'react';
-import { Siren, ArrowRight, MapPin } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Siren, ArrowRight, MapPin, Activity } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
-interface Counts {
-  requests: number;
-  incidents: number;
-  fundraisers: number;
-  offers: number;
+// Minimal row shape for the home Live Feed — a subset of the BangonSocialRow
+// columns used on the full /bangon-gensan command center.
+interface SocialRow {
+  id: string;
+  category: string | null;
+  headline: string | null;
+  summary: string | null;
+  message: string | null;
+  message_url: string | null;
+  barangay: string | null;
+  landmark: string | null;
+  posted_at: string;
+}
+
+// Disaster-category color mapping, mirrored from BangonGensan.tsx so the home
+// feed dots match the command-center feed.
+const SOCIAL_COLOR: Record<string, string> = {
+  Earthquake: '#a855f7',
+  Flood: '#0ea5e9',
+  Typhoon: '#0284c7',
+  Landslide: '#92400e',
+  'Fire Disaster': '#dc2626',
+  'Power Outage': '#facc15',
+  'Water Shortage': '#06b6d4',
+  Evacuation: '#f97316',
+  'Relief Operation': '#10b981',
+  Rescue: '#ef4444',
+  'Missing Person (Disaster)': '#7c3aed',
+  Other: '#6b7280',
+};
+const SOCIAL_COLOR_DEFAULT = '#6b7280';
+
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  if (diff < 0) return 'now';
+  const m = Math.floor(diff / 60_000);
+  if (m < 1) return 'now';
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  return `${d}d`;
 }
 
 export default function BangonHomeSector() {
-  const [counts, setCounts] = useState<Counts | null>(null);
+  const [fundraisers, setFundraisers] = useState<number | null>(null);
+  const [feed, setFeed] = useState<SocialRow[] | null>(null);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
-    let cancelled = false;
+    cancelledRef.current = false;
 
-    const fetchCounts = async () => {
+    const fetchData = async () => {
       try {
-        const [req, inc, fund, offer] = await Promise.all([
+        const cutoff = new Date(
+          Date.now() - 5 * 24 * 60 * 60 * 1000
+        ).toISOString();
+        const [fund, soc] = await Promise.all([
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          // base tables are now admin-only-read; count via the masked public
-          // views so anon visitors still get accurate totals (no names exposed).
-          (supabase as any).from('bangon_requests_public').select('*', { count: 'exact', head: true }),
+          (supabase as any)
+            .from('bangon_fundraisers')
+            .select('*', { count: 'exact', head: true }),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any).from('bangon_incidents')  .select('*', { count: 'exact', head: true }),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any).from('bangon_fundraisers').select('*', { count: 'exact', head: true }),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (supabase as any).from('bangon_offers_public').select('*', { count: 'exact', head: true }),
+          (supabase as any)
+            .from('bangon_social_reports')
+            .select(
+              'id, category, headline, summary, message, message_url, barangay, landmark, posted_at'
+            )
+            .gte('posted_at', cutoff)
+            .order('posted_at', { ascending: false })
+            .limit(12),
         ]);
-        if (cancelled) return;
-        setCounts({
-          requests:    req.count   ?? 0,
-          incidents:   inc.count   ?? 0,
-          fundraisers: fund.count  ?? 0,
-          offers:      offer.count ?? 0,
-        });
+        if (cancelledRef.current) return;
+        setFundraisers(fund.count ?? 0);
+        setFeed((soc.data as SocialRow[]) ?? []);
       } catch {
-        // Failed-to-fetch (e.g. table not deployed) → leave counts null so
-        // the cards render the loading dash instead of fake zeros.
+        // Failed-to-fetch (e.g. table not deployed) → leave state null so the
+        // UI renders loading/empty placeholders instead of fake data.
       }
     };
 
-    void fetchCounts();
-    const id = setInterval(() => void fetchCounts(), 60_000);
-    return () => { cancelled = true; clearInterval(id); };
+    void fetchData();
+    const id = setInterval(() => void fetchData(), 60_000);
+    return () => {
+      cancelledRef.current = true;
+      clearInterval(id);
+    };
   }, []);
 
   return (
@@ -70,7 +113,8 @@ export default function BangonHomeSector() {
       <div
         className="absolute inset-0 opacity-[0.06] pointer-events-none"
         style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 1px)',
+          backgroundImage:
+            'radial-gradient(circle at 1px 1px, #fff 1px, transparent 1px)',
           backgroundSize: '24px 24px',
         }}
       />
@@ -89,15 +133,110 @@ export default function BangonHomeSector() {
 
         {/* Title */}
         <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight">
-          #BangonGensan <span className="text-red-300">— June 8 Earthquake Response</span>
+          #BangonGensan{' '}
+          <span className="text-red-300">— June 8 Earthquake Response</span>
         </h2>
 
-        {/* Stats grid */}
-        <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <StatCard label="Help Requests"      value={counts?.requests}    accent="bg-red-700/25     border-red-500/40" />
-          <StatCard label="Incidents Reported" value={counts?.incidents}   accent="bg-orange-700/25  border-orange-500/40" />
-          <StatCard label="Active Fundraisers" value={counts?.fundraisers} accent="bg-amber-700/25   border-amber-500/40" />
-          <StatCard label="Offers of Help"     value={counts?.offers}      accent="bg-emerald-700/25 border-emerald-500/40" />
+        {/* Body: Live Feed + Active Fundraisers stat */}
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-3">
+          {/* Live Feed (scraped social-media disaster reports) */}
+          <div className="lg:col-span-2 rounded-lg border border-red-900/50 bg-black/30 overflow-hidden">
+            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-red-900/40 bg-red-950/40">
+              <Activity size={12} className="text-red-300" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-200">
+                Live Feed
+              </span>
+              <span className="ml-auto relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-400" />
+              </span>
+            </div>
+            <div className="max-h-[260px] overflow-y-auto divide-y divide-white/5">
+              {feed === null && (
+                <div className="px-3 py-6 text-center text-[10px] text-red-300/60">
+                  Loading reports…
+                </div>
+              )}
+              {feed !== null && feed.length === 0 && (
+                <div className="px-3 py-6 text-center text-[10px] text-red-300/60">
+                  No social-media disaster reports in the last 5 days.
+                </div>
+              )}
+              {feed?.map(s => {
+                const cat = s.category ?? 'Disaster';
+                const loc = s.barangay
+                  ? s.landmark
+                    ? `${s.barangay} · ${s.landmark}`
+                    : s.barangay
+                  : (s.landmark ?? 'GenSan');
+                const subtitle =
+                  s.headline ?? s.summary ?? (s.message ?? '').slice(0, 140);
+                // Whitelist URL schemes — defense in depth against an upstream
+                // that lets a non-http(s) URL leak into bangon_social_reports.
+                const url =
+                  s.message_url && /^https?:\/\//i.test(s.message_url)
+                    ? s.message_url
+                    : undefined;
+                const RowTag = url ? 'a' : 'div';
+                const rowProps = url
+                  ? {
+                      href: url,
+                      target: '_blank' as const,
+                      rel: 'noopener noreferrer',
+                    }
+                  : {};
+                return (
+                  <RowTag
+                    key={s.id}
+                    {...rowProps}
+                    className={`block px-3 py-2 hover:bg-white/5 transition-colors ${url ? 'cursor-pointer' : ''}`}
+                  >
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span
+                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        style={{
+                          backgroundColor:
+                            SOCIAL_COLOR[cat] ?? SOCIAL_COLOR_DEFAULT,
+                        }}
+                      />
+                      <span className="text-[11px] font-bold text-white">
+                        {cat}
+                      </span>
+                      <span className="text-[8px] px-1 py-0 rounded font-medium bg-sky-500/15 text-sky-300">
+                        SOCIAL MEDIA
+                      </span>
+                      <span className="text-[9px] text-red-300/50 ml-auto font-mono">
+                        {relativeTime(s.posted_at)}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-red-100/70 leading-snug line-clamp-1 pl-3">
+                      {subtitle}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5 pl-3 text-[9px] text-red-300/50">
+                      <span className="flex items-center gap-0.5">
+                        <MapPin size={8} />
+                        {loc}
+                      </span>
+                      {url && <span className="text-sky-300 ml-auto">↗</span>}
+                    </div>
+                  </RowTag>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Active Fundraisers stat */}
+          <div className="rounded-lg border border-amber-500/40 bg-amber-700/25 px-4 py-4 flex flex-col justify-center">
+            <div className="text-4xl font-bold text-white tabular-nums leading-none">
+              {fundraisers === null ? '—' : fundraisers.toLocaleString('en-PH')}
+            </div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-amber-200 mt-2">
+              Active Fundraisers
+            </div>
+            <p className="mt-2 text-[10px] text-amber-100/60 leading-relaxed">
+              Community-run relief fundraisers, verified before they appear.
+            </p>
+          </div>
         </div>
 
         {/* CTAs */}
@@ -121,22 +260,10 @@ export default function BangonHomeSector() {
 
         {/* Disclaimer */}
         <p className="mt-4 text-[11px] text-red-300/70 leading-relaxed max-w-2xl">
-          #BangonGensan is a temporary community-powered relief coordination platform. All submissions are public.
+          #BangonGensan is a temporary community-powered relief coordination
+          platform. All submissions are public.
         </p>
       </div>
     </section>
-  );
-}
-
-function StatCard({ label, value, accent }: { label: string; value: number | undefined; accent: string }) {
-  return (
-    <div className={`rounded-lg border px-3 py-2.5 ${accent}`}>
-      <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums leading-none">
-        {value === undefined ? '—' : value.toLocaleString('en-PH')}
-      </div>
-      <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-red-200 mt-1.5">
-        {label}
-      </div>
-    </div>
   );
 }
